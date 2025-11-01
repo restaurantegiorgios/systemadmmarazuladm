@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { Globe, LogOut, User } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUser } from '@/contexts/UserContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,11 +13,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import ProfileModal from './ProfileModal';
 
 export const Header = () => {
   const { language, setLanguage, t } = useLanguage();
   const { currentUser, logout } = useUser();
   const navigate = useNavigate();
+  const [isProfileModalOpen, setProfileModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -24,84 +27,87 @@ export const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-elegant sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary-foreground/10 rounded-lg flex items-center justify-center">
-            <span className="text-xl font-bold">G</span>
-          </div>
-          <div>
-            <h1 className="text-xl font-bold">{t('login.subtitle')}</h1>
-            <p className="text-xs opacity-90">{t('login.title')}</p>
-          </div>
-        </div>
+    <>
+      <header className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-elegant sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <Link to="/dashboard" className="flex items-center gap-3 cursor-pointer">
+            <div className="w-10 h-10 bg-primary-foreground/10 rounded-lg flex items-center justify-center">
+              <span className="text-xl font-bold">G</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold">{t('login.subtitle')}</h1>
+              <p className="text-xs opacity-90">{t('login.title')}</p>
+            </div>
+          </Link>
 
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
-                <Globe className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-card z-50">
-              <DropdownMenuItem onClick={() => setLanguage('pt-BR')} className={language === 'pt-BR' ? 'bg-secondary' : ''}>
-                🇧🇷 Português
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage('en-US')} className={language === 'en-US' ? 'bg-secondary' : ''}>
-                🇺🇸 English
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
+                  <Globe className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-card z-50">
+                <DropdownMenuItem onClick={() => setLanguage('pt-BR')} className={language === 'pt-BR' ? 'bg-secondary' : ''}>
+                  🇧🇷 Português
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('en-US')} className={language === 'en-US' ? 'bg-secondary' : ''}>
+                  🇺🇸 English
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
-                {currentUser?.photo ? (
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={currentUser.photo} />
-                    <AvatarFallback>{currentUser.firstName[0]}{currentUser.lastName[0]}</AvatarFallback>
-                  </Avatar>
-                ) : (
-                  <User className="h-5 w-5" />
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-card z-50 w-64">
-              {currentUser && (
-                <>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={currentUser.photo} />
-                        <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white">
-                          {currentUser.firstName[0]}{currentUser.lastName[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          {currentUser.firstName} {currentUser.lastName}
-                        </p>
-                        <p className="text-xs leading-none text-muted-foreground">
-                          {currentUser.email}
-                        </p>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
+                  {currentUser?.photo ? (
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={currentUser.photo} />
+                      <AvatarFallback>{currentUser.firstName[0]}{currentUser.lastName[0]}</AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <User className="h-5 w-5" />
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-card z-50 w-64">
+                {currentUser && (
+                  <>
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={currentUser.photo} />
+                          <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white">
+                            {currentUser.firstName[0]}{currentUser.lastName[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">
+                            {currentUser.firstName} {currentUser.lastName}
+                          </p>
+                          <p className="text-xs leading-none text-muted-foreground">
+                            {currentUser.email}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                </>
-              )}
-              <DropdownMenuItem onClick={() => navigate('/profile')}>
-                <User className="mr-2 h-4 w-4" />
-                {t('profile')}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                {t('logout')}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                <DropdownMenuItem onSelect={() => setProfileModalOpen(true)}>
+                  <User className="mr-2 h-4 w-4" />
+                  {t('profile')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  {t('logout')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      <ProfileModal isOpen={isProfileModalOpen} onClose={() => setProfileModalOpen(false)} />
+    </>
   );
 };

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useEmployees } from '@/contexts/EmployeeProvider';
+import { useEmployees, Employee } from '@/contexts/EmployeeProvider';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import EmployeeFormModal from '@/components/EmployeeFormModal';
 
 const Dashboard = () => {
   const { t } = useLanguage();
@@ -34,6 +35,8 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isFormModalOpen, setFormModalOpen] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
 
   const filteredEmployees = employees.filter(emp => {
     const matchesSearch = emp.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -50,6 +53,16 @@ const Dashboard = () => {
     }
   };
 
+  const handleAddNew = () => {
+    setEditingEmployee(null);
+    setFormModalOpen(true);
+  };
+
+  const handleEdit = (employee: Employee) => {
+    setEditingEmployee(employee);
+    setFormModalOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -58,7 +71,7 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <h1 className="text-3xl font-bold text-foreground">{t('dashboard.title')}</h1>
           <Button 
-            onClick={() => navigate('/employee/new')}
+            onClick={handleAddNew}
             className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -137,7 +150,7 @@ const Dashboard = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => navigate(`/employee/edit/${employee.id}`)}
+                        onClick={() => handleEdit(employee)}
                         title={t('dashboard.edit')}
                       >
                         <Edit className="h-4 w-4" />
@@ -175,6 +188,12 @@ const Dashboard = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <EmployeeFormModal 
+        isOpen={isFormModalOpen}
+        onClose={() => setFormModalOpen(false)}
+        employee={editingEmployee}
+      />
     </div>
   );
 };
