@@ -57,10 +57,18 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       toast.error("Falha ao copiar para a área de transferência.");
     });
   };
+  
+  const handleWhatsAppRedirect = (phone: string) => {
+    // Remove todos os caracteres não numéricos e adiciona o código do país (55 para Brasil)
+    const cleanPhone = phone.replace(/\D/g, '');
+    const whatsappLink = `https://wa.me/55${cleanPhone}`;
+    window.open(whatsappLink, '_blank');
+  };
 
   const renderField = (id: keyof Employee, labelKey: string, type: string = 'text', maxLength?: number) => {
     const value = editableData[id] || employee[id];
     const isCopyable = ['fullName', 'email', 'address', 'cpf', 'phone'].includes(id);
+    const isPhoneField = id === 'phone';
     
     // Base classes for action buttons
     const actionButtonClasses = "opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 text-muted-foreground hover:bg-muted hover:text-primary";
@@ -80,7 +88,12 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
         <div className="group">
           <Label htmlFor={id} className="text-muted-foreground">{t(labelKey)}</Label>
           <div className="flex items-center gap-1">
-            <p className="text-lg font-medium">{displayValue}</p>
+            <p 
+              className={`text-lg font-medium ${isPhoneField ? 'cursor-pointer group-hover:underline' : ''}`}
+              onClick={isPhoneField ? () => handleWhatsAppRedirect(displayValue) : undefined}
+            >
+              {displayValue}
+            </p>
             
             <div className="flex items-center gap-1">
               {/* Copy Icon */}
