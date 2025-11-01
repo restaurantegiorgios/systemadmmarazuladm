@@ -10,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Upload } from 'lucide-react';
+import { Upload, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface EmployeeDetailsTabProps {
   employee: Employee;
@@ -41,11 +42,17 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
   const currentPhoto = editableData.photo || employee.photo;
   const currentFullName = editableData.fullName || employee.fullName;
 
+  const handleOpenMap = (address: string) => {
+    const encodedAddress = encodeURIComponent(address);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+  };
+
   const renderField = (id: keyof Employee, labelKey: string, type: string = 'text', maxLength?: number) => {
     const value = editableData[id] || employee[id];
     
     if (!isEditing) {
       let displayValue = String(value);
+      
       if (id === 'position') {
         displayValue = t(`position.${value}`);
       } else if (id === 'status') {
@@ -57,7 +64,20 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       return (
         <div>
           <Label htmlFor={id} className="text-muted-foreground">{t(labelKey)}</Label>
-          <p className="text-lg font-medium">{displayValue}</p>
+          <div className="flex items-center justify-between">
+            <p className="text-lg font-medium">{displayValue}</p>
+            {id === 'address' && displayValue && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => handleOpenMap(displayValue)}
+                title="Ver no Google Maps"
+                className="text-primary hover:text-primary/80"
+              >
+                <MapPin className="h-5 w-5" />
+              </Button>
+            )}
+          </div>
         </div>
       );
     }
