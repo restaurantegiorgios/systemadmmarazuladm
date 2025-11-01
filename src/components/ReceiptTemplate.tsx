@@ -1,5 +1,6 @@
 import React from 'react';
 import { Employee } from '@/contexts/EmployeeProvider';
+import LogoPlaceholder from './LogoPlaceholder';
 
 interface ReceiptTemplateProps {
   employee: Employee;
@@ -33,35 +34,83 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
   const month = date.toLocaleDateString('pt-BR', { month: 'long' });
   const year = date.getFullYear();
 
+  // Helper component for underlined text
+  const UnderlinedText: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = '' }) => (
+    <span className={`inline-block border-b border-black px-1 ${className}`}>
+      {children}
+    </span>
+  );
+
   return (
-    <div className="p-6 border border-gray-300 bg-white text-black max-w-xl mx-auto print:border-none print:p-0">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold mb-2 tracking-widest">{t('receipt.receiptTitle')}</h2>
-        <p className="text-xl font-bold border-b border-black pb-1">
-          R$: <span className="underline">{formattedValue.replace('R$', '').trim()}</span>
-        </p>
+    <div className="p-6 border border-gray-300 bg-white text-black max-w-xl mx-auto print:border-none print:p-0 text-sm">
+      
+      {/* Header: RECIBO R$: ________ */}
+      <div className="flex justify-between items-end mb-6">
+        <h2 className="text-2xl font-bold">{t('receipt.receiptTitle')}</h2>
+        <div className="text-xl font-bold flex items-center">
+          R$: 
+          <UnderlinedText className="min-w-[100px] text-right text-lg font-extrabold">
+            {formattedValue.replace('R$', '').trim()}
+          </UnderlinedText>
+        </div>
       </div>
 
-      <p className="text-base leading-relaxed mb-4">
-        {t('receipt.receivedBy')} <span className="font-bold underline">{employee.fullName.toUpperCase()}</span>
+      {/* Body Text */}
+      <p className="leading-relaxed mb-4">
+        {t('receipt.receivedBy')} 
+        <UnderlinedText className="w-full text-base font-bold">
+          {employee.fullName.toUpperCase()}
+        </UnderlinedText>
+      </p>
+      
+      <p className="leading-relaxed mb-4">
+        {t('receipt.cpfHolder')} 
+        <UnderlinedText className="min-w-[150px] text-base font-bold">
+          {employee.cpf}
+        </UnderlinedText>
+        {' '}
+        {t('receipt.receivedFrom')}
+      </p>
+      
+      <p className="leading-relaxed mb-4">
+        <UnderlinedText className="w-full text-base font-bold">
+          {valueInWords.toUpperCase()}
+        </UnderlinedText>,
         <br />
-        {t('receipt.cpfHolder')} <span className="font-bold underline">{employee.cpf}</span> Recebi de GIORGIOS RESTAURANT LTDA
-        a importância de <span className="font-bold underline">{valueInWords.toUpperCase()}</span>,
-        referente a OS SERVICOS PRESTADOS NO ESTABELECIMENTO. 
-        <br />
-        {t('receipt.serviceDateLabel')} <span className="font-bold underline">{new Date(serviceDate).toLocaleDateString('pt-BR')}</span>.
+        {t('receipt.serviceReference')}
+        {' '}
+        {t('receipt.serviceDateLabel')}
+        <UnderlinedText className="min-w-[100px] text-base font-bold">
+          {new Date(serviceDate).toLocaleDateString('pt-BR')}
+        </UnderlinedText>.
       </p>
 
-      <p className="text-sm font-semibold italic mb-6 border-t border-black pt-2">
+      {/* Note */}
+      <p className="font-semibold italic mt-6 mb-6">
         {t('receipt.note')}
       </p>
 
-      <div className="text-center mt-10">
-        <p className="text-lg font-bold">Giorgio's Mar Azul RESTAURANTE</p>
-        <div className="mt-8 border-t border-black pt-2">
-          <p className="text-sm">
-            {t('receipt.location')} <span className="underline">{day}</span>, <span className="underline">{month.toUpperCase()}</span> DE <span className="underline">{year}</span>
+      {/* Footer: Logo and Date/Location */}
+      <div className="flex items-end justify-between mt-10">
+        <div className="flex flex-col items-center">
+          <LogoPlaceholder className="w-20 h-20" />
+          <div className="mt-8 border-t border-black pt-2 w-full">
+            {/* Signature line */}
+            <UnderlinedText className="w-full min-h-[1.5em] block">{''}</UnderlinedText>
+          </div>
+        </div>
+        
+        <div className="text-right text-sm">
+          <p className="mb-2">
+            {t('receipt.location')} 
+            <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>, 
+            <UnderlinedText className="min-w-[80px]">{month.toUpperCase()}</UnderlinedText> DE 
+            <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
           </p>
+          <div className="mt-8 border-t border-black pt-2">
+            {/* Signature line */}
+            <UnderlinedText className="w-full min-h-[1.5em] block">{''}</UnderlinedText>
+          </div>
         </div>
       </div>
     </div>
