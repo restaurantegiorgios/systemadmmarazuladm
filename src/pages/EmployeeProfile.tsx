@@ -4,21 +4,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmployees, Employee, Document } from '@/contexts/EmployeeProvider';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { ArrowLeft, Upload, Trash2, FileText, User, Save, X, Edit, Download } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,7 +19,14 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
+// Import new modular components
+import EmployeeProfileHeader from '@/components/employee/EmployeeProfileHeader';
+import EmployeeDetailsTab from '@/components/employee/EmployeeDetailsTab';
+import EmployeeDocumentsTab from '@/components/employee/EmployeeDocumentsTab';
+
 type DocumentTypeKey = 'all' | 'rg' | 'cpf' | 'medical' | 'contract' | 'other';
+
+const documentTypes: DocumentTypeKey[] = ['all', 'rg', 'cpf', 'medical', 'contract', 'other'];
 
 const EmployeeProfile = () => {
   const { id } = useParams();
@@ -51,8 +47,6 @@ const EmployeeProfile = () => {
   const [documentFilter, setDocumentFilter] = useState<DocumentTypeKey>('all');
   
   const [docToDelete, setDocToDelete] = useState<string | null>(null); // State for confirmation dialog
-
-  const documentTypes: DocumentTypeKey[] = ['all', 'rg', 'cpf', 'medical', 'contract', 'other'];
 
   useEffect(() => {
     if (initialEmployee) {
@@ -78,20 +72,7 @@ const EmployeeProfile = () => {
     return initialEmployee.documents.filter(doc => doc.type === documentFilter);
   }, [initialEmployee, documentFilter]);
 
-  if (!initialEmployee) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container mx-auto px-4 py-8 text-center">
-          <p className="text-xl">Funcionário não encontrado</p>
-          <Button onClick={() => navigate('/dashboard')} className="mt-4">
-            Voltar ao Dashboard
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
+  // --- Utility Functions ---
   const formatCPF = (value: string) => {
     return value
       .replace(/\D/g, '')
@@ -109,6 +90,15 @@ const EmployeeProfile = () => {
       .replace(/(-\d{4})\d+?$/, '$1');
   };
 
+  const getInitials = (fullName: string) => {
+    const parts = fullName.split(' ').filter(p => p.length > 0);
+    if (parts.length === 0) return '';
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
+  };
+  // -------------------------
+
+  // --- Handlers for Details Tab ---
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     let formattedValue = value;
@@ -138,7 +128,7 @@ const EmployeeProfile = () => {
   };
 
   const handleSave = () => {
-    if (!id) return;
+    if (!id || !initialEmployee) return;
 
     // Basic validation check for required fields
     if (!editableData.fullName || !editableData.cpf || !editableData.admissionDate || !editableData.email || !editableData.phone || !editableData.address) {
@@ -152,6 +142,7 @@ const EmployeeProfile = () => {
   };
 
   const handleCancelEdit = () => {
+    if (!initialEmployee) return;
     // Reset data to initial state
     setEditableData({
       fullName: initialEmployee.fullName,
@@ -166,7 +157,9 @@ const EmployeeProfile = () => {
     });
     setIsEditing(false);
   };
+  // --------------------------------
 
+  // --- Handlers for Documents Tab ---
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setSelectedFile(file || null);
@@ -174,7 +167,7 @@ const EmployeeProfile = () => {
 
   const handleUpload = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedFile) {
+    if (!selectedFile || !initialEmployee) {
       toast.error('Selecione um arquivo para upload');
       return;
     }
@@ -196,19 +189,17 @@ const EmployeeProfile = () => {
   };
 
   const confirmDeleteDoc = () => {
-    if (docToDelete) {
+    if (docToDelete && initialEmployee) {
       deleteDocument(initialEmployee.id, docToDelete);
       toast.success(t('profile.docDeleted'));
       setDocToDelete(null);
     }
   };
   
-  // Function to open document in a new tab for viewing/printing
   const handleViewDoc = (doc: Document) => {
     if (doc.fileData) {
       const newWindow = window.open();
       if (newWindow) {
-        // Use the data URL directly to display the content (works for PDF/Images)
         newWindow.document.write(`<iframe src="${doc.fileData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
         newWindow.document.title = doc.fileName;
       } else {
@@ -219,7 +210,6 @@ const EmployeeProfile = () => {
     }
   };
 
-  // Function to force download of the document
   const handleDownloadDoc = (doc: Document) => {
     if (doc.fileData) {
       const link = document.createElement('a');
@@ -232,16 +222,21 @@ const EmployeeProfile = () => {
       toast.error("Dados do arquivo não encontrados para download.");
     }
   };
+  // ----------------------------------
 
-  const getInitials = (fullName: string) => {
-    const parts = fullName.split(' ').filter(p => p.length > 0);
-    if (parts.length === 0) return '';
-    if (parts.length === 1) return parts[0][0].toUpperCase();
-    return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
-  };
-
-  const currentPhoto = editableData.photo || initialEmployee.photo;
-  const currentFullName = editableData.fullName || initialEmployee.fullName;
+  if (!initialEmployee) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto px-4 py-8 text-center">
+          <p className="text-xl">Funcionário não encontrado</p>
+          <Button onClick={() => navigate('/dashboard')} className="mt-4">
+            Voltar ao Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -259,42 +254,17 @@ const EmployeeProfile = () => {
 
         <Card className="max-w-4xl mx-auto shadow-elegant">
           <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b pb-4">
-              <div className="flex items-center gap-4 mb-4 sm:mb-0">
-                <Avatar className="w-20 h-20 shadow-md">
-                  <AvatarImage src={currentPhoto} />
-                  <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
-                    {getInitials(currentFullName)}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h1 className="text-3xl font-bold mb-1">{currentFullName}</h1>
-                  <Badge variant={initialEmployee.status === 'active' ? 'default' : 'secondary'}>
-                    {t(`dashboard.${initialEmployee.status}`)}
-                  </Badge>
-                </div>
-              </div>
-              
-              <div className="flex gap-2">
-                {isEditing ? (
-                  <>
-                    <Button variant="outline" onClick={handleCancelEdit}>
-                      <X className="mr-2 h-4 w-4" />
-                      {t('form.cancel')}
-                    </Button>
-                    <Button onClick={handleSave} className="bg-gradient-to-r from-primary to-accent">
-                      <Save className="mr-2 h-4 w-4" />
-                      {t('form.save')}
-                    </Button>
-                  </>
-                ) : (
-                  <Button onClick={() => setIsEditing(true)}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    {t('dashboard.edit')}
-                  </Button>
-                )}
-              </div>
-            </div>
+            
+            <EmployeeProfileHeader
+              employee={initialEmployee}
+              editableData={editableData}
+              isEditing={isEditing}
+              t={t}
+              onEditToggle={() => setIsEditing(true)}
+              onSave={handleSave}
+              onCancel={handleCancelEdit}
+              getInitials={getInitials}
+            />
 
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -302,274 +272,36 @@ const EmployeeProfile = () => {
                 <TabsTrigger value="documents">{t('profile.documents')}</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="details" className="space-y-4">
-                {isEditing && (
-                  <div className="flex flex-col items-center space-y-2 mb-6">
-                    <Label htmlFor="employee-photo-upload" className="cursor-pointer">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                        <Upload className="w-4 h-4" />
-                        <span>{t('userProfile.changePhoto')} ({t('form.optional')})</span>
-                      </div>
-                      <Input 
-                        id="employee-photo-upload" 
-                        type="file" 
-                        accept="image/*" 
-                        onChange={handlePhotoUpload} 
-                        className="hidden" 
-                      />
-                    </Label>
-                  </div>
-                )}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  
-                  {/* Full Name */}
-                  <div>
-                    <Label htmlFor="fullName" className="text-muted-foreground">{t('form.fullName')}</Label>
-                    {isEditing ? (
-                      <Input 
-                        id="fullName" 
-                        value={editableData.fullName || ''} 
-                        onChange={handleInputChange} 
-                        required
-                      />
-                    ) : (
-                      <p className="text-lg font-medium">{initialEmployee.fullName}</p>
-                    )}
-                  </div>
-                  
-                  {/* CPF */}
-                  <div>
-                    <Label htmlFor="cpf" className="text-muted-foreground">{t('form.cpf')}</Label>
-                    {isEditing ? (
-                      <Input 
-                        id="cpf" 
-                        value={editableData.cpf || ''} 
-                        onChange={handleInputChange} 
-                        maxLength={14}
-                        required
-                      />
-                    ) : (
-                      <p className="text-lg font-medium">{initialEmployee.cpf}</p>
-                    )}
-                  </div>
-                  
-                  {/* Position */}
-                  <div>
-                    <Label htmlFor="position" className="text-muted-foreground">{t('form.position')}</Label>
-                    {isEditing ? (
-                      <Select 
-                        value={editableData.position} 
-                        onValueChange={(value) => handleSelectChange('position', value)}
-                      >
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="waiter">{t('position.waiter')}</SelectItem>
-                          <SelectItem value="chef">{t('position.chef')}</SelectItem>
-                          <SelectItem value="souschef">{t('position.souschef')}</SelectItem>
-                          <SelectItem value="cook">{t('position.cook')}</SelectItem>
-                          <SelectItem value="dishwasher">{t('position.dishwasher')}</SelectItem>
-                          <SelectItem value="manager">{t('position.manager')}</SelectItem>
-                          <SelectItem value="host">{t('position.host')}</SelectItem>
-                          <SelectItem value="bartender">{t('position.bartender')}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <p className="text-lg font-medium">{t(`position.${initialEmployee.position}`)}</p>
-                    )}
-                  </div>
-                  
-                  {/* Admission Date */}
-                  <div>
-                    <Label htmlFor="admissionDate" className="text-muted-foreground">{t('form.admissionDate')}</Label>
-                    {isEditing ? (
-                      <Input 
-                        id="admissionDate" 
-                        type="date" 
-                        value={editableData.admissionDate || ''} 
-                        onChange={handleInputChange} 
-                        required
-                      />
-                    ) : (
-                      <p className="text-lg font-medium">
-                        {new Date(initialEmployee.admissionDate).toLocaleDateString()}
-                      </p>
-                    )}
-                  </div>
-                  
-                  {/* Email */}
-                  <div>
-                    <Label htmlFor="email" className="text-muted-foreground">{t('form.email')}</Label>
-                    {isEditing ? (
-                      <Input 
-                        id="email" 
-                        type="email" 
-                        value={editableData.email || ''} 
-                        onChange={handleInputChange} 
-                        required
-                      />
-                    ) : (
-                      <p className="text-lg font-medium">{initialEmployee.email}</p>
-                    )}
-                  </div>
-                  
-                  {/* Phone */}
-                  <div>
-                    <Label htmlFor="phone" className="text-muted-foreground">{t('form.phone')}</Label>
-                    {isEditing ? (
-                      <Input 
-                        id="phone" 
-                        value={editableData.phone || ''} 
-                        onChange={handleInputChange} 
-                        maxLength={15}
-                        required
-                      />
-                    ) : (
-                      <p className="text-lg font-medium">{initialEmployee.phone}</p>
-                    )}
-                  </div>
-                  
-                  {/* Address */}
-                  <div className="md:col-span-2">
-                    <Label htmlFor="address" className="text-muted-foreground">{t('form.address')}</Label>
-                    {isEditing ? (
-                      <Input 
-                        id="address" 
-                        value={editableData.address || ''} 
-                        onChange={handleInputChange} 
-                        required
-                      />
-                    ) : (
-                      <p className="text-lg font-medium">{initialEmployee.address}</p>
-                    )}
-                  </div>
-                  
-                  {/* Status */}
-                  <div>
-                    <Label htmlFor="status" className="text-muted-foreground">{t('form.status')}</Label>
-                    {isEditing ? (
-                      <Select 
-                        value={editableData.status} 
-                        onValueChange={(value: 'active' | 'inactive') => handleSelectChange('status', value)}
-                      >
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="active">{t('dashboard.active')}</SelectItem>
-                          <SelectItem value="inactive">{t('dashboard.inactive')}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <p className="text-lg font-medium">{t(`dashboard.${initialEmployee.status}`)}</p>
-                    )}
-                  </div>
-                </div>
+              <TabsContent value="details">
+                <EmployeeDetailsTab
+                  employee={initialEmployee}
+                  editableData={editableData}
+                  isEditing={isEditing}
+                  t={t}
+                  handleInputChange={handleInputChange}
+                  handleSelectChange={handleSelectChange}
+                  handlePhotoUpload={handlePhotoUpload}
+                  getInitials={getInitials}
+                />
               </TabsContent>
 
-              <TabsContent value="documents" className="space-y-6">
-                <Card className="bg-secondary/50">
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-semibold mb-4">{t('form.uploadDoc')}</h3>
-                    <form onSubmit={handleUpload} className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="docType">{t('form.docType')}</Label>
-                          <Select value={uploadDocType} onValueChange={setUploadDocType}>
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className="bg-card z-50">
-                              {/* Note: 'all' is not included here as it's for filtering, not uploading */}
-                              <SelectItem value="rg">{t('docType.rg')}</SelectItem>
-                              <SelectItem value="cpf">{t('docType.cpf')}</SelectItem>
-                              <SelectItem value="medical">{t('docType.medical')}</SelectItem>
-                              <SelectItem value="contract">{t('docType.contract')}</SelectItem>
-                              <SelectItem value="other">{t('docType.other')}</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="file">{t('form.selectFile')}</Label>
-                          <Input
-                            id="file"
-                            type="file"
-                            accept="application/pdf,image/*"
-                            onChange={handleFileChange}
-                          />
-                        </div>
-                      </div>
-                      <Button type="submit" className="w-full bg-gradient-to-r from-primary to-accent" disabled={!selectedFile}>
-                        <Upload className="mr-2 h-4 w-4" />
-                        {t('form.upload')}
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-
-                <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold">{t('profile.uploadedDocs')}</h3>
-                    <div className="w-[200px]">
-                      <Select 
-                        value={documentFilter} 
-                        onValueChange={(value: DocumentTypeKey) => setDocumentFilter(value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('docType.all')} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-card z-50">
-                          {documentTypes.map(type => (
-                            <SelectItem key={type} value={type}>
-                              {t(`docType.${type}`)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  
-                  {filteredDocuments.length === 0 ? (
-                    <p className="text-center py-8 text-muted-foreground">
-                      {t('profile.noDocuments')}
-                    </p>
-                  ) : (
-                    <div className="space-y-2">
-                      {filteredDocuments.map((doc) => (
-                        <Card key={doc.id} className="hover:shadow-soft transition-shadow">
-                          <CardContent className="p-4 flex items-center justify-between">
-                            {/* Clicar no item abre a visualização */}
-                            <div className="flex items-center gap-3 cursor-pointer" onClick={() => handleViewDoc(doc)}>
-                              <FileText className="h-8 w-8 text-primary" />
-                              <div>
-                                <p className="font-medium hover:underline">{doc.fileName}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {t(`docType.${doc.type}`)} • {new Date(doc.uploadDate).toLocaleDateString()}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex gap-2">
-                              {/* Botão de Download */}
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleDownloadDoc(doc)}
-                                title="Baixar Documento"
-                              >
-                                <Download className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setDocToDelete(doc.id)} // Open confirmation dialog
-                                title={t('profile.deleteDoc')}
-                              >
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
-                </div>
+              <TabsContent value="documents">
+                <EmployeeDocumentsTab
+                  t={t}
+                  employee={initialEmployee}
+                  filteredDocuments={filteredDocuments}
+                  documentTypes={documentTypes}
+                  documentFilter={documentFilter}
+                  setDocumentFilter={setDocumentFilter}
+                  uploadDocType={uploadDocType}
+                  setUploadDocType={setUploadDocType}
+                  selectedFile={selectedFile}
+                  handleFileChange={handleFileChange}
+                  handleUpload={handleUpload}
+                  handleViewDoc={handleViewDoc}
+                  handleDownloadDoc={handleDownloadDoc}
+                  setDocToDelete={setDocToDelete}
+                />
               </TabsContent>
             </Tabs>
           </CardContent>
