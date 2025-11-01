@@ -72,7 +72,8 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
                 size="icon" 
                 onClick={() => handleOpenMap(displayValue)}
                 title="Ver no Google Maps"
-                className="text-primary hover:text-primary/80"
+                // Alterado para usar a cor destrutiva (vermelho) no hover e texto branco
+                className="text-destructive hover:bg-destructive hover:text-white transition-colors"
               >
                 <MapPin className="h-5 w-5" />
               </Button>
