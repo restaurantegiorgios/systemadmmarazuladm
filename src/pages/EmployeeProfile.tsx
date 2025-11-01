@@ -19,6 +19,16 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { ArrowLeft, Upload, Trash2, FileText, User, Save, X, Edit, Download } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const EmployeeProfile = () => {
   const { id } = useParams();
@@ -33,6 +43,7 @@ const EmployeeProfile = () => {
   
   const [docType, setDocType] = useState('rg');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [docToDelete, setDocToDelete] = useState<string | null>(null); // State for confirmation dialog
 
   useEffect(() => {
     if (initialEmployee) {
@@ -167,9 +178,12 @@ const EmployeeProfile = () => {
     reader.readAsDataURL(selectedFile);
   };
 
-  const handleDeleteDoc = (docId: string) => {
-    deleteDocument(initialEmployee.id, docId);
-    toast.success(t('profile.docDeleted'));
+  const confirmDeleteDoc = () => {
+    if (docToDelete) {
+      deleteDocument(initialEmployee.id, docToDelete);
+      toast.success(t('profile.docDeleted'));
+      setDocToDelete(null);
+    }
   };
   
   const handleViewDoc = (doc: Document) => {
@@ -489,7 +503,7 @@ const EmployeeProfile = () => {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => handleDeleteDoc(doc.id)}
+                                onClick={() => setDocToDelete(doc.id)} // Open confirmation dialog
                                 title={t('profile.deleteDoc')}
                               >
                                 <Trash2 className="h-4 w-4 text-destructive" />
@@ -506,6 +520,24 @@ const EmployeeProfile = () => {
           </CardContent>
         </Card>
       </main>
+      
+      {/* Confirmation Dialog for Document Deletion */}
+      <AlertDialog open={!!docToDelete} onOpenChange={() => setDocToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('dashboard.delete')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('dashboard.deleteConfirm')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('form.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteDoc} className="bg-destructive hover:bg-destructive/90">
+              {t('dashboard.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
