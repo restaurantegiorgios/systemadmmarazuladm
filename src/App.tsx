@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import EmployeeForm from "./pages/EmployeeForm";
 import EmployeeProfile from "./pages/EmployeeProfile";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
                 <Route path="/employee/new" element={<EmployeeForm />} />
                 <Route path="/employee/edit/:id" element={<EmployeeForm />} />
                 <Route path="/employee/:id" element={<EmployeeProfile />} />
+                <Route path="/profile" element={<Profile />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

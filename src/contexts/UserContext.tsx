@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-interface User {
+export interface User {
   id: string;
   firstName: string;
   lastName: string;
@@ -15,6 +15,7 @@ interface UserContextType {
   login: (email: string, password: string) => boolean;
   logout: () => void;
   register: (userData: Omit<User, 'id'>) => { success: boolean; error?: string };
+  updateUser: (userId: string, userData: Partial<Omit<User, 'id'>>) => { success: boolean; error?: string };
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -70,8 +71,33 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true };
   };
 
+  const updateUser = (userId: string, userData: Partial<Omit<User, 'id'>>): { success: boolean; error?: string } => {
+    const userIndex = users.findIndex(u => u.id === userId);
+    if (userIndex === -1) {
+      return { success: false, error: 'userProfile.error.userNotFound' };
+    }
+
+    if (userData.email && users.some(u => u.email === userData.email && u.id !== userId)) {
+      return { success: false, error: 'userProfile.error.emailConflict' };
+    }
+
+    const updatedUsers = [...users];
+    const updatedUser = { ...updatedUsers[userIndex], ...userData };
+    updatedUsers[userIndex] = updatedUser;
+
+    setUsers(updatedUsers);
+    localStorage.setItem('systemUsers', JSON.stringify(updatedUsers));
+
+    if (currentUser && currentUser.id === userId) {
+      setCurrentUser(updatedUser);
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    }
+
+    return { success: true };
+  };
+
   return (
-    <UserContext.Provider value={{ users, currentUser, login, logout, register }}>
+    <UserContext.Provider value={{ users, currentUser, login, logout, register, updateUser }}>
       {children}
     </UserContext.Provider>
   );

@@ -75,6 +75,24 @@ const translations = {
     'profile.deleteDoc': 'Deletar documento',
     'profile.docDeleted': 'Documento deletado com sucesso!',
     
+    // User Profile
+    'userProfile.title': 'Meu Perfil',
+    'userProfile.description': 'Atualize suas informações pessoais e de segurança.',
+    'userProfile.changePhoto': 'Alterar Foto',
+    'userProfile.firstName': 'Nome',
+    'userProfile.lastName': 'Sobrenome',
+    'userProfile.newPassword': 'Nova Senha (opcional)',
+    'userProfile.confirmNewPassword': 'Confirmar Nova Senha',
+    'userProfile.save': 'Salvar Alterações',
+    'userProfile.success': 'Perfil atualizado com sucesso!',
+    'userProfile.error': 'Erro ao atualizar perfil',
+    'userProfile.error.emailConflict': 'Email já cadastrado por outro usuário',
+    'userProfile.error.userNotFound': 'Usuário não encontrado',
+    'userProfile.error.passwordMismatch': 'As senhas não coincidem',
+    'userProfile.error.passwordLength': 'A senha deve ter pelo menos 6 caracteres',
+    'userProfile.error.required': 'Campo obrigatório',
+    'userProfile.error.invalidEmail': 'Email inválido',
+
     // Positions
     'position.waiter': 'Garçom',
     'position.chef': 'Chefe de Cozinha',
@@ -158,6 +176,24 @@ const translations = {
     'profile.deleteDoc': 'Delete document',
     'profile.docDeleted': 'Document deleted successfully!',
     
+    // User Profile
+    'userProfile.title': 'My Profile',
+    'userProfile.description': 'Update your personal and security information.',
+    'userProfile.changePhoto': 'Change Photo',
+    'userProfile.firstName': 'First Name',
+    'userProfile.lastName': 'Last Name',
+    'userProfile.newPassword': 'New Password (optional)',
+    'userProfile.confirmNewPassword': 'Confirm New Password',
+    'userProfile.save': 'Save Changes',
+    'userProfile.success': 'Profile updated successfully!',
+    'userProfile.error': 'Error updating profile',
+    'userProfile.error.emailConflict': 'Email already registered by another user',
+    'userProfile.error.userNotFound': 'User not found',
+    'userProfile.error.passwordMismatch': 'Passwords do not match',
+    'userProfile.error.passwordLength': 'Password must be at least 6 characters',
+    'userProfile.error.required': 'Field is required',
+    'userProfile.error.invalidEmail': 'Invalid email',
+
     // Positions
     'position.waiter': 'Waiter',
     'position.chef': 'Head Chef',
