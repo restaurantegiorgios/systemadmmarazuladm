@@ -17,7 +17,8 @@ export interface Employee {
 export interface Document {
   id: string;
   type: string;
-  fileName: string;
+  fileName: string; // Nome original do arquivo
+  fileData: string; // Conteúdo do arquivo em Base64 (data URL)
   uploadDate: string;
 }
 
@@ -31,6 +32,9 @@ interface EmployeeContextType {
   deleteDocument: (employeeId: string, documentId: string) => void;
 }
 
+// Mock data updated to include fileData (using placeholders for simplicity, as real Base64 is too long)
+const mockFilePlaceholder = 'data:application/pdf;base64,...'; 
+
 const mockEmployees: Employee[] = [
   {
     id: '1',
@@ -43,8 +47,8 @@ const mockEmployees: Employee[] = [
     address: 'Rua das Flores, 123 - São Paulo, SP',
     status: 'active',
     documents: [
-      { id: 'd1', type: 'rg', fileName: 'RG_Carlos.pdf', uploadDate: '2023-01-10' },
-      { id: 'd2', type: 'cpf', fileName: 'CPF_Carlos.pdf', uploadDate: '2023-01-10' },
+      { id: 'd1', type: 'rg', fileName: 'RG_Carlos.pdf', fileData: mockFilePlaceholder, uploadDate: '2023-01-10' },
+      { id: 'd2', type: 'cpf', fileName: 'CPF_Carlos.pdf', fileData: mockFilePlaceholder, uploadDate: '2023-01-10' },
     ],
     photo: undefined,
   },
@@ -59,8 +63,8 @@ const mockEmployees: Employee[] = [
     address: 'Av. Paulista, 1000 - São Paulo, SP',
     status: 'active',
     documents: [
-      { id: 'd3', type: 'rg', fileName: 'RG_Maria.pdf', uploadDate: '2022-05-25' },
-      { id: 'd4', type: 'medical', fileName: 'Exame_Maria.pdf', uploadDate: '2022-05-25' },
+      { id: 'd3', type: 'rg', fileName: 'RG_Maria.pdf', fileData: mockFilePlaceholder, uploadDate: '2022-05-25' },
+      { id: 'd4', type: 'medical', fileName: 'Exame_Maria.pdf', fileData: mockFilePlaceholder, uploadDate: '2022-05-25' },
     ],
     photo: undefined,
   },
@@ -88,7 +92,7 @@ const mockEmployees: Employee[] = [
     address: 'Rua Consolação, 750 - São Paulo, SP',
     status: 'active',
     documents: [
-      { id: 'd5', type: 'contract', fileName: 'Contrato_Ana.pdf', uploadDate: '2021-09-10' },
+      { id: 'd5', type: 'contract', fileName: 'Contrato_Ana.pdf', fileData: mockFilePlaceholder, uploadDate: '2021-09-10' },
     ],
     photo: undefined,
   },
@@ -129,7 +133,7 @@ const mockEmployees: Employee[] = [
     address: 'Rua Oscar Freire, 890 - São Paulo, SP',
     status: 'active',
     documents: [
-      { id: 'd6', type: 'rg', fileName: 'RG_Fernando.pdf', uploadDate: '2022-08-05' },
+      { id: 'd6', type: 'rg', fileName: 'RG_Fernando.pdf', fileData: mockFilePlaceholder, uploadDate: '2022-08-05' },
     ],
     photo: undefined,
   },

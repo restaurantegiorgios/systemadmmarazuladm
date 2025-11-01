@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useEmployees, Employee } from '@/contexts/EmployeeProvider';
+import { useEmployees, Employee, Document } from '@/contexts/EmployeeProvider';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { ArrowLeft, Upload, Trash2, FileText, User, Save, X, Edit } from 'lucide-react';
+import { ArrowLeft, Upload, Trash2, FileText, User, Save, X, Edit, Download } from 'lucide-react';
 
 const EmployeeProfile = () => {
   const { id } = useParams();
@@ -32,7 +32,7 @@ const EmployeeProfile = () => {
   const [editableData, setEditableData] = useState<Partial<Employee>>({});
   
   const [docType, setDocType] = useState('rg');
-  const [fileName, setFileName] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (initialEmployee) {
@@ -139,20 +139,32 @@ const EmployeeProfile = () => {
     setIsEditing(false);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setSelectedFile(file || null);
+  };
+
   const handleUpload = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fileName) {
-      toast.error('Selecione um arquivo');
+    if (!selectedFile) {
+      toast.error('Selecione um arquivo para upload');
       return;
     }
     
-    addDocument(initialEmployee.id, {
-      type: docType,
-      fileName: fileName,
-    });
-    
-    toast.success('Documento enviado com sucesso!');
-    setFileName('');
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const fileData = reader.result as string;
+      
+      addDocument(initialEmployee.id, {
+        type: docType,
+        fileName: selectedFile.name,
+        fileData: fileData,
+      });
+      
+      toast.success('Documento enviado com sucesso!');
+      setSelectedFile(null);
+    };
+    reader.readAsDataURL(selectedFile);
   };
 
   const handleDeleteDoc = (docId: string) => {
@@ -160,6 +172,21 @@ const EmployeeProfile = () => {
     toast.success(t('profile.docDeleted'));
   };
   
+  const handleViewDoc = (doc: Document) => {
+    // Abre o Base64 em uma nova aba para visualização/impressão
+    if (doc.fileData) {
+      const newWindow = window.open();
+      if (newWindow) {
+        newWindow.document.write(`<iframe src="${doc.fileData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+        newWindow.document.title = doc.fileName;
+      } else {
+        toast.error("Não foi possível abrir a nova janela. Verifique se o bloqueador de pop-ups está ativo.");
+      }
+    } else {
+      toast.error("Dados do arquivo não encontrados.");
+    }
+  };
+
   const getInitials = (fullName: string) => {
     const parts = fullName.split(' ').filter(p => p.length > 0);
     if (parts.length === 0) return '';
@@ -396,32 +423,33 @@ const EmployeeProfile = () => {
                   <CardContent className="p-6">
                     <h3 className="text-lg font-semibold mb-4">{t('form.uploadDoc')}</h3>
                     <form onSubmit={handleUpload} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="docType">{t('form.docType')}</Label>
-                        <Select value={docType} onValueChange={setDocType}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-card z-50">
-                            <SelectItem value="rg">{t('docType.rg')}</SelectItem>
-                            <SelectItem value="cpf">{t('docType.cpf')}</SelectItem>
-                            <SelectItem value="medical">{t('docType.medical')}</SelectItem>
-                            <SelectItem value="contract">{t('docType.contract')}</SelectItem>
-                            <SelectItem value="other">{t('docType.other')}</SelectItem>
-                          </SelectContent>
-                        </Select>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="docType">{t('form.docType')}</Label>
+                          <Select value={docType} onValueChange={setDocType}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-card z-50">
+                              <SelectItem value="rg">{t('docType.rg')}</SelectItem>
+                              <SelectItem value="cpf">{t('docType.cpf')}</SelectItem>
+                              <SelectItem value="medical">{t('docType.medical')}</SelectItem>
+                              <SelectItem value="contract">{t('docType.contract')}</SelectItem>
+                              <SelectItem value="other">{t('docType.other')}</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="file">{t('form.selectFile')}</Label>
+                          <Input
+                            id="file"
+                            type="file"
+                            accept="application/pdf,image/*"
+                            onChange={handleFileChange}
+                          />
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="file">{t('form.selectFile')}</Label>
-                        <Input
-                          id="file"
-                          type="text"
-                          placeholder="nome_do_arquivo.pdf"
-                          value={fileName}
-                          onChange={(e) => setFileName(e.target.value)}
-                        />
-                      </div>
-                      <Button type="submit" className="w-full bg-gradient-to-r from-primary to-accent">
+                      <Button type="submit" className="w-full bg-gradient-to-r from-primary to-accent" disabled={!selectedFile}>
                         <Upload className="mr-2 h-4 w-4" />
                         {t('form.upload')}
                       </Button>
@@ -440,23 +468,33 @@ const EmployeeProfile = () => {
                       {initialEmployee.documents.map((doc) => (
                         <Card key={doc.id} className="hover:shadow-soft transition-shadow">
                           <CardContent className="p-4 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 cursor-pointer" onClick={() => handleViewDoc(doc)}>
                               <FileText className="h-8 w-8 text-primary" />
                               <div>
-                                <p className="font-medium">{doc.fileName}</p>
+                                <p className="font-medium hover:underline">{doc.fileName}</p>
                                 <p className="text-sm text-muted-foreground">
                                   {t(`docType.${doc.type}`)} • {new Date(doc.uploadDate).toLocaleDateString()}
                                 </p>
                               </div>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDeleteDoc(doc.id)}
-                              title={t('profile.deleteDoc')}
-                            >
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleViewDoc(doc)}
+                                title="Visualizar Documento"
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDeleteDoc(doc.id)}
+                                title={t('profile.deleteDoc')}
+                              >
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            </div>
                           </CardContent>
                         </Card>
                       ))}
