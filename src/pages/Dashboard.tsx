@@ -13,6 +13,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Search, Edit, Trash2, Eye, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -34,15 +41,22 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [positionFilter, setPositionFilter] = useState<'all' | string>('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+
+  const positions = [
+    'waiter', 'chef', 'souschef', 'cook', 
+    'dishwasher', 'manager', 'host', 'bartender'
+  ];
 
   const filteredEmployees = employees.filter(emp => {
     const matchesSearch = emp.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           t(`position.${emp.position}`).toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || emp.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesPosition = positionFilter === 'all' || emp.position === positionFilter;
+    return matchesSearch && matchesStatus && matchesPosition;
   });
 
   const handleDelete = () => {
@@ -103,6 +117,17 @@ const Dashboard = () => {
                 className="pl-10"
               />
             </div>
+            <Select value={positionFilter} onValueChange={setPositionFilter}>
+              <SelectTrigger className="w-full md:w-[200px]">
+                <SelectValue placeholder={t('form.position')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('dashboard.allPositions')}</SelectItem>
+                {positions.map(pos => (
+                  <SelectItem key={pos} value={pos}>{t(`position.${pos}`)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <div className="flex gap-2">
               <Button
                 variant={statusFilter === 'all' ? 'default' : 'outline'}
