@@ -18,11 +18,67 @@ const formatCurrency = (value: number): string => {
 };
 
 // Utility function to convert number to written form (e.g., 100.50 -> cem reais e cinquenta centavos)
-// NOTE: This is a complex function, for simplicity and elegance, we will use a placeholder for now.
 const numberToWords = (value: number): string => {
-  // In a real application, this would use a library or a complex function.
-  // For now, we return the formatted currency string as a placeholder for the written amount.
-  return formatCurrency(value).replace('R$', '').trim();
+  if (value >= 1000) {
+    return `VALOR EXCEDIDO (${formatCurrency(value)})`;
+  }
+
+  const units = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];
+  const teens = ['dez', 'onze', 'doze', 'treze', 'catorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
+  const tens = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+  const hundreds = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
+
+  const integerPart = Math.floor(value);
+  const decimalPart = Math.round((value - integerPart) * 100);
+
+  const convertHundreds = (n: number): string => {
+    if (n === 0) return '';
+    if (n === 100) return 'cem';
+    
+    let result = '';
+    const h = Math.floor(n / 100);
+    const t = n % 100;
+
+    if (h > 0) {
+      result += hundreds[h];
+      if (t > 0) result += ' e ';
+    }
+
+    if (t > 0) {
+      if (t < 10) {
+        result += units[t];
+      } else if (t < 20) {
+        result += teens[t - 10];
+      } else {
+        const ten = Math.floor(t / 10);
+        const unit = t % 10;
+        result += tens[ten];
+        if (unit > 0) result += ' e ' + units[unit];
+      }
+    }
+    return result;
+  };
+
+  let result = '';
+  
+  if (integerPart > 0) {
+    const reais = integerPart === 1 ? 'real' : 'reais';
+    result += convertHundreds(integerPart) + ' ' + reais;
+  }
+
+  if (decimalPart > 0) {
+    const centavos = decimalPart === 1 ? 'centavo' : 'centavos';
+    const centavosWords = convertHundreds(decimalPart);
+    
+    if (integerPart > 0) {
+      result += ' e ';
+    }
+    result += centavosWords + ' ' + centavos;
+  }
+  
+  if (result === '') return 'zero reais';
+
+  return result;
 };
 
 const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, serviceDate, t }) => {
