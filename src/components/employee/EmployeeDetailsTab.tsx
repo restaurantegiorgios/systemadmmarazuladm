@@ -74,18 +74,13 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       }
       
       return (
-        <div className={isCopyable ? 'group' : ''}>
+        <div className="group">
           <Label htmlFor={id} className="text-muted-foreground">{t(labelKey)}</Label>
           <div className="flex items-center justify-between">
-            <p 
-              className={`text-lg font-medium ${isCopyable ? 'cursor-pointer hover:text-primary transition-colors' : ''}`}
-              onClick={isCopyable ? () => handleCopy(displayValue, labelKey) : undefined}
-            >
-              {displayValue}
-            </p>
+            <p className="text-lg font-medium">{displayValue}</p>
             
             <div className="flex items-center gap-1">
-              {/* Copy Icon (visible on hover for copyable fields) */}
+              {/* Copy Icon (visible on hover of the group) */}
               {isCopyable && (
                 <Button
                   variant="ghost"
@@ -105,7 +100,8 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
                   size="icon" 
                   onClick={() => handleOpenMap(displayValue)}
                   title="Ver no Google Maps"
-                  className="text-destructive hover:bg-destructive hover:text-white transition-colors"
+                  // Revertendo o estilo para algo mais neutro e menos destrutivo
+                  className="text-muted-foreground hover:bg-muted hover:text-primary transition-colors h-8 w-8"
                 >
                   <MapPin className="h-5 w-5" />
                 </Button>
