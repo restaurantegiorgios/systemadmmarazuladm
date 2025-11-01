@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmployees, Employee } from '@/contexts/EmployeeProvider';
@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Search, Edit, Trash2, Eye, X } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -35,6 +35,14 @@ import {
 } from '@/components/ui/alert-dialog';
 import EmployeeFormModal from '@/components/EmployeeFormModal';
 
+type SortKey = 'fullName' | 'position' | 'email' | 'phone' | 'status';
+type SortDirection = 'asc' | 'desc';
+
+interface SortConfig {
+  key: SortKey;
+  direction: SortDirection;
+}
+
 const Dashboard = () => {
   const { t } = useLanguage();
   const { employees, deleteEmployee } = useEmployees();
@@ -45,19 +53,71 @@ const Dashboard = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'fullName', direction: 'asc' });
 
   const positions = [
     'waiter', 'chef', 'souschef', 'cook', 
     'dishwasher', 'manager', 'host', 'bartender'
   ];
 
-  const filteredEmployees = employees.filter(emp => {
-    const matchesSearch = emp.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          t(`position.${emp.position}`).toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || emp.status === statusFilter;
-    const matchesPosition = positionFilter === 'all' || emp.position === positionFilter;
-    return matchesSearch && matchesStatus && matchesPosition;
-  });
+  const filteredEmployees = useMemo(() => {
+    return employees.filter(emp => {
+      const matchesSearch = emp.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            t(`position.${emp.position}`).toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || emp.status === statusFilter;
+      const matchesPosition = positionFilter === 'all' || emp.position === positionFilter;
+      return matchesSearch && matchesStatus && matchesPosition;
+    });
+  }, [employees, searchTerm, statusFilter, positionFilter, t]);
+
+
+  const sortedEmployees = useMemo(() => {
+    let sortableItems = [...filteredEmployees];
+    
+    if (sortConfig.key) {
+      sortableItems.sort((a, b) => {
+        // Use string comparison for all fields
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+
+        if (aValue < bValue) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [filteredEmployees, sortConfig]);
+
+  const requestSort = (key: SortKey) => {
+    let direction: SortDirection = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key: SortKey) => {
+    if (sortConfig.key !== key) return null;
+    return sortConfig.direction === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />;
+  };
+
+  const SortableHeader = ({ children, sortKey, className = '' }: { children: React.ReactNode, sortKey: SortKey, className?: string }) => (
+    <TableHead className={className}>
+      <Button
+        variant="ghost"
+        className="p-0 h-auto hover:bg-transparent text-foreground/80 hover:text-foreground font-semibold"
+        onClick={() => requestSort(sortKey)}
+      >
+        {children}
+        {getSortIcon(sortKey)}
+      </Button>
+    </TableHead>
+  );
 
   const handleDelete = () => {
     if (deleteId) {
@@ -155,16 +215,16 @@ const Dashboard = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('dashboard.name')}</TableHead>
-                <TableHead className="hidden md:table-cell">{t('dashboard.position')}</TableHead>
-                <TableHead className="hidden lg:table-cell">{t('dashboard.email')}</TableHead>
-                <TableHead className="hidden lg:table-cell">{t('dashboard.phone')}</TableHead>
-                <TableHead>{t('dashboard.status')}</TableHead>
+                <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
+                <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
+                <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
+                <SortableHeader sortKey="phone" className="hidden lg:table-cell">{t('dashboard.phone')}</SortableHeader>
+                <SortableHeader sortKey="status">{t('dashboard.status')}</SortableHeader>
                 <TableHead className="text-right">{t('dashboard.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredEmployees.map((employee) => (
+              {sortedEmployees.map((employee) => (
                 <TableRow key={employee.id} className="hover:bg-muted/50 transition-colors">
                   <TableCell className="font-medium">{employee.fullName}</TableCell>
                   <TableCell className="hidden md:table-cell">{t(`position.${employee.position}`)}</TableCell>
