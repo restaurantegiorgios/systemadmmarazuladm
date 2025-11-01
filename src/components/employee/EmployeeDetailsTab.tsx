@@ -66,7 +66,9 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
   };
 
   const renderField = (id: keyof Employee, labelKey: string, type: string = 'text', maxLength?: number) => {
-    const value = editableData[id] || employee[id];
+    // CORREÇÃO: Verifica se o valor existe em editableData (mesmo que seja '') antes de usar o valor original.
+    const value = (editableData[id] !== undefined ? editableData[id] : employee[id]) as string;
+    
     const isCopyable = ['fullName', 'email', 'address', 'cpf', 'phone'].includes(id);
     const isPhoneField = id === 'phone';
     
@@ -74,7 +76,7 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
     const actionButtonClasses = "opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 text-muted-foreground hover:bg-muted hover:text-primary";
 
     if (!isEditing) {
-      let displayValue = String(value);
+      let displayValue = value;
       
       if (id === 'position') {
         displayValue = t(`position.${value}`);
