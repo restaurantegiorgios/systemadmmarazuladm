@@ -14,7 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, X } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -82,7 +82,20 @@ const Dashboard = () => {
         <div className="bg-card rounded-lg shadow-soft p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                {searchTerm ? (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm('')}
+                    className="p-0 bg-transparent border-none text-muted-foreground hover:text-foreground"
+                    aria-label="Clear search"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                ) : (
+                  <Search className="h-4 w-4 text-muted-foreground" />
+                )}
+              </div>
               <Input
                 placeholder={t('dashboard.search')}
                 value={searchTerm}
