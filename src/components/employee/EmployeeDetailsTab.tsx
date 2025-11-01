@@ -60,7 +60,7 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
 
   const renderField = (id: keyof Employee, labelKey: string, type: string = 'text', maxLength?: number) => {
     const value = editableData[id] || employee[id];
-    const isCopyable = ['fullName', 'email', 'address', 'cpf'].includes(id);
+    const isCopyable = ['fullName', 'email', 'address', 'cpf', 'phone'].includes(id); // Added phone to copyable fields
     
     if (!isEditing) {
       let displayValue = String(value);
@@ -76,7 +76,8 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       return (
         <div className="group">
           <Label htmlFor={id} className="text-muted-foreground">{t(labelKey)}</Label>
-          <div className="flex items-center justify-between">
+          {/* Alterado para flex items-center e removido justify-between */}
+          <div className="flex items-center gap-1">
             <p className="text-lg font-medium">{displayValue}</p>
             
             <div className="flex items-center gap-1">
@@ -87,21 +88,20 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
                   size="icon"
                   onClick={() => handleCopy(displayValue, labelKey)}
                   title={t('dashboard.copy')}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
                 >
                   <Copy className="h-4 w-4 text-muted-foreground hover:text-primary" />
                 </Button>
               )}
 
-              {/* Map Pin Icon (only for address) */}
+              {/* Map Pin Icon (only for address) - Always visible for address, but still close to the value */}
               {id === 'address' && displayValue && (
                 <Button 
                   variant="ghost" 
                   size="icon" 
                   onClick={() => handleOpenMap(displayValue)}
                   title="Ver no Google Maps"
-                  // Revertendo o estilo para algo mais neutro e menos destrutivo
-                  className="text-muted-foreground hover:bg-muted hover:text-primary transition-colors h-8 w-8"
+                  className="text-muted-foreground hover:bg-muted hover:text-primary transition-colors h-8 w-8 p-0"
                 >
                   <MapPin className="h-5 w-5" />
                 </Button>
