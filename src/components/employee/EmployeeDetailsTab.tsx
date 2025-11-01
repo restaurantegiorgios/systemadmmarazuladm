@@ -10,8 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Upload, MapPin } from 'lucide-react';
+import { Upload, MapPin, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner'; // Import toast for feedback
 
 interface EmployeeDetailsTabProps {
   employee: Employee;
@@ -46,9 +47,20 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
     const encodedAddress = encodeURIComponent(address);
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
   };
+  
+  const handleCopy = (text: string, fieldName: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success(`${t(fieldName)} copiado!`, {
+        description: text,
+      });
+    }).catch(() => {
+      toast.error("Falha ao copiar para a área de transferência.");
+    });
+  };
 
   const renderField = (id: keyof Employee, labelKey: string, type: string = 'text', maxLength?: number) => {
     const value = editableData[id] || employee[id];
+    const isCopyable = ['fullName', 'email', 'address', 'cpf'].includes(id);
     
     if (!isEditing) {
       let displayValue = String(value);
@@ -62,22 +74,43 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       }
       
       return (
-        <div>
+        <div className={isCopyable ? 'group' : ''}>
           <Label htmlFor={id} className="text-muted-foreground">{t(labelKey)}</Label>
           <div className="flex items-center justify-between">
-            <p className="text-lg font-medium">{displayValue}</p>
-            {id === 'address' && displayValue && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => handleOpenMap(displayValue)}
-                title="Ver no Google Maps"
-                // Alterado para usar a cor destrutiva (vermelho) no hover e texto branco
-                className="text-destructive hover:bg-destructive hover:text-white transition-colors"
-              >
-                <MapPin className="h-5 w-5" />
-              </Button>
-            )}
+            <p 
+              className={`text-lg font-medium ${isCopyable ? 'cursor-pointer hover:text-primary transition-colors' : ''}`}
+              onClick={isCopyable ? () => handleCopy(displayValue, labelKey) : undefined}
+            >
+              {displayValue}
+            </p>
+            
+            <div className="flex items-center gap-1">
+              {/* Copy Icon (visible on hover for copyable fields) */}
+              {isCopyable && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleCopy(displayValue, labelKey)}
+                  title={t('dashboard.copy')}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+                >
+                  <Copy className="h-4 w-4 text-muted-foreground hover:text-primary" />
+                </Button>
+              )}
+
+              {/* Map Pin Icon (only for address) */}
+              {id === 'address' && displayValue && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handleOpenMap(displayValue)}
+                  title="Ver no Google Maps"
+                  className="text-destructive hover:bg-destructive hover:text-white transition-colors"
+                >
+                  <MapPin className="h-5 w-5" />
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       );

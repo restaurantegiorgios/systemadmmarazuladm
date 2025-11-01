@@ -45,6 +45,7 @@ const translations = {
     'dashboard.view': 'Ver Perfil',
     'dashboard.deleteConfirm': 'Tem certeza que deseja deletar este funcionário?',
     'dashboard.deleteSuccess': 'Funcionário deletado com sucesso!',
+    'dashboard.copy': 'Copiar', // Added copy key
     
     // Employee Form
     'form.title.new': 'Novo Funcionário',
@@ -150,6 +151,7 @@ const translations = {
     'dashboard.view': 'View Profile',
     'dashboard.deleteConfirm': 'Are you sure you want to delete this employee?',
     'dashboard.deleteSuccess': 'Employee deleted successfully!',
+    'dashboard.copy': 'Copy', // Added copy key
     
     // Employee Form
     'form.title.new': 'New Employee',
