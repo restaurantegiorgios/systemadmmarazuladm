@@ -496,7 +496,7 @@ const EmployeeProfile = () => {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => handleViewDoc(doc)}
-                                title="Visualizar Documento"
+                                title="Visualizar/Download Documento"
                               >
                                 <Download className="h-4 w-4" />
                               </Button>
