@@ -24,7 +24,7 @@ const numberToWords = (value: number): string => {
   return formatCurrency(value).replace('R$', '').trim();
 };
 
-const ReceiptTemplate = React.forwardRef<HTMLDivElement, ReceiptTemplateProps>(({ employee, value, serviceDate, t }, ref) => {
+const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, serviceDate, t }) => {
   const formattedValue = formatCurrency(value);
   const valueInWords = numberToWords(value);
   
@@ -34,11 +34,7 @@ const ReceiptTemplate = React.forwardRef<HTMLDivElement, ReceiptTemplateProps>((
   const year = date.getFullYear();
 
   return (
-    <div 
-      ref={ref} 
-      className="p-8 border border-gray-300 bg-white text-black max-w-xl mx-auto shadow-lg print:shadow-none print:border-none print:p-0"
-      style={{ minHeight: '300px' }}
-    >
+    <div className="p-6 border border-gray-300 bg-white text-black max-w-xl mx-auto print:border-none print:p-0">
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold mb-2 tracking-widest">{t('receipt.receiptTitle')}</h2>
         <p className="text-xl font-bold border-b border-black pb-1">
@@ -68,6 +64,26 @@ const ReceiptTemplate = React.forwardRef<HTMLDivElement, ReceiptTemplateProps>((
           </p>
         </div>
       </div>
+    </div>
+  );
+};
+
+const ReceiptTemplate = React.forwardRef<HTMLDivElement, ReceiptTemplateProps>((props, ref) => {
+  return (
+    <div 
+      ref={ref} 
+      className="w-full max-w-xl mx-auto shadow-lg print:shadow-none print:w-auto print:max-w-none"
+    >
+      {/* Primeira Via */}
+      <ReceiptContent {...props} />
+
+      {/* Linha de Corte (Apenas visível na impressão) */}
+      <div className="hidden print:block my-8 border-t border-dashed border-gray-500 text-center text-xs text-gray-500">
+        --- {props.t('receipt.receiptTitle')} (Corte Aqui) ---
+      </div>
+
+      {/* Segunda Via */}
+      <ReceiptContent {...props} />
     </div>
   );
 });

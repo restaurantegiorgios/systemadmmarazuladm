@@ -80,8 +80,36 @@ const ReceiptGenerator = () => {
   };
 
   const handlePrint = () => {
-    if (generatedReceipt) {
-      window.print();
+    if (generatedReceipt && receiptRef.current) {
+      const printContent = receiptRef.current.innerHTML;
+      const printWindow = window.open('', '', 'height=600,width=800');
+      
+      if (printWindow) {
+        // Inject Tailwind CSS styles and the content into the new window
+        printWindow.document.write('<html><head><title>Recibo</title>');
+        // We need to include the application's CSS for Tailwind print styles to work
+        printWindow.document.write('<link rel="stylesheet" href="/src/index.css" />');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write('<style>');
+        // Hide everything except the receipt content when printing
+        printWindow.document.write('@media print { body { margin: 0; } .print-only { display: block !important; } }');
+        printWindow.document.write('</style>');
+        printWindow.document.write('<div class="p-4 print:p-0">'); // Add padding for screen view, remove for print
+        printWindow.document.write(printContent);
+        printWindow.document.write('</div>');
+        printWindow.document.write('</body></html>');
+        
+        printWindow.document.close();
+        
+        // Wait for content to load before printing
+        printWindow.onload = () => {
+          printWindow.print();
+          // Optional: close the window after printing, though often annoying for users
+          // printWindow.close();
+        };
+      } else {
+        toast.error("Não foi possível abrir a janela de impressão. Verifique se o bloqueador de pop-ups está ativo.");
+      }
     }
   };
 
@@ -95,7 +123,7 @@ const ReceiptGenerator = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Control Panel */}
-          <Card className="lg:col-span-1 h-fit shadow-soft">
+          <Card className="lg:col-span-1 h-fit shadow-soft print:hidden">
             <CardHeader>
               <CardTitle>{t('receipt.generate')}</CardTitle>
             </CardHeader>
@@ -158,7 +186,7 @@ const ReceiptGenerator = () => {
 
           {/* Receipt Preview */}
           <div className="lg:col-span-2 space-y-4">
-            <Card className="shadow-elegant">
+            <Card className="shadow-elegant print:hidden">
               <CardHeader>
                 <CardTitle>{t('receipt.receiptTemplate')}</CardTitle>
               </CardHeader>
