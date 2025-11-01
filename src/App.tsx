@@ -9,6 +9,7 @@ import { UserProvider } from "./contexts/UserContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import EmployeeProfile from "./pages/EmployeeProfile";
+import ReceiptGenerator from "./pages/ReceiptGenerator"; // Import new page
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
                 <Route path="/" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/employee/:id" element={<EmployeeProfile />} />
+                <Route path="/receipts" element={<ReceiptGenerator />} /> {/* New Route */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Globe, LogOut, User } from 'lucide-react';
+import { Globe, LogOut, User, FileText } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUser } from '@/contexts/UserContext';
 import { useNavigate, Link } from 'react-router-dom';
@@ -40,7 +40,23 @@ export const Header = () => {
             </div>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
+            {/* Navigation Links */}
+            <nav className="hidden md:flex items-center gap-4">
+              <Link to="/dashboard">
+                <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10">
+                  {t('dashboard.title')}
+                </Button>
+              </Link>
+              <Link to="/receipts">
+                <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10">
+                  <FileText className="mr-2 h-4 w-4" />
+                  {t('receipt.title')}
+                </Button>
+              </Link>
+            </nav>
+
+            {/* Language Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
@@ -57,6 +73,7 @@ export const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            {/* User Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">

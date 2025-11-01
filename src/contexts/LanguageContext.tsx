@@ -97,6 +97,26 @@ const translations = {
     'userProfile.error.required': 'Campo obrigatório',
     'userProfile.error.invalidEmail': 'Email inválido',
 
+    // Receipt Generator (New)
+    'receipt.title': 'Gerador de Recibos',
+    'receipt.selectEmployee': 'Selecione o Funcionário',
+    'receipt.value': 'Valor do Pagamento (R$)',
+    'receipt.serviceDate': 'Data da Prestação do Serviço',
+    'receipt.generate': 'Gerar Recibo',
+    'receipt.print': 'Imprimir Recibo',
+    'receipt.error.selectEmployee': 'Selecione um funcionário para gerar o recibo.',
+    'receipt.error.invalidValue': 'Insira um valor válido.',
+    'receipt.error.invalidDate': 'Insira uma data válida.',
+    'receipt.receiptTemplate': 'Modelo de Recibo',
+    'receipt.receiptTitle': 'RECIBO',
+    'receipt.receivedBy': 'EU,',
+    'receipt.cpfHolder': 'Portador do CPF:',
+    'receipt.receivedFrom': 'Recebi de GIORGIOS RESTAURANT LTDA a importância de',
+    'receipt.serviceReference': 'referente a OS SERVICOS PRESTADOS NO ESTABELECIMENTO.',
+    'receipt.serviceDateLabel': 'Data da Prestação do Serviço:',
+    'receipt.note': 'Obs.: DOU PLENA QUITAR DO VALOR ACIMA CITADOS.',
+    'receipt.location': 'PORTO DE GALINHAS – IPOJUCA – PE,',
+    
     // Positions
     'position.waiter': 'Garçom',
     'position.chef': 'Chefe de Cozinha',
@@ -202,6 +222,26 @@ const translations = {
     'userProfile.error.passwordLength': 'Password must be at least 6 characters',
     'userProfile.error.required': 'Field is required',
     'userProfile.error.invalidEmail': 'Invalid email',
+
+    // Receipt Generator (New)
+    'receipt.title': 'Receipt Generator',
+    'receipt.selectEmployee': 'Select Employee',
+    'receipt.value': 'Payment Value (R$)',
+    'receipt.serviceDate': 'Service Date',
+    'receipt.generate': 'Generate Receipt',
+    'receipt.print': 'Print Receipt',
+    'receipt.error.selectEmployee': 'Select an employee to generate the receipt.',
+    'receipt.error.invalidValue': 'Enter a valid value.',
+    'receipt.error.invalidDate': 'Enter a valid date.',
+    'receipt.receiptTemplate': 'Receipt Template',
+    'receipt.receiptTitle': 'RECEIPT',
+    'receipt.receivedBy': 'I,',
+    'receipt.cpfHolder': 'CPF Holder:',
+    'receipt.receivedFrom': 'Received from GIORGIOS RESTAURANT LTDA the amount of',
+    'receipt.serviceReference': 'referring to SERVICES PROVIDED AT THE ESTABLISHMENT.',
+    'receipt.serviceDateLabel': 'Service Provision Date:',
+    'receipt.note': 'Note: I GIVE FULL DISCHARGE OF THE ABOVE CITED VALUE.',
+    'receipt.location': 'PORTO DE GALINHAS – IPOJUCA – PE,',
 
     // Positions
     'position.waiter': 'Waiter',
