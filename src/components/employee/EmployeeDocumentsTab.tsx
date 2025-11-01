@@ -72,11 +72,17 @@ const EmployeeDocumentsTab: React.FC<EmployeeDocumentsTabProps> = ({
               </div>
               <div className="space-y-2">
                 <Label htmlFor="file">{t('form.selectFile')}</Label>
+                {/* 
+                  Estilizando o Input type="file" para ter um cursor pointer e um efeito visual de hover.
+                  O Input de arquivo é notoriamente difícil de estilizar de forma consistente.
+                  Aqui, usamos classes Tailwind para garantir que o campo se destaque.
+                */}
                 <Input
                   id="file"
                   type="file"
                   accept="application/pdf,image/*"
                   onChange={handleFileChange}
+                  className="cursor-pointer file:cursor-pointer file:text-primary file:bg-secondary hover:file:bg-secondary/80 transition-colors"
                 />
               </div>
             </div>
