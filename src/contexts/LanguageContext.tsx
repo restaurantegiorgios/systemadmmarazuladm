@@ -107,6 +107,7 @@ const translations = {
     'position.bartender': 'Barman',
     
     // Document Types
+    'docType.all': 'Todos os Documentos',
     'docType.rg': 'RG',
     'docType.cpf': 'CPF',
     'docType.medical': 'Exame Médico',
@@ -211,6 +212,7 @@ const translations = {
     'position.bartender': 'Bartender',
     
     // Document Types
+    'docType.all': 'All Documents',
     'docType.rg': 'ID Card',
     'docType.cpf': 'Tax ID',
     'docType.medical': 'Medical Exam',

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmployees, Employee, Document } from '@/contexts/EmployeeProvider';
@@ -30,6 +30,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
+type DocumentTypeKey = 'all' | 'rg' | 'cpf' | 'medical' | 'contract' | 'other';
+
 const EmployeeProfile = () => {
   const { id } = useParams();
   const { t } = useLanguage();
@@ -41,9 +43,16 @@ const EmployeeProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editableData, setEditableData] = useState<Partial<Employee>>({});
   
-  const [docType, setDocType] = useState('rg');
+  // State for document upload form
+  const [uploadDocType, setUploadDocType] = useState('rg');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  
+  // State for document filtering
+  const [documentFilter, setDocumentFilter] = useState<DocumentTypeKey>('all');
+  
   const [docToDelete, setDocToDelete] = useState<string | null>(null); // State for confirmation dialog
+
+  const documentTypes: DocumentTypeKey[] = ['all', 'rg', 'cpf', 'medical', 'contract', 'other'];
 
   useEffect(() => {
     if (initialEmployee) {
@@ -60,6 +69,14 @@ const EmployeeProfile = () => {
       });
     }
   }, [initialEmployee]);
+
+  const filteredDocuments = useMemo(() => {
+    if (!initialEmployee) return [];
+    if (documentFilter === 'all') {
+      return initialEmployee.documents;
+    }
+    return initialEmployee.documents.filter(doc => doc.type === documentFilter);
+  }, [initialEmployee, documentFilter]);
 
   if (!initialEmployee) {
     return (
@@ -167,7 +184,7 @@ const EmployeeProfile = () => {
       const fileData = reader.result as string;
       
       addDocument(initialEmployee.id, {
-        type: docType,
+        type: uploadDocType,
         fileName: selectedFile.name,
         fileData: fileData,
       });
@@ -455,11 +472,12 @@ const EmployeeProfile = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="docType">{t('form.docType')}</Label>
-                          <Select value={docType} onValueChange={setDocType}>
+                          <Select value={uploadDocType} onValueChange={setUploadDocType}>
                             <SelectTrigger>
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="bg-card z-50">
+                              {/* Note: 'all' is not included here as it's for filtering, not uploading */}
                               <SelectItem value="rg">{t('docType.rg')}</SelectItem>
                               <SelectItem value="cpf">{t('docType.cpf')}</SelectItem>
                               <SelectItem value="medical">{t('docType.medical')}</SelectItem>
@@ -487,14 +505,34 @@ const EmployeeProfile = () => {
                 </Card>
 
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">{t('profile.uploadedDocs')}</h3>
-                  {initialEmployee.documents.length === 0 ? (
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold">{t('profile.uploadedDocs')}</h3>
+                    <div className="w-[200px]">
+                      <Select 
+                        value={documentFilter} 
+                        onValueChange={(value: DocumentTypeKey) => setDocumentFilter(value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={t('docType.all')} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card z-50">
+                          {documentTypes.map(type => (
+                            <SelectItem key={type} value={type}>
+                              {t(`docType.${type}`)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  {filteredDocuments.length === 0 ? (
                     <p className="text-center py-8 text-muted-foreground">
                       {t('profile.noDocuments')}
                     </p>
                   ) : (
                     <div className="space-y-2">
-                      {initialEmployee.documents.map((doc) => (
+                      {filteredDocuments.map((doc) => (
                         <Card key={doc.id} className="hover:shadow-soft transition-shadow">
                           <CardContent className="p-4 flex items-center justify-between">
                             {/* Clicar no item abre a visualização */}
@@ -508,7 +546,7 @@ const EmployeeProfile = () => {
                               </div>
                             </div>
                             <div className="flex gap-2">
-                              {/* Botão de Download (função separada) */}
+                              {/* Botão de Download */}
                               <Button
                                 variant="ghost"
                                 size="icon"
