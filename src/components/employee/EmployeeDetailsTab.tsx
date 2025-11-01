@@ -60,8 +60,11 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
 
   const renderField = (id: keyof Employee, labelKey: string, type: string = 'text', maxLength?: number) => {
     const value = editableData[id] || employee[id];
-    const isCopyable = ['fullName', 'email', 'address', 'cpf', 'phone'].includes(id); // Added phone to copyable fields
+    const isCopyable = ['fullName', 'email', 'address', 'cpf', 'phone'].includes(id);
     
+    // Base classes for action buttons
+    const actionButtonClasses = "opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 text-muted-foreground hover:bg-muted hover:text-primary";
+
     if (!isEditing) {
       let displayValue = String(value);
       
@@ -76,32 +79,31 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       return (
         <div className="group">
           <Label htmlFor={id} className="text-muted-foreground">{t(labelKey)}</Label>
-          {/* Alterado para flex items-center e removido justify-between */}
           <div className="flex items-center gap-1">
             <p className="text-lg font-medium">{displayValue}</p>
             
             <div className="flex items-center gap-1">
-              {/* Copy Icon (visible on hover of the group) */}
+              {/* Copy Icon */}
               {isCopyable && (
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => handleCopy(displayValue, labelKey)}
                   title={t('dashboard.copy')}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
+                  className={actionButtonClasses}
                 >
-                  <Copy className="h-4 w-4 text-muted-foreground hover:text-primary" />
+                  <Copy className="h-4 w-4" />
                 </Button>
               )}
 
-              {/* Map Pin Icon (only for address) - Always visible for address, but still close to the value */}
+              {/* Map Pin Icon (only for address) */}
               {id === 'address' && displayValue && (
                 <Button 
                   variant="ghost" 
                   size="icon" 
                   onClick={() => handleOpenMap(displayValue)}
                   title="Ver no Google Maps"
-                  className="text-muted-foreground hover:bg-muted hover:text-primary transition-colors h-8 w-8 p-0"
+                  className={actionButtonClasses}
                 >
                   <MapPin className="h-5 w-5" />
                 </Button>
