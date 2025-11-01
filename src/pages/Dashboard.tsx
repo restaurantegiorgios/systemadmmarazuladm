@@ -21,7 +21,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown, User } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -118,6 +119,13 @@ const Dashboard = () => {
       </Button>
     </TableHead>
   );
+  
+  const getInitials = (fullName: string) => {
+    const parts = fullName.split(' ').filter(p => p.length > 0);
+    if (parts.length === 0) return '';
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
+  };
 
   const handleDelete = () => {
     if (deleteId) {
@@ -215,6 +223,7 @@ const Dashboard = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead> {/* New Photo Column */}
                 <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
                 <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
                 <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
@@ -226,6 +235,14 @@ const Dashboard = () => {
             <TableBody>
               {sortedEmployees.map((employee) => (
                 <TableRow key={employee.id} className="hover:bg-muted/50 transition-colors">
+                  <TableCell>
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={employee.photo} />
+                      <AvatarFallback className="bg-secondary text-secondary-foreground">
+                        {employee.photo ? '' : <User className="h-4 w-4" />}
+                      </AvatarFallback>
+                    </Avatar>
+                  </TableCell>
                   <TableCell className="font-medium">{employee.fullName}</TableCell>
                   <TableCell className="hidden md:table-cell">{t(`position.${employee.position}`)}</TableCell>
                   <TableCell className="hidden lg:table-cell">{employee.email}</TableCell>

@@ -11,6 +11,7 @@ export interface Employee {
   address: string;
   status: 'active' | 'inactive';
   documents: Document[];
+  photo?: string; // Added photo field
 }
 
 export interface Document {
@@ -45,6 +46,7 @@ const mockEmployees: Employee[] = [
       { id: 'd1', type: 'rg', fileName: 'RG_Carlos.pdf', uploadDate: '2023-01-10' },
       { id: 'd2', type: 'cpf', fileName: 'CPF_Carlos.pdf', uploadDate: '2023-01-10' },
     ],
+    photo: undefined,
   },
   {
     id: '2',
@@ -60,6 +62,7 @@ const mockEmployees: Employee[] = [
       { id: 'd3', type: 'rg', fileName: 'RG_Maria.pdf', uploadDate: '2022-05-25' },
       { id: 'd4', type: 'medical', fileName: 'Exame_Maria.pdf', uploadDate: '2022-05-25' },
     ],
+    photo: undefined,
   },
   {
     id: '3',
@@ -72,6 +75,7 @@ const mockEmployees: Employee[] = [
     address: 'Rua Augusta, 500 - São Paulo, SP',
     status: 'active',
     documents: [],
+    photo: undefined,
   },
   {
     id: '4',
@@ -86,6 +90,7 @@ const mockEmployees: Employee[] = [
     documents: [
       { id: 'd5', type: 'contract', fileName: 'Contrato_Ana.pdf', uploadDate: '2021-09-10' },
     ],
+    photo: undefined,
   },
   {
     id: '5',
@@ -98,6 +103,7 @@ const mockEmployees: Employee[] = [
     address: 'Rua da República, 320 - São Paulo, SP',
     status: 'inactive',
     documents: [],
+    photo: undefined,
   },
   {
     id: '6',
@@ -110,6 +116,7 @@ const mockEmployees: Employee[] = [
     address: 'Av. Brigadeiro, 200 - São Paulo, SP',
     status: 'active',
     documents: [],
+    photo: undefined,
   },
   {
     id: '7',
@@ -124,6 +131,7 @@ const mockEmployees: Employee[] = [
     documents: [
       { id: 'd6', type: 'rg', fileName: 'RG_Fernando.pdf', uploadDate: '2022-08-05' },
     ],
+    photo: undefined,
   },
   {
     id: '8',
@@ -136,6 +144,7 @@ const mockEmployees: Employee[] = [
     address: 'Rua Haddock Lobo, 450 - São Paulo, SP',
     status: 'active',
     documents: [],
+    photo: undefined,
   },
   {
     id: '9',
@@ -148,6 +157,7 @@ const mockEmployees: Employee[] = [
     address: 'Rua dos Pinheiros, 670 - São Paulo, SP',
     status: 'active',
     documents: [],
+    photo: undefined,
   },
   {
     id: '10',
@@ -160,6 +170,7 @@ const mockEmployees: Employee[] = [
     address: 'Av. Rebouças, 1200 - São Paulo, SP',
     status: 'inactive',
     documents: [],
+    photo: undefined,
   },
   {
     id: '11',
@@ -172,6 +183,7 @@ const mockEmployees: Employee[] = [
     address: 'Rua Bela Cintra, 550 - São Paulo, SP',
     status: 'active',
     documents: [],
+    photo: undefined,
   },
   {
     id: '12',
@@ -184,6 +196,7 @@ const mockEmployees: Employee[] = [
     address: 'Av. Europa, 890 - São Paulo, SP',
     status: 'active',
     documents: [],
+    photo: undefined,
   },
   {
     id: '13',
@@ -196,6 +209,7 @@ const mockEmployees: Employee[] = [
     address: 'Rua Pamplona, 320 - São Paulo, SP',
     status: 'active',
     documents: [],
+    photo: undefined,
   },
   {
     id: '14',
@@ -208,6 +222,7 @@ const mockEmployees: Employee[] = [
     address: 'Rua Joaquim Floriano, 780 - São Paulo, SP',
     status: 'active',
     documents: [],
+    photo: undefined,
   },
   {
     id: '15',
@@ -220,6 +235,7 @@ const mockEmployees: Employee[] = [
     address: 'Av. Faria Lima, 2500 - São Paulo, SP',
     status: 'active',
     documents: [],
+    photo: undefined,
   },
 ];
 

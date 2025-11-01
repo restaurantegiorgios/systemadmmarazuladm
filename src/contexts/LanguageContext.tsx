@@ -33,6 +33,7 @@ const translations = {
     'dashboard.allPositions': 'Todos os Cargos',
     'dashboard.active': 'Ativos',
     'dashboard.inactive': 'Inativos',
+    'dashboard.photo': 'Foto',
     'dashboard.name': 'Nome',
     'dashboard.position': 'Cargo',
     'dashboard.email': 'Email',
@@ -66,6 +67,7 @@ const translations = {
     'form.upload': 'Fazer Upload',
     'form.success': 'Funcionário salvo com sucesso!',
     'form.error': 'Erro ao salvar funcionário',
+    'form.optional': 'Opcional',
     
     // Employee Profile
     'profile.title': 'Perfil do Funcionário',
@@ -135,6 +137,7 @@ const translations = {
     'dashboard.allPositions': 'All Positions',
     'dashboard.active': 'Active',
     'dashboard.inactive': 'Inactive',
+    'dashboard.photo': 'Photo',
     'dashboard.name': 'Name',
     'dashboard.position': 'Position',
     'dashboard.email': 'Email',
@@ -168,6 +171,7 @@ const translations = {
     'form.upload': 'Upload',
     'form.success': 'Employee saved successfully!',
     'form.error': 'Error saving employee',
+    'form.optional': 'Optional',
     
     // Employee Profile
     'profile.title': 'Employee Profile',

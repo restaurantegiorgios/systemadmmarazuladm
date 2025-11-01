@@ -4,6 +4,8 @@ import { useEmployees, Employee } from '@/contexts/EmployeeProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Upload } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -41,6 +43,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
     phone: '',
     address: '',
     status: 'active' as 'active' | 'inactive',
+    photo: '' as string | undefined, // Added photo field
   });
 
   useEffect(() => {
@@ -54,6 +57,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
         phone: employee.phone,
         address: employee.address,
         status: employee.status,
+        photo: employee.photo,
       });
     } else {
       setFormData({
@@ -65,6 +69,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
         phone: '',
         address: '',
         status: 'active',
+        photo: undefined,
       });
     }
   }, [employee, isEdit, isOpen]);
@@ -85,18 +90,48 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
       .replace(/(\d{5})(\d)/, '$1-$2')
       .replace(/(-\d{4})\d+?$/, '$1');
   };
+  
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, photo: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Basic validation check for required fields
+    if (!formData.fullName || !formData.cpf || !formData.admissionDate || !formData.email || !formData.phone || !formData.address) {
+        toast.error(t('form.error'));
+        return;
+    }
+
+    const employeeDataToSave = {
+        ...formData,
+        // Ensure photo is undefined if empty string, as per Employee interface
+        photo: formData.photo || undefined,
+    };
+
     if (isEdit && employee) {
-      updateEmployee(employee.id, formData);
+      updateEmployee(employee.id, employeeDataToSave);
     } else {
-      addEmployee(formData);
+      addEmployee(employeeDataToSave);
     }
     
     toast.success(t('form.success'));
     onClose();
+  };
+
+  const getInitials = (fullName: string) => {
+    const parts = fullName.split(' ').filter(p => p.length > 0);
+    if (parts.length === 0) return '';
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
   };
 
   return (
@@ -107,6 +142,30 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
           <DialogDescription>{t('form.personalData')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
+          
+          {/* Photo Upload Section */}
+          <div className="flex flex-col items-center space-y-2 mb-6">
+            <Avatar className="w-24 h-24">
+              <AvatarImage src={formData.photo} />
+              <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
+                {getInitials(formData.fullName)}
+              </AvatarFallback>
+            </Avatar>
+            <Label htmlFor="employee-photo-upload" className="cursor-pointer">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Upload className="w-4 h-4" />
+                <span>{t('userProfile.changePhoto')} ({t('form.optional')})</span>
+              </div>
+              <Input 
+                id="employee-photo-upload" 
+                type="file" 
+                accept="image/*" 
+                onChange={handlePhotoUpload} 
+                className="hidden" 
+              />
+            </Label>
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="fullName">{t('form.fullName')}</Label>
