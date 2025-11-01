@@ -186,11 +186,12 @@ const EmployeeProfile = () => {
     }
   };
   
+  // Function to open document in a new tab for viewing/printing
   const handleViewDoc = (doc: Document) => {
-    // Abre o Base64 em uma nova aba para visualização/impressão
     if (doc.fileData) {
       const newWindow = window.open();
       if (newWindow) {
+        // Use the data URL directly to display the content (works for PDF/Images)
         newWindow.document.write(`<iframe src="${doc.fileData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
         newWindow.document.title = doc.fileName;
       } else {
@@ -198,6 +199,20 @@ const EmployeeProfile = () => {
       }
     } else {
       toast.error("Dados do arquivo não encontrados.");
+    }
+  };
+
+  // Function to force download of the document
+  const handleDownloadDoc = (doc: Document) => {
+    if (doc.fileData) {
+      const link = document.createElement('a');
+      link.href = doc.fileData;
+      link.download = doc.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      toast.error("Dados do arquivo não encontrados para download.");
     }
   };
 
@@ -482,6 +497,7 @@ const EmployeeProfile = () => {
                       {initialEmployee.documents.map((doc) => (
                         <Card key={doc.id} className="hover:shadow-soft transition-shadow">
                           <CardContent className="p-4 flex items-center justify-between">
+                            {/* Clicar no item abre a visualização */}
                             <div className="flex items-center gap-3 cursor-pointer" onClick={() => handleViewDoc(doc)}>
                               <FileText className="h-8 w-8 text-primary" />
                               <div>
@@ -492,11 +508,12 @@ const EmployeeProfile = () => {
                               </div>
                             </div>
                             <div className="flex gap-2">
+                              {/* Botão de Download (função separada) */}
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => handleViewDoc(doc)}
-                                title="Visualizar/Download Documento"
+                                onClick={() => handleDownloadDoc(doc)}
+                                title="Baixar Documento"
                               >
                                 <Download className="h-4 w-4" />
                               </Button>
