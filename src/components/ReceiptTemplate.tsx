@@ -95,7 +95,7 @@ const numberToWords = (value: number): string => {
 
 const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, serviceDate, t }) => {
   const formattedValue = formatCurrency(value);
-  const valueInWords = capitalizeWords(numberToWords(value)); // Apply capitalization here
+  const valueInWords = capitalizeWords(numberToWords(value));
   
   const date = new Date(serviceDate);
   const day = date.getDate();
@@ -156,26 +156,29 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         {t('receipt.note')}
       </p>
 
-      {/* Footer: Logo, Signature and Date/Location */}
-      <div className="flex items-end justify-between mt-10">
-        {/* Left Side: Logo and Signature */}
-        <div className="flex flex-col items-center w-1/2 pr-4">
+      {/* Footer: Logo and Date/Location (Same Line) */}
+      <div className="flex items-center justify-between mt-10 mb-10">
+        {/* Left Side: Logo */}
+        <div className="flex items-center w-1/2">
           <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
-          <div className="mt-12 w-full text-center">
-            <div className="border-t border-black w-full"></div>
-            <p className="text-xs mt-1">Assinatura.:</p>
-          </div>
         </div>
         
         {/* Right Side: Date/Location */}
-        <div className="text-right text-sm w-1/2 pl-4">
+        <div className="text-right text-sm w-1/2">
           <p className="mb-2">
             {t('receipt.location')} 
             <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>, 
             <UnderlinedText className="min-w-[80px]">{month.toUpperCase()}</UnderlinedText> DE 
             <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
           </p>
-          {/* Removed the duplicate signature line here */}
+        </div>
+      </div>
+      
+      {/* Signature Line (Last Line, Centered) */}
+      <div className="flex flex-col items-center mt-10">
+        <div className="w-full max-w-xs text-center">
+          <div className="border-t border-black w-full"></div>
+          <p className="text-xs mt-1">Assinatura.:</p>
         </div>
       </div>
     </div>
