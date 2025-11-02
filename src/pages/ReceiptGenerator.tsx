@@ -34,7 +34,8 @@ interface PassageReceiptData {
   type: 'passage';
   employee: Employee;
   value: number;
-  serviceDate: string;
+  serviceStartDate: string; // Changed from serviceDate
+  serviceEndDate: string;   // New
   days: string;
   paymentMethod: string;
   otherPaymentMethod: string;
@@ -56,7 +57,7 @@ const ReceiptGenerator = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
   const [paymentValue, setPaymentValue] = useState<string>('');
   
-  // Service Receipt specific states (now start/end)
+  // Common Date States (used for both types)
   const [serviceStartDate, setServiceStartDate] = useState<string>(today);
   const [serviceEndDate, setServiceEndDate] = useState<string>(today);
   
@@ -67,7 +68,6 @@ const ReceiptGenerator = () => {
   const [passageOrigin, setPassageOrigin] = useState('');
   const [passageDestination, setPassageDestination] = useState('');
   const [passageValueInput, setPassageValueInput] = useState<string>('');
-  // Note: Passage receipt still uses serviceDate for the date realized field, which is fine.
 
   const [generatedReceipt, setGeneratedReceipt] = useState<GeneratedReceipt>(null);
 
@@ -99,6 +99,18 @@ const ReceiptGenerator = () => {
   const handlePassageValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassageValueInput(formatCurrencyInput(e.target.value));
   };
+  
+  const validateDates = (start: string, end: string) => {
+    if (!start || !end) {
+      toast.error(t('receipt.error.invalidDate'));
+      return false;
+    }
+    if (new Date(start) > new Date(end)) {
+      toast.error("A data de início não pode ser posterior à data de fim.");
+      return false;
+    }
+    return true;
+  }
 
   const handleGenerateReceipt = (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,19 +129,12 @@ const ReceiptGenerator = () => {
       return;
     }
     
+    if (!validateDates(serviceStartDate, serviceEndDate)) {
+      setGeneratedReceipt(null);
+      return;
+    }
+    
     if (receiptType === 'service') {
-      if (!serviceStartDate || !serviceEndDate) {
-        toast.error(t('receipt.error.invalidDate'));
-        setGeneratedReceipt(null);
-        return;
-      }
-      
-      if (new Date(serviceStartDate) > new Date(serviceEndDate)) {
-        toast.error("A data de início não pode ser posterior à data de fim.");
-        setGeneratedReceipt(null);
-        return;
-      }
-
       setGeneratedReceipt({
         type: 'service',
         employee: selectedEmployee,
@@ -140,10 +145,6 @@ const ReceiptGenerator = () => {
     } else if (receiptType === 'passage') {
       const numericPassageValue = cleanCurrencyValue(passageValueInput);
 
-      if (!serviceStartDate) { // Using serviceStartDate as the 'date realized' for passage receipt
-        toast.error(t('receipt.error.invalidDate'));
-        return;
-      }
       if (!passageDays) {
         toast.error(t('receipt.passage.error.daysRequired'));
         return;
@@ -173,7 +174,8 @@ const ReceiptGenerator = () => {
         type: 'passage',
         employee: selectedEmployee,
         value: numericValue,
-        serviceDate: serviceStartDate, // Using start date as the single date for passage receipt
+        serviceStartDate: serviceStartDate,
+        serviceEndDate: serviceEndDate,
         days: passageDays,
         paymentMethod: passagePaymentMethod,
         otherPaymentMethod: passageOtherPaymentMethod,
@@ -240,7 +242,8 @@ const ReceiptGenerator = () => {
           ref={receiptRef}
           employee={generatedReceipt.employee}
           value={generatedReceipt.value}
-          serviceDate={generatedReceipt.serviceDate}
+          serviceStartDate={generatedReceipt.serviceStartDate} // Pass start date
+          serviceEndDate={generatedReceipt.serviceEndDate}     // Pass end date
           days={generatedReceipt.days}
           paymentMethod={generatedReceipt.paymentMethod}
           otherPaymentMethod={generatedReceipt.otherPaymentMethod}
@@ -281,16 +284,42 @@ const ReceiptGenerator = () => {
 
   const renderPassageFields = () => (
     <>
+      {/* Date Realized Field (using serviceStartDate) */}
       <div className="space-y-2">
-        <Label htmlFor="passage-date">{t('receipt.serviceDate')}</Label>
+        <Label htmlFor="passage-date">{t('receipt.passage.dateRealizedLabel')}</Label>
         <Input
           id="passage-date"
           type="date"
-          value={serviceStartDate} // Reusing serviceStartDate for the single date field
+          value={serviceStartDate}
           onChange={(e) => setServiceStartDate(e.target.value)}
           required
         />
       </div>
+      
+      {/* New: Service Period Fields */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="service-start-date">{t('receipt.serviceDate')} (Início)</Label>
+          <Input
+            id="service-start-date"
+            type="date"
+            value={serviceStartDate}
+            onChange={(e) => setServiceStartDate(e.target.value)}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="service-end-date">{t('receipt.serviceDate')} (Fim)</Label>
+          <Input
+            id="service-end-date"
+            type="date"
+            value={serviceEndDate}
+            onChange={(e) => setServiceEndDate(e.target.value)}
+            required
+          />
+        </div>
+      </div>
+      
       <div className="space-y-2">
         <Label htmlFor="passage-days">{t('receipt.passage.daysPlaceholder')}</Label>
         <Textarea 

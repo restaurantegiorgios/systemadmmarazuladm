@@ -5,7 +5,8 @@ import { cn } from '@/lib/utils';
 interface ReceiptPassageTemplateProps {
   employee: Employee;
   value: number;
-  serviceDate: string;
+  serviceStartDate: string; // New: Used for date realized
+  serviceEndDate: string;   // New: Not explicitly used in text, but passed for consistency
   days: string;
   paymentMethod: string;
   otherPaymentMethod: string;
@@ -26,7 +27,7 @@ const formatCurrency = (value: number): string => {
 const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   employee,
   value,
-  serviceDate,
+  serviceStartDate,
   days,
   paymentMethod,
   otherPaymentMethod,
@@ -38,7 +39,8 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   const formattedValue = formatCurrency(value);
   const formattedPassageValue = formatCurrency(passageValue);
   
-  const date = new Date(serviceDate);
+  // Use serviceStartDate as the date realized
+  const date = new Date(serviceStartDate);
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const year = date.getFullYear();
