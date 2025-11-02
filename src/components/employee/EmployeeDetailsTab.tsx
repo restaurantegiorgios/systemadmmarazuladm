@@ -86,7 +86,7 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
         displayValue = t(`dashboard.${value}`);
       } else if (id === 'workSchedule') {
         displayValue = t(`schedule.${value}`);
-      } else if (['admissionDate', 'interviewDate', 'testDate'].includes(id) && typeof value === 'string') {
+      } else if (['admissionDate', 'interviewDate', 'testDate', 'birthDate'].includes(id) && typeof value === 'string') {
         displayValue = new Date(value).toLocaleDateString();
       }
       
@@ -246,10 +246,11 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {renderField('fullName', 'form.fullName')}
         {renderField('cpf', 'form.cpf', 'text', 14)}
+        {renderField('birthDate', 'form.birthDate', 'date')} {/* NEW FIELD */}
         {renderField('position', 'form.position')}
-        {renderField('workSchedule', 'form.workSchedule')} {/* NEW */}
-        {renderField('interviewDate', 'form.interviewDate', 'date')} {/* NEW */}
-        {renderField('testDate', 'form.testDate', 'date')} {/* NEW */}
+        {renderField('workSchedule', 'form.workSchedule')}
+        {renderField('interviewDate', 'form.interviewDate', 'date')}
+        {renderField('testDate', 'form.testDate', 'date')}
         {renderField('admissionDate', 'form.admissionDate', 'date')}
         {renderField('email', 'form.email', 'email')}
         {renderField('phone', 'form.phone', 'text', 15)}

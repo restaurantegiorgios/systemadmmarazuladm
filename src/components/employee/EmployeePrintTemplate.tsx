@@ -94,13 +94,13 @@ const EmployeePrintTemplate = React.forwardRef<HTMLDivElement, EmployeePrintTemp
         {/* Full Name (Full Width) */}
         {renderDetailBlock('form.fullName', employee.fullName, undefined, true)}
         
-        {/* CPF and Position */}
+        {/* CPF and Birth Date */}
         {renderDetailBlock('form.cpf', employee.cpf, formatCPF)}
-        {renderDetailBlock('form.position', t(`position.${employee.position}`))}
+        {renderDetailBlock('form.birthDate', employee.birthDate, (v) => formatDate(v, t))} {/* NEW FIELD */}
         
-        {/* Schedule and Status */}
+        {/* Position and Schedule */}
+        {renderDetailBlock('form.position', t(`position.${employee.position}`))}
         {renderDetailBlock('form.workSchedule', t(`schedule.${employee.workSchedule}`))}
-        {renderDetailBlock('form.status', t(`dashboard.${employee.status}`))}
         
         {/* Dates */}
         {renderDetailBlock('form.interviewDate', employee.interviewDate, (v) => formatDate(v, t))}
@@ -113,6 +113,9 @@ const EmployeePrintTemplate = React.forwardRef<HTMLDivElement, EmployeePrintTemp
         
         {/* Address (Full Width) */}
         {renderDetailBlock('form.address', employee.address, undefined, true)}
+        
+        {/* Status */}
+        {renderDetailBlock('form.status', t(`dashboard.${employee.status}`))}
       </div>
       
       {/* Footer / Print Date */}

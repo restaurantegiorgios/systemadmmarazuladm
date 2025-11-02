@@ -41,9 +41,10 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
     cpf: '',
     position: 'waiter',
     admissionDate: today,
-    interviewDate: today, // NEW
-    testDate: today,      // NEW
-    workSchedule: 'escala 6x1' as 'escala 6x1' | 'escala 5x2', // NEW
+    birthDate: today,      // NEW
+    interviewDate: today, 
+    testDate: today,      
+    workSchedule: 'escala 6x1' as 'escala 6x1' | 'escala 5x2', 
     email: '',
     phone: '',
     address: '',
@@ -58,9 +59,10 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
         cpf: employee.cpf,
         position: employee.position,
         admissionDate: employee.admissionDate,
-        interviewDate: employee.interviewDate, // Load existing data
-        testDate: employee.testDate,           // Load existing data
-        workSchedule: employee.workSchedule,   // Load existing data
+        birthDate: employee.birthDate, // Load existing data
+        interviewDate: employee.interviewDate, 
+        testDate: employee.testDate,           
+        workSchedule: employee.workSchedule,   
         email: employee.email,
         phone: employee.phone,
         address: employee.address,
@@ -73,9 +75,10 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
         cpf: '',
         position: 'waiter',
         admissionDate: today,
-        interviewDate: today, // Default for new
-        testDate: today,      // Default for new
-        workSchedule: 'escala 6x1', // Default for new
+        birthDate: today, // Default for new
+        interviewDate: today, 
+        testDate: today,      
+        workSchedule: 'escala 6x1', 
         email: '',
         phone: '',
         address: '',
@@ -117,7 +120,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
     e.preventDefault();
     
     // Basic validation check for required fields
-    if (!formData.fullName || !formData.cpf || !formData.admissionDate || !formData.email || !formData.phone || !formData.address || !formData.interviewDate || !formData.testDate || !formData.workSchedule) {
+    if (!formData.fullName || !formData.cpf || !formData.admissionDate || !formData.email || !formData.phone || !formData.address || !formData.interviewDate || !formData.testDate || !formData.workSchedule || !formData.birthDate) {
         toast.error(t('form.error'));
         return;
     }
@@ -185,6 +188,10 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
             <div className="space-y-2">
               <Label htmlFor="cpf">{t('form.cpf')}</Label>
               <Input id="cpf" required value={formData.cpf} onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })} maxLength={14} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="birthDate">{t('form.birthDate')}</Label>
+              <Input id="birthDate" type="date" required value={formData.birthDate} onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="position">{t('form.position')}</Label>

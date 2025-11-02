@@ -67,6 +67,7 @@ const translations = {
     'form.documents': 'Documentos',
     'form.fullName': 'Nome Completo',
     'form.cpf': 'CPF',
+    'form.birthDate': 'Data de Nascimento', // NEW
     'form.position': 'Cargo',
     'form.admissionDate': 'Data de Admissão',
     'form.interviewDate': 'Data de Entrevista', // NEW
@@ -244,6 +245,7 @@ const translations = {
     'form.documents': 'Documents',
     'form.fullName': 'Full Name',
     'form.cpf': 'Tax ID',
+    'form.birthDate': 'Birth Date', // NEW
     'form.position': 'Position',
     'form.admissionDate': 'Admission Date',
     'form.interviewDate': 'Interview Date', // NEW

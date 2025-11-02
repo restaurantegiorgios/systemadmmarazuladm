@@ -14,6 +14,7 @@ export interface Employee {
   photo?: string; // Added photo field
   
   // New fields
+  birthDate: string;     // Data de Nascimento (NEW)
   interviewDate: string; // Data de Entrevista
   testDate: string;      // Data de Teste
   workSchedule: 'escala 6x1' | 'escala 5x2'; // Escala de Trabalho
@@ -56,6 +57,7 @@ const mockEmployees: Employee[] = [
       { id: 'd2', type: 'cpf', fileName: 'CPF_Carlos.pdf', fileData: mockFilePlaceholder, uploadDate: '2023-01-10' },
     ],
     photo: undefined,
+    birthDate: '1995-05-20', // NEW
     interviewDate: '2023-01-10',
     testDate: '2023-01-12',
     workSchedule: 'escala 6x1',
@@ -75,6 +77,7 @@ const mockEmployees: Employee[] = [
       { id: 'd4', type: 'medical', fileName: 'Exame_Maria.pdf', fileData: mockFilePlaceholder, uploadDate: '2022-05-25' },
     ],
     photo: undefined,
+    birthDate: '1988-11-15', // NEW
     interviewDate: '2022-05-20',
     testDate: '2022-05-25',
     workSchedule: 'escala 5x2',
@@ -91,6 +94,7 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    birthDate: '2000-01-01', // NEW
     interviewDate: '2023-03-05',
     testDate: '2023-03-08',
     workSchedule: 'escala 6x1',
@@ -109,6 +113,7 @@ const mockEmployees: Employee[] = [
       { id: 'd5', type: 'contract', fileName: 'Contrato_Ana.pdf', fileData: mockFilePlaceholder, uploadDate: '2021-09-10' },
     ],
     photo: undefined,
+    birthDate: '1990-07-22', // NEW
     interviewDate: '2021-09-01',
     testDate: '2021-09-10',
     workSchedule: 'escala 5x2',
@@ -125,6 +130,7 @@ const mockEmployees: Employee[] = [
     status: 'inactive',
     documents: [],
     photo: undefined,
+    birthDate: '1985-03-10', // NEW
     interviewDate: '2022-11-10',
     testDate: '2022-11-15',
     workSchedule: 'escala 6x1',
@@ -141,6 +147,7 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    birthDate: '1998-09-05', // NEW
     interviewDate: '2023-01-25',
     testDate: '2023-01-28',
     workSchedule: 'escala 5x2',
@@ -159,6 +166,7 @@ const mockEmployees: Employee[] = [
       { id: 'd6', type: 'rg', fileName: 'RG_Fernando.pdf', fileData: mockFilePlaceholder, uploadDate: '2022-08-05' },
     ],
     photo: undefined,
+    birthDate: '1992-04-18', // NEW
     interviewDate: '2022-08-01',
     testDate: '2022-08-05',
     workSchedule: 'escala 6x1',
@@ -175,6 +183,7 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    birthDate: '1997-12-03', // NEW
     interviewDate: '2023-04-10',
     testDate: '2023-04-12',
     workSchedule: 'escala 6x1',
@@ -191,6 +200,7 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    birthDate: '1994-02-28', // NEW
     interviewDate: '2023-05-15',
     testDate: '2023-05-18',
     workSchedule: 'escala 5x2',
@@ -207,6 +217,7 @@ const mockEmployees: Employee[] = [
     status: 'inactive',
     documents: [],
     photo: undefined,
+    birthDate: '1996-10-10', // NEW
     interviewDate: '2022-11-25',
     testDate: '2022-11-28',
     workSchedule: 'escala 6x1',
@@ -223,6 +234,7 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    birthDate: '1993-01-25', // NEW
     interviewDate: '2023-05-25',
     testDate: '2023-05-28',
     workSchedule: 'escala 5x2',
@@ -239,6 +251,7 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    birthDate: '1999-06-12', // NEW
     interviewDate: '2023-07-05',
     testDate: '2023-07-08',
     workSchedule: 'escala 6x1',
@@ -255,6 +268,7 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    birthDate: '1991-08-08', // NEW
     interviewDate: '2022-10-10',
     testDate: '2022-10-12',
     workSchedule: 'escala 5x2',
@@ -271,6 +285,7 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    birthDate: '1995-03-17', // NEW
     interviewDate: '2023-07-25',
     testDate: '2023-07-28',
     workSchedule: 'escala 6x1',
@@ -287,6 +302,7 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    birthDate: '1990-11-29', // NEW
     interviewDate: '2023-08-25',
     testDate: '2023-08-28',
     workSchedule: 'escala 5x2',
