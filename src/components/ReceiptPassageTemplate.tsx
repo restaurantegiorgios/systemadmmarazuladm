@@ -77,96 +77,102 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   };
 
   return (
-    <div className="p-6 border border-gray-300 bg-white text-black mx-auto print:border-none print:p-0 text-sm w-full">
+    // Adicionando flex-col e justify-between para empurrar o rodapé para baixo
+    <div className="p-6 border border-gray-300 bg-white text-black mx-auto print:border-none print:p-0 text-sm w-full flex flex-col justify-between h-full">
       
-      {/* Header */}
-      <h2 className="text-xl font-bold text-center mb-6">{t('receipt.passage.declarationTitle')}</h2>
+      <div> {/* Content Wrapper */}
+        {/* Header */}
+        <h2 className="text-xl font-bold text-center mb-6">{t('receipt.passage.declarationTitle')}</h2>
 
-      {/* Body Text */}
-      <p className="leading-relaxed mb-4">
-        {t('receipt.passage.receivedBy')} 
-        <UnderlinedText className="w-full text-base font-bold">
-          {employee.fullName.toUpperCase()}
-        </UnderlinedText>, 
-        {' '}
-        {t('receipt.passage.cpfHolder')} 
-        <UnderlinedText className="min-w-[120px] text-base font-bold">
-          {employee.cpf}
-        </UnderlinedText>, 
-        {' '}
-        {t('receipt.passage.receivedFrom')}
-        <UnderlinedText className="min-w-[100px] text-base font-bold">
-          {formattedValue.replace('R$', '').trim()}
-        </UnderlinedText>
-        {' '}
-        {t('receipt.passage.amount')}
-        <UnderlinedText className="min-w-[100px] text-base font-bold">
-          {formattedValue.replace('R$', '').trim()}
-        </UnderlinedText>
-        {' '}
-        {t('receipt.passage.dateRealized')}
-        <span className="whitespace-nowrap">
-          <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>/
-          <UnderlinedText className="min-w-[20px]">{month}</UnderlinedText>/
-          <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
-        </span>
-        {t('receipt.passage.reference')}
-        <UnderlinedText className="w-full text-base font-bold">
-          {servicePeriod}
-        </UnderlinedText>.
-      </p>
-
-      {/* Payment Method */}
-      <div className="mb-4 space-y-2">
-        <p className="font-semibold">{t('receipt.passage.paymentMethod')}</p>
-        <div className="flex flex-wrap gap-x-6 gap-y-2">
-          {renderPaymentMethod('cash')}
-          {renderPaymentMethod('pix')}
-          {renderPaymentMethod('transfer')}
-          {renderPaymentMethod('other')}
-        </div>
-      </div>
-
-      {/* Origin, Destination, Passage Value */}
-      <div className="space-y-2 mb-2">
-        <p className="leading-relaxed">
-          {t('receipt.passage.origin')} 
-          <UnderlinedText className="min-w-[150px]">{origin}</UnderlinedText>
-        </p>
-        <p className="leading-relaxed">
-          {t('receipt.passage.destination')} 
-          <UnderlinedText className="min-w-[150px]">{destination}</UnderlinedText>
-        </p>
-        
-        {/* Passage Value */}
-        <p className="leading-relaxed">
-          {t('receipt.passage.passageValue')} 
+        {/* Body Text */}
+        <p className="leading-relaxed mb-4">
+          {t('receipt.passage.receivedBy')} 
+          <UnderlinedText className="w-full text-base font-bold">
+            {employee.fullName.toUpperCase()}
+          </UnderlinedText>, 
+          {' '}
+          {t('receipt.passage.cpfHolder')} 
+          <UnderlinedText className="min-w-[120px] text-base font-bold">
+            {employee.cpf}
+          </UnderlinedText>, 
+          {' '}
+          {t('receipt.passage.receivedFrom')}
           <UnderlinedText className="min-w-[100px] text-base font-bold">
-            {formattedPassageValue.replace('R$', '').trim()}
+            {formattedValue.replace('R$', '').trim()}
           </UnderlinedText>
+          {' '}
+          {t('receipt.passage.amount')}
+          <UnderlinedText className="min-w-[100px] text-base font-bold">
+            {formattedValue.replace('R$', '').trim()}
+          </UnderlinedText>
+          {' '}
+          {t('receipt.passage.dateRealized')}
+          <span className="whitespace-nowrap">
+            <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>/
+            <UnderlinedText className="min-w-[20px]">{month}</UnderlinedText>/
+            <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
+          </span>
+          {t('receipt.passage.reference')}
+          <UnderlinedText className="w-full text-base font-bold">
+            {servicePeriod}
+          </UnderlinedText>.
         </p>
+
+        {/* Payment Method */}
+        <div className="mb-4 space-y-2">
+          <p className="font-semibold">{t('receipt.passage.paymentMethod')}</p>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            {renderPaymentMethod('cash')}
+            {renderPaymentMethod('pix')}
+            {renderPaymentMethod('transfer')}
+            {renderPaymentMethod('other')}
+          </div>
+        </div>
+
+        {/* Origin, Destination, Passage Value */}
+        <div className="space-y-2 mb-2">
+          <p className="leading-relaxed">
+            {t('receipt.passage.origin')} 
+            <UnderlinedText className="min-w-[150px]">{origin}</UnderlinedText>
+          </p>
+          <p className="leading-relaxed">
+            {t('receipt.passage.destination')} 
+            <UnderlinedText className="min-w-[150px]">{destination}</UnderlinedText>
+          </p>
+          
+          {/* Passage Value */}
+          <p className="leading-relaxed">
+            {t('receipt.passage.passageValue')} 
+            <UnderlinedText className="min-w-[100px] text-base font-bold">
+              {formattedPassageValue.replace('R$', '').trim()}
+            </UnderlinedText>
+          </p>
+        </div>
       </div>
       
-      {/* Full Discharge Declaration and Logo (on the same line) */}
-      <div className="flex items-center justify-between mt-2 mb-6">
-        {/* Full Discharge Declaration (Centered within its space) */}
-        <p className="italic text-center flex-1">
-          {t('receipt.passage.fullDischarge')}
-        </p>
-        
-        {/* Logo (Aligned right) */}
-        <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto flex-shrink-0" />
-      </div>
-
-      {/* Signature Lines */}
-      <div className="grid grid-cols-2 gap-8 mt-10">
-        <div className="flex flex-col items-center">
-          <div className="border-t border-black w-full"></div>
-          <p className="text-xs mt-1">{t('receipt.passage.receiver')}</p>
+      {/* Footer (Signature and Logo) */}
+      <div className="mt-auto pt-4">
+        {/* Full Discharge Declaration and Logo (on the same line) */}
+        <div className="flex items-center justify-between mt-2 mb-6">
+          {/* Full Discharge Declaration (Centered within its space) */}
+          <p className="italic text-center flex-1">
+            {t('receipt.passage.fullDischarge')}
+          </p>
+          
+          {/* Logo (Aligned right) */}
+          <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto flex-shrink-0" />
         </div>
-        <div className="flex flex-col items-center">
-          <div className="border-t border-black w-full"></div>
-          <p className="text-xs mt-1">{t('receipt.passage.responsible')}</p>
+
+        {/* Signature Lines */}
+        <div className="grid grid-cols-2 gap-8 mt-10">
+          <div className="flex flex-col items-center">
+            <div className="border-t border-black w-full"></div>
+            <p className="text-xs mt-1">{t('receipt.passage.receiver')}</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="border-t border-black w-full"></div>
+            <p className="text-xs mt-1">{t('receipt.passage.responsible')}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -177,20 +183,20 @@ const ReceiptPassageTemplate = React.forwardRef<HTMLDivElement, ReceiptPassageTe
   return (
     <div 
       ref={ref} 
-      className="w-full mx-auto shadow-lg print:shadow-none print:w-auto print:max-w-none"
+      className="w-full mx-auto shadow-lg print:shadow-none print:w-auto print:max-w-none flex flex-col print:h-[28.5cm] print:justify-between" // Força a altura total da folha A4 (aprox 29.7cm, usando 28.5cm para margens)
     >
-      {/* Primeira Via - Envolvida em um contêiner de altura forçada para impressão */}
-      <div className="print:h-[50vh] print:flex print:flex-col print:justify-between">
+      {/* Primeira Via */}
+      <div className="flex-1 print:max-h-[48%]"> {/* Limita a altura para 48% para dar espaço à linha de corte */}
         <ReceiptPassageContent {...props} />
       </div>
 
       {/* Linha de Corte (Apenas visível na impressão) */}
-      <div className="hidden print:block my-8 border-t border-dashed border-gray-500">
+      <div className="hidden print:block my-2 border-t border-dashed border-gray-500">
         {/* Linha de corte sem texto descritivo */}
       </div>
 
-      {/* Segunda Via - Envolvida em um contêiner de altura forçada para impressão */}
-      <div className="print:h-[50vh] print:flex print:flex-col print:justify-between">
+      {/* Segunda Via */}
+      <div className="flex-1 print:max-h-[48%]"> {/* Limita a altura para 48% */}
         <ReceiptPassageContent {...props} />
       </div>
     </div>
