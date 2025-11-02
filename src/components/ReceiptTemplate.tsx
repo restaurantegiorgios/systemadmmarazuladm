@@ -17,6 +17,19 @@ const formatCurrency = (value: number): string => {
   });
 };
 
+// Utility function to capitalize the first letter of each word
+const capitalizeWords = (str: string): string => {
+  if (!str) return '';
+  return str.toLowerCase().split(' ').map(word => {
+    if (word.length === 0) return '';
+    // Handle conjunctions and prepositions that should remain lowercase
+    if (['e', 'de', 'do', 'da', 'dos', 'das', 'a', 'o'].includes(word)) {
+      return word;
+    }
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  }).join(' ');
+};
+
 // Utility function to convert number to written form (e.g., 100.50 -> cem reais e cinquenta centavos)
 const numberToWords = (value: number): string => {
   if (value >= 1000) {
@@ -83,7 +96,7 @@ const numberToWords = (value: number): string => {
 
 const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, serviceDate, t }) => {
   const formattedValue = formatCurrency(value);
-  const valueInWords = numberToWords(value);
+  const valueInWords = capitalizeWords(numberToWords(value)); // Apply capitalization here
   
   const date = new Date(serviceDate);
   const day = date.getDate();
@@ -128,7 +141,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         {' '}
         {t('receipt.receivedFrom')}
         <UnderlinedText className="text-base font-bold">
-          {valueInWords.toUpperCase()}
+          {valueInWords}
         </UnderlinedText>,
         {' '}
         {t('receipt.serviceReference')}
