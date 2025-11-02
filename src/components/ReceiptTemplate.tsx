@@ -1,6 +1,5 @@
 import React from 'react';
 import { Employee } from '@/contexts/EmployeeProvider';
-import LogoPlaceholder from './LogoPlaceholder';
 
 interface ReceiptTemplateProps {
   employee: Employee;
@@ -160,10 +159,10 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
       {/* Footer: Logo and Date/Location */}
       <div className="flex items-end justify-between mt-10">
         <div className="flex flex-col items-center">
-          <LogoPlaceholder className="w-20 h-20" />
-          <div className="mt-8 border-t border-black pt-2 w-full">
-            {/* Signature line */}
-            <UnderlinedText className="w-full min-h-[1.5em] block">{''}</UnderlinedText>
+          <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
+          <div className="mt-12 w-full text-center">
+            <div className="border-t border-black w-full"></div>
+            <p className="text-xs mt-1">Assinatura.:</p>
           </div>
         </div>
         
