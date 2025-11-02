@@ -127,8 +127,8 @@ const Login = () => {
 
       <Card className="w-full max-w-md shadow-2xl relative z-10 animate-fade-in">
         <CardHeader className="space-y-1 text-center">
-          {/* Ajustando para w-52 h-52 e rounded-full */}
-          <div className="mx-auto w-52 h-52 flex items-center justify-center mb-4 rounded-full overflow-hidden bg-white p-2 shadow-md">
+          {/* Reduzindo para w-32 h-32 e rounded-full */}
+          <div className="mx-auto w-32 h-32 flex items-center justify-center mb-4 rounded-full overflow-hidden bg-white p-2 shadow-md">
             <img 
               src="/logo_giorgios_centralizada.png" 
               alt="Logo Giorgio's Mar Azul" 
