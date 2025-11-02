@@ -36,6 +36,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import EmployeeFormModal from '@/components/EmployeeFormModal';
 import DashboardStats from '@/components/DashboardStats'; // Import the new component
+import ScrollToTopButton from '@/components/ScrollToTopButton'; // Import the new component
 
 type SortKey = 'fullName' | 'position' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -318,6 +319,8 @@ const Dashboard = () => {
         onClose={() => setFormModalOpen(false)}
         employee={editingEmployee}
       />
+      
+      <ScrollToTopButton />
     </div>
   );
 };
