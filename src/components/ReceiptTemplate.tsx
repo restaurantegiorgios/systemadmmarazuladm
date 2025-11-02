@@ -218,7 +218,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         {/* Right Side: Date/Location */}
         <div className="text-right text-sm w-1/2">
           {/* Corrigindo o espaçamento para a formatação correta */}
-          <p className="mb-2 whitespace-nowrap">
+          <p className="mb-2">
             {t('receipt.service.location')}{' '}
             <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>,{' '}
             <UnderlinedText className="min-w-[80px]">{month.toUpperCase()}</UnderlinedText> DE{' '}
