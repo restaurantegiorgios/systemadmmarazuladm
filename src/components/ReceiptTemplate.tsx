@@ -208,7 +208,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
       </p>
 
       {/* Footer: Logo and Date/Location (Same Line) */}
-      <div className="flex items-center justify-between mt-10 mb-10">
+      <div className="flex items-center justify-between mt-7 mb-7">
         {/* Left Side: Logo */}
         <div className="flex items-center w-1/3">
           {/* Using the static path for the logo */}
