@@ -200,7 +200,7 @@ const ReceiptGenerator = () => {
           @media print { 
             /* Define margens mínimas para a página */
             @page { 
-              margin: 2cm !important; /* Margem de 2cm em todos os lados */
+              margin: 0 2cm !important; /* Margem de 2cm apenas nas laterais */
             }
             body { 
               margin: 0; 

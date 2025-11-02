@@ -252,7 +252,7 @@ const EmployeeProfile = () => {
         printWindow.document.write(`
           @media print { 
             @page { 
-              margin: 2cm !important;
+              margin: 0 2cm !important;
             }
             body { 
               margin: 0; 
