@@ -159,7 +159,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
       {/* Declaration and Logo Section */}
       <div className="relative mt-6 mb-4">
         {/* Logo - Positioned absolutely */}
-        <div className="absolute right-0 -top-6">
+        <div className="absolute right-0" style={{ top: '-9.5rem' }}>
           <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
         </div>
 
