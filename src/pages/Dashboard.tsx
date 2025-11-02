@@ -227,7 +227,7 @@ const Dashboard = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead> {/* New Photo Column */}
+                  <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead>
                   <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
                   <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
                   <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
