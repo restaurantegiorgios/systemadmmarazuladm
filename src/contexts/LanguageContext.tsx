@@ -138,7 +138,8 @@ const translations = {
     'receipt.passage.receivedFrom': 'recebi de GIORGIOS RESTAURANT LTDA',
     'receipt.passage.amount': 'a importância de R$',
     'receipt.passage.dateRealized': '(realizada no dia',
-    'receipt.passage.dateRealizedLabel': 'Data de Realização', // NEW
+    'receipt.passage.useCurrentRealizationDate': 'Usar data de realização atual',
+    'receipt.passage.setRealizationDate': 'Data de Realização',
     'receipt.passage.reference': '), referente ao pagamento de passagem de transporte destinados aos dias:',
     'receipt.passage.paymentMethod': 'Forma de pagamento:',
     'receipt.passage.paymentMethod.cash': 'Dinheiro',
@@ -316,7 +317,8 @@ const translations = {
     'receipt.passage.receivedFrom': 'received from GIORGIOS RESTAURANT LTDA',
     'receipt.passage.amount': 'the amount of R$',
     'receipt.passage.dateRealized': '(realized on',
-    'receipt.passage.dateRealizedLabel': 'Date Realized', // NEW
+    'receipt.passage.useCurrentRealizationDate': 'Use current realization date',
+    'receipt.passage.setRealizationDate': 'Realization Date',
     'receipt.passage.reference': '), referring to the payment of transport passage destined for the days:',
     'receipt.passage.paymentMethod': 'Payment Method:',
     'receipt.passage.paymentMethod.cash': 'Cash',

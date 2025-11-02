@@ -28,7 +28,7 @@ interface ServiceReceiptData {
   value: number;
   serviceStartDate: string;
   serviceEndDate: string;
-  signatureDate: string; // NEW: For the signature date at the bottom
+  signatureDate: string;
 }
 
 interface PassageReceiptData {
@@ -37,6 +37,7 @@ interface PassageReceiptData {
   value: number;
   serviceStartDate: string;
   serviceEndDate: string;
+  realizationDate: string; // NEW
   paymentMethod: string;
   otherPaymentMethod: string;
   origin: string;
@@ -66,6 +67,8 @@ const ReceiptGenerator = () => {
   const [signatureDate, setSignatureDate] = useState<string>(today);
 
   // Passage Receipt specific states
+  const [useCurrentRealizationDate, setUseCurrentRealizationDate] = useState<boolean>(true);
+  const [realizationDate, setRealizationDate] = useState<string>(today);
   const [passagePaymentMethod, setPassagePaymentMethod] = useState('');
   const [passageOtherPaymentMethod, setPassageOtherPaymentMethod] = useState('');
   const [passageOrigin, setPassageOrigin] = useState('');
@@ -74,12 +77,17 @@ const ReceiptGenerator = () => {
 
   const [generatedReceipt, setGeneratedReceipt] = useState<GeneratedReceipt>(null);
 
-  // Effect to update the signature date when the toggle is switched back to 'on'
   useEffect(() => {
     if (useCurrentSignatureDate) {
       setSignatureDate(new Date().toISOString().split('T')[0]);
     }
   }, [useCurrentSignatureDate]);
+
+  useEffect(() => {
+    if (useCurrentRealizationDate) {
+      setRealizationDate(new Date().toISOString().split('T')[0]);
+    }
+  }, [useCurrentRealizationDate]);
 
   const selectedEmployee = selectedEmployeeId ? getEmployeeById(selectedEmployeeId) : null;
 
@@ -155,7 +163,7 @@ const ReceiptGenerator = () => {
         value: numericValue,
         serviceStartDate: serviceStartDate,
         serviceEndDate: serviceEndDate,
-        signatureDate: signatureDate, // Pass the correct signature date
+        signatureDate: signatureDate,
       });
     } else if (receiptType === 'passage') {
       const numericPassageValue = cleanCurrencyValue(passageValueInput);
@@ -187,6 +195,7 @@ const ReceiptGenerator = () => {
         value: numericValue,
         serviceStartDate: serviceStartDate,
         serviceEndDate: serviceEndDate,
+        realizationDate: realizationDate,
         paymentMethod: passagePaymentMethod,
         otherPaymentMethod: passageOtherPaymentMethod,
         origin: passageOrigin,
@@ -274,6 +283,7 @@ const ReceiptGenerator = () => {
           value={generatedReceipt.value}
           serviceStartDate={generatedReceipt.serviceStartDate}
           serviceEndDate={generatedReceipt.serviceEndDate}
+          realizationDate={generatedReceipt.realizationDate}
           paymentMethod={generatedReceipt.paymentMethod}
           otherPaymentMethod={generatedReceipt.otherPaymentMethod}
           origin={generatedReceipt.origin}
@@ -339,17 +349,6 @@ const ReceiptGenerator = () => {
 
   const renderPassageFields = () => (
     <>
-      <div className="space-y-2">
-        <Label htmlFor="passage-date">{t('receipt.passage.dateRealizedLabel')}</Label>
-        <Input
-          id="passage-date"
-          type="date"
-          value={serviceStartDate}
-          onChange={(e) => setServiceStartDate(e.target.value)}
-          required
-        />
-      </div>
-      
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="service-start-date">{t('receipt.serviceDate')} (Início)</Label>
@@ -372,6 +371,30 @@ const ReceiptGenerator = () => {
           />
         </div>
       </div>
+
+      <div className="flex items-center justify-between rounded-lg border p-3">
+        <div className="space-y-0.5">
+          <Label htmlFor="use-current-realization-date-switch">{t('receipt.passage.useCurrentRealizationDate')}</Label>
+        </div>
+        <Switch
+          id="use-current-realization-date-switch"
+          checked={useCurrentRealizationDate}
+          onCheckedChange={setUseCurrentRealizationDate}
+        />
+      </div>
+
+      {!useCurrentRealizationDate && (
+        <div className="space-y-2 animate-fade-in">
+          <Label htmlFor="realization-date">{t('receipt.passage.setRealizationDate')}</Label>
+          <Input
+            id="realization-date"
+            type="date"
+            value={realizationDate}
+            onChange={(e) => setRealizationDate(e.target.value)}
+            required
+          />
+        </div>
+      )}
       
       <div className="space-y-2">
         <Label>{t('receipt.passage.paymentMethod')}</Label>
