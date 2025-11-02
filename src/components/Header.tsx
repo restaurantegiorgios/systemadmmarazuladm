@@ -31,8 +31,13 @@ export const Header = () => {
       <header className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-elegant sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center gap-3 cursor-pointer">
-            <div className="w-10 h-10 bg-primary-foreground/10 rounded-lg flex items-center justify-center">
-              <span className="text-xl font-bold">G</span>
+            {/* Substituindo o 'G' pela logo */}
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img 
+                src="/logo_giorgios_centralizada.png" 
+                alt="Logo Giorgio's Mar Azul" 
+                className="h-full w-auto"
+              />
             </div>
             <div>
               <h1 className="text-xl font-bold">{t('login.subtitle')}</h1>
