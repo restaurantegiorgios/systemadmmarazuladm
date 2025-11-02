@@ -245,10 +245,6 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
               <Label htmlFor="phone">{t('form.phone')}</Label>
               <Input id="phone" required value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })} maxLength={15} />
             </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="address">{t('form.address')}</Label>
-              <Input id="address" required value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
-            </div>
             <div className="space-y-2">
               <Label htmlFor="status">{t('form.status')}</Label>
               <Select value={formData.status} onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}>
@@ -258,6 +254,10 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
                   <SelectItem value="inactive">{t('dashboard.inactive')}</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="address">{t('form.address')}</Label>
+              <Input id="address" required value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
             </div>
           </div>
           <DialogFooter>
