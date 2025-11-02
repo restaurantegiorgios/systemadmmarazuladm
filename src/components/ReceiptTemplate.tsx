@@ -203,7 +203,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
       </p>
 
       {/* Note */}
-      <p className="font-semibold italic mt-6 mb-6">
+      <p className="font-semibold italic mt-4 mb-4">
         {t('receipt.service.note')}
       </p>
 
