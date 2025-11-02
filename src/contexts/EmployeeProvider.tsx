@@ -1,24 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-export interface Employee {
-  id: string;
-  fullName: string;
-  cpf: string;
-  position: string;
-  admissionDate: string;
-  email: string;
-  phone: string;
-  address: string;
-  status: 'active' | 'inactive';
-  documents: Document[];
-  photo?: string; // Added photo field
-  
-  // New fields
-  birthDate: string;     // Data de Nascimento (NEW)
-  interviewDate: string; // Data de Entrevista
-  testDate: string;      // Data de Teste
-  workSchedule: 'escala 6x1' | 'escala 5x2'; // Escala de Trabalho
-}
+import { EmployeeFormValues } from '@/lib/validators';
 
 export interface Document {
   id: string;
@@ -28,9 +9,14 @@ export interface Document {
   uploadDate: string;
 }
 
+export interface Employee extends EmployeeFormValues {
+  id: string;
+  documents: Document[];
+}
+
 interface EmployeeContextType {
   employees: Employee[];
-  addEmployee: (employee: Omit<Employee, 'id' | 'documents'>) => void;
+  addEmployee: (employee: EmployeeFormValues) => void;
   updateEmployee: (id: string, employee: Partial<Employee>) => void;
   deleteEmployee: (id: string) => void;
   getEmployeeById: (id: string) => Employee | undefined;
@@ -314,12 +300,12 @@ const EmployeeContext = createContext<EmployeeContextType | undefined>(undefined
 export const EmployeeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [employees, setEmployees] = useState<Employee[]>(mockEmployees);
 
-  const addEmployee = (employeeData: Omit<Employee, 'id' | 'documents'>) => {
+  const addEmployee = (employeeData: EmployeeFormValues) => {
     const newEmployee: Employee = {
       ...employeeData,
       id: Date.now().toString(),
       documents: [],
-    } as Employee; // Cast needed because Omit doesn't guarantee all fields are present, but we fill them here.
+    };
     setEmployees([...employees, newEmployee]);
   };
 

@@ -40,6 +40,7 @@ import ScrollToTopButton from '@/components/ScrollToTopButton'; // Import the ne
 
 type SortKey = 'fullName' | 'position' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
+type StatusFilter = 'all' | 'active' | 'inactive';
 
 interface SortConfig {
   key: SortKey;
@@ -51,7 +52,7 @@ const Dashboard = () => {
   const { employees, deleteEmployee } = useEmployees();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [positionFilter, setPositionFilter] = useState<'all' | string>('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isFormModalOpen, setFormModalOpen] = useState(false);
@@ -62,6 +63,12 @@ const Dashboard = () => {
   const positions = [
     'waiter', 'chef', 'souschef', 'cook', 
     'dishwasher', 'manager', 'host', 'bartender'
+  ];
+
+  const statusOptions: { value: StatusFilter; labelKey: string }[] = [
+    { value: 'all', labelKey: 'dashboard.allStatus' },
+    { value: 'active', labelKey: 'dashboard.active' },
+    { value: 'inactive', labelKey: 'dashboard.inactive' },
   ];
 
   const filteredEmployees = useMemo(() => {
@@ -202,24 +209,15 @@ const Dashboard = () => {
               </SelectContent>
             </Select>
             <div className="flex gap-2">
-              <Button
-                variant={statusFilter === 'all' ? 'default' : 'outline'}
-                onClick={() => setStatusFilter('all')}
-              >
-                {t('dashboard.allStatus')}
-              </Button>
-              <Button
-                variant={statusFilter === 'active' ? 'default' : 'outline'}
-                onClick={() => setStatusFilter('active')}
-              >
-                {t('dashboard.active')}
-              </Button>
-              <Button
-                variant={statusFilter === 'inactive' ? 'default' : 'outline'}
-                onClick={() => setStatusFilter('inactive')}
-              >
-                {t('dashboard.inactive')}
-              </Button>
+              {statusOptions.map(option => (
+                <Button
+                  key={option.value}
+                  variant={statusFilter === option.value ? 'default' : 'outline'}
+                  onClick={() => setStatusFilter(option.value)}
+                >
+                  {t(option.labelKey)}
+                </Button>
+              ))}
             </div>
           </div>
         </div>

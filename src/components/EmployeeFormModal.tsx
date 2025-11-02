@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmployees, Employee } from '@/contexts/EmployeeProvider';
+import { employeeSchema, EmployeeFormValues } from '@/lib/validators';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,6 +24,7 @@ import {
   DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from 'sonner';
 
 interface EmployeeFormModalProps {
@@ -33,61 +37,49 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
   const { t } = useLanguage();
   const { addEmployee, updateEmployee } = useEmployees();
   const isEdit = !!employee;
-  
-  const today = new Date().toISOString().split('T')[0];
 
-  const [formData, setFormData] = useState({
-    fullName: '',
-    cpf: '',
-    position: 'waiter',
-    admissionDate: today,
-    birthDate: today,      // NEW
-    interviewDate: today, 
-    testDate: today,      
-    workSchedule: 'escala 6x1' as 'escala 6x1' | 'escala 5x2', 
-    email: '',
-    phone: '',
-    address: '',
-    status: 'active' as 'active' | 'inactive',
-    photo: '' as string | undefined,
+  const form = useForm<EmployeeFormValues>({
+    resolver: zodResolver(employeeSchema),
+    defaultValues: {
+      fullName: '',
+      cpf: '',
+      position: 'waiter',
+      admissionDate: '',
+      birthDate: '',
+      interviewDate: '',
+      testDate: '',
+      workSchedule: 'escala 6x1',
+      email: '',
+      phone: '',
+      address: '',
+      status: 'active',
+      photo: '',
+    },
   });
 
   useEffect(() => {
-    if (isEdit && employee) {
-      setFormData({
-        fullName: employee.fullName,
-        cpf: employee.cpf,
-        position: employee.position,
-        admissionDate: employee.admissionDate,
-        birthDate: employee.birthDate, // Load existing data
-        interviewDate: employee.interviewDate, 
-        testDate: employee.testDate,           
-        workSchedule: employee.workSchedule,   
-        email: employee.email,
-        phone: employee.phone,
-        address: employee.address,
-        status: employee.status,
-        photo: employee.photo,
-      });
-    } else {
-      // Initialize dates as empty strings for new employee creation
-      setFormData({
-        fullName: '',
-        cpf: '',
-        position: 'waiter',
-        admissionDate: '', // Empty
-        birthDate: '',     // Empty
-        interviewDate: '', // Empty
-        testDate: '',      // Empty
-        workSchedule: 'escala 6x1', 
-        email: '',
-        phone: '',
-        address: '',
-        status: 'active',
-        photo: undefined,
-      });
+    if (isOpen) {
+      if (isEdit && employee) {
+        form.reset(employee);
+      } else {
+        form.reset({
+          fullName: '',
+          cpf: '',
+          position: 'waiter',
+          admissionDate: '',
+          birthDate: '',
+          interviewDate: '',
+          testDate: '',
+          workSchedule: 'escala 6x1',
+          email: '',
+          phone: '',
+          address: '',
+          status: 'active',
+          photo: '',
+        });
+      }
     }
-  }, [employee, isEdit, isOpen]);
+  }, [employee, isEdit, isOpen, form]);
 
   const formatCPF = (value: string) => {
     return value
@@ -105,31 +97,22 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
       .replace(/(\d{5})(\d)/, '$1-$2')
       .replace(/(-\d{4})\d+?$/, '$1');
   };
-  
+
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, photo: reader.result as string }));
+        form.setValue('photo', reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Basic validation check for required fields
-    if (!formData.fullName || !formData.cpf || !formData.admissionDate || !formData.email || !formData.phone || !formData.address || !formData.interviewDate || !formData.testDate || !formData.workSchedule || !formData.birthDate) {
-        toast.error(t('form.error'));
-        return;
-    }
-
+  const onSubmit = (data: EmployeeFormValues) => {
     const employeeDataToSave = {
-        ...formData,
-        // Ensure photo is undefined if empty string, as per Employee interface
-        photo: formData.photo || undefined,
+      ...data,
+      photo: data.photo || undefined,
     };
 
     if (isEdit && employee) {
@@ -137,7 +120,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
     } else {
       addEmployee(employeeDataToSave);
     }
-    
+
     toast.success(t('form.success'));
     onClose();
   };
@@ -149,6 +132,9 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
     return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
   };
 
+  const photoValue = form.watch('photo');
+  const fullNameValue = form.watch('fullName');
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[625px]">
@@ -156,115 +142,148 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
           <DialogTitle>{isEdit ? t('form.title.edit') : t('form.title.new')}</DialogTitle>
           <DialogDescription>{t('form.personalData')}</DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 py-4">
-          
-          {/* Photo Upload Section */}
-          <div className="flex flex-col items-center space-y-2 mb-6">
-            <Avatar className="w-24 h-24">
-              <AvatarImage src={formData.photo} />
-              <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
-                {getInitials(formData.fullName)}
-              </AvatarFallback>
-            </Avatar>
-            <Label htmlFor="employee-photo-upload" className="cursor-pointer">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                <Upload className="w-4 h-4" />
-                <span>{t('userProfile.changePhoto')} ({t('form.optional')})</span>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <div className="flex flex-col items-center space-y-2 mb-6">
+              <Avatar className="w-24 h-24">
+                <AvatarImage src={photoValue} />
+                <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
+                  {getInitials(fullNameValue)}
+                </AvatarFallback>
+              </Avatar>
+              <Label htmlFor="employee-photo-upload" className="cursor-pointer">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Upload className="w-4 h-4" />
+                  <span>{t('userProfile.changePhoto')} ({t('form.optional')})</span>
+                </div>
+                <Input id="employee-photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+              </Label>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <FormField control={form.control} name="fullName" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.fullName')}</FormLabel>
+                    <FormControl><Input {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
               </div>
-              <Input 
-                id="employee-photo-upload" 
-                type="file" 
-                accept="image/*" 
-                onChange={handlePhotoUpload} 
-                className="hidden" 
-              />
-            </Label>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="fullName">{t('form.fullName')}</Label>
-              <Input id="fullName" required value={formData.fullName} onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} />
+              <FormField control={form.control} name="cpf" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('form.cpf')}</FormLabel>
+                  <FormControl>
+                    <Input {...field} onChange={e => field.onChange(formatCPF(e.target.value))} maxLength={14} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="birthDate" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('form.birthDate')}</FormLabel>
+                  <FormControl><Input type="date" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="position" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('form.position')}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      <SelectItem value="waiter">{t('position.waiter')}</SelectItem>
+                      <SelectItem value="chef">{t('position.chef')}</SelectItem>
+                      <SelectItem value="souschef">{t('position.souschef')}</SelectItem>
+                      <SelectItem value="cook">{t('position.cook')}</SelectItem>
+                      <SelectItem value="dishwasher">{t('position.dishwasher')}</SelectItem>
+                      <SelectItem value="manager">{t('position.manager')}</SelectItem>
+                      <SelectItem value="host">{t('position.host')}</SelectItem>
+                      <SelectItem value="bartender">{t('position.bartender')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="interviewDate" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('form.interviewDate')}</FormLabel>
+                  <FormControl><Input type="date" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="testDate" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('form.testDate')}</FormLabel>
+                  <FormControl><Input type="date" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="admissionDate" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('form.admissionDate')}</FormLabel>
+                  <FormControl><Input type="date" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="workSchedule" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('form.workSchedule')}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      <SelectItem value="escala 6x1">{t('schedule.escala 6x1')}</SelectItem>
+                      <SelectItem value="escala 5x2">{t('schedule.escala 5x2')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="email" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('form.email')}</FormLabel>
+                  <FormControl><Input type="email" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="phone" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('form.phone')}</FormLabel>
+                  <FormControl>
+                    <Input {...field} onChange={e => field.onChange(formatPhone(e.target.value))} maxLength={15} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="status" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('form.status')}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      <SelectItem value="active">{t('dashboard.active')}</SelectItem>
+                      <SelectItem value="inactive">{t('dashboard.inactive')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <div className="md:col-span-2">
+                <FormField control={form.control} name="address" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.address')}</FormLabel>
+                    <FormControl><Input {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="cpf">{t('form.cpf')}</Label>
-              <Input id="cpf" required value={formData.cpf} onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })} maxLength={14} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="birthDate">{t('form.birthDate')}</Label>
-              <Input id="birthDate" type="date" required value={formData.birthDate} onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="position">{t('form.position')}</Label>
-              <Select value={formData.position} onValueChange={(value) => setFormData({ ...formData, position: value })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="waiter">{t('position.waiter')}</SelectItem>
-                  <SelectItem value="chef">{t('position.chef')}</SelectItem>
-                  <SelectItem value="souschef">{t('position.souschef')}</SelectItem>
-                  <SelectItem value="cook">{t('position.cook')}</SelectItem>
-                  <SelectItem value="dishwasher">{t('position.dishwasher')}</SelectItem>
-                  <SelectItem value="manager">{t('position.manager')}</SelectItem>
-                  <SelectItem value="host">{t('position.host')}</SelectItem>
-                  <SelectItem value="bartender">{t('position.bartender')}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            {/* NEW DATE FIELDS */}
-            <div className="space-y-2">
-              <Label htmlFor="interviewDate">{t('form.interviewDate')}</Label>
-              <Input id="interviewDate" type="date" required value={formData.interviewDate} onChange={(e) => setFormData({ ...formData, interviewDate: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="testDate">{t('form.testDate')}</Label>
-              <Input id="testDate" type="date" required value={formData.testDate} onChange={(e) => setFormData({ ...formData, testDate: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="admissionDate">{t('form.admissionDate')}</Label>
-              <Input id="admissionDate" type="date" required value={formData.admissionDate} onChange={(e) => setFormData({ ...formData, admissionDate: e.target.value })} />
-            </div>
-            
-            {/* NEW SCHEDULE FIELD */}
-            <div className="space-y-2">
-              <Label htmlFor="workSchedule">{t('form.workSchedule')}</Label>
-              <Select value={formData.workSchedule} onValueChange={(value: 'escala 6x1' | 'escala 5x2') => setFormData({ ...formData, workSchedule: value })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="escala 6x1">{t('schedule.escala 6x1')}</SelectItem>
-                  <SelectItem value="escala 5x2">{t('schedule.escala 5x2')}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('form.email')}</Label>
-              <Input id="email" type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">{t('form.phone')}</Label>
-              <Input id="phone" required value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })} maxLength={15} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="status">{t('form.status')}</Label>
-              <Select value={formData.status} onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">{t('dashboard.active')}</SelectItem>
-                  <SelectItem value="inactive">{t('dashboard.inactive')}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="address">{t('form.address')}</Label>
-              <Input id="address" required value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>{t('form.cancel')}</Button>
-            <Button type="submit" className="bg-gradient-to-r from-primary to-accent">{t('form.save')}</Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={onClose}>{t('form.cancel')}</Button>
+              <Button type="submit" className="bg-gradient-to-r from-primary to-accent">{t('form.save')}</Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
