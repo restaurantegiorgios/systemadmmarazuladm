@@ -123,8 +123,8 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
       {/* Header: RECIBO R$: ________ */}
       <div className="flex justify-between items-end mb-6">
         <h2 className="text-2xl font-bold">{t('receipt.service.receiptTitle')}</h2>
-        <div className="text-xl font-bold flex items-center">
-          R$: <span className="text-lg font-extrabold ml-1">{valueOnly}</span>
+        <div className="text-2xl font-bold flex items-center">
+          R$: <span className="text-2xl font-extrabold ml-1">{valueOnly}</span>
         </div>
       </div>
 
