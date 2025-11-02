@@ -127,7 +127,7 @@ const Login = () => {
         </DropdownMenu>
       </div>
 
-      <Card className="w-full max-w-md sm:max-w-lg shadow-2xl relative z-10 animate-fade-in">
+      <Card className="w-full max-w-md shadow-2xl relative z-10 animate-fade-in">
         <CardHeader className="space-y-1 text-center">
           {/* Renderiza a logo apenas se a aba ativa for 'login' */}
           {activeTab === 'login' && (
