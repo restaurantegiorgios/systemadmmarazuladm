@@ -1,7 +1,6 @@
 import React from 'react';
-import { Employee, Document } from '@/contexts/EmployeeProvider';
+import { Employee } from '@/contexts/EmployeeProvider';
 import { cn } from '@/lib/utils';
-import { FileText, User } from 'lucide-react';
 
 interface EmployeePrintTemplateProps {
   employee: Employee;
@@ -40,18 +39,17 @@ const formatPhone = (value: string) => {
 
 const EmployeePrintTemplate = React.forwardRef<HTMLDivElement, EmployeePrintTemplateProps>(({ employee, t, getInitials }, ref) => {
   
-  const renderDetail = (labelKey: string, value: string | undefined, formatter?: (v: string) => string) => {
+  // New render function for the desired block format
+  const renderDetailBlock = (labelKey: string, value: string | undefined, formatter?: (v: string) => string, fullWidth: boolean = false) => {
     const displayValue = value ? (formatter ? formatter(value) : value) : t('form.notAvailable');
+    
     return (
-      <div className="flex justify-between border-b border-gray-200 py-2">
-        <span className="font-medium text-gray-600">{t(labelKey)}:</span>
-        <span className="font-semibold text-gray-800">{displayValue}</span>
+      <div className={cn("space-y-1 pb-3", fullWidth ? "col-span-2" : "col-span-1")}>
+        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{t(labelKey)}</p>
+        <p className="text-base font-semibold text-gray-900">{displayValue}</p>
       </div>
     );
   };
-
-  // Document rendering function is no longer needed, but keeping the structure clean.
-  // const renderDocument = (doc: Document) => (...);
 
   return (
     <div 
@@ -67,7 +65,7 @@ const EmployeePrintTemplate = React.forwardRef<HTMLDivElement, EmployeePrintTemp
         </div>
       </div>
 
-      {/* Employee Summary */}
+      {/* Employee Summary (Photo and Status) */}
       <div className="flex items-center gap-6 mb-8 p-4 bg-gray-50 border border-gray-200 rounded-lg">
         {employee.photo ? (
           <img 
@@ -89,22 +87,33 @@ const EmployeePrintTemplate = React.forwardRef<HTMLDivElement, EmployeePrintTemp
         </div>
       </div>
 
-      {/* Personal Details */}
+      {/* Personal Details in Block Format */}
       <h3 className="text-lg font-bold mb-4 border-b pb-1">{t('form.personalData')}</h3>
-      <div className="grid grid-cols-2 gap-x-8 gap-y-2 mb-8">
-        <div className="col-span-2">
-          {renderDetail('form.address', employee.address)}
-        </div>
-        {renderDetail('form.cpf', employee.cpf, formatCPF)}
-        {renderDetail('form.phone', employee.phone, formatPhone)}
-        {renderDetail('form.email', employee.email)}
-        {renderDetail('form.workSchedule', t(`schedule.${employee.workSchedule}`))}
-        {renderDetail('form.interviewDate', employee.interviewDate, (v) => formatDate(v, t))}
-        {renderDetail('form.testDate', employee.testDate, (v) => formatDate(v, t))}
-        {renderDetail('form.admissionDate', employee.admissionDate, (v) => formatDate(v, t))}
+      <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-8">
+        
+        {/* Full Name (Full Width) */}
+        {renderDetailBlock('form.fullName', employee.fullName, undefined, true)}
+        
+        {/* CPF and Position */}
+        {renderDetailBlock('form.cpf', employee.cpf, formatCPF)}
+        {renderDetailBlock('form.position', t(`position.${employee.position}`))}
+        
+        {/* Schedule and Status */}
+        {renderDetailBlock('form.workSchedule', t(`schedule.${employee.workSchedule}`))}
+        {renderDetailBlock('form.status', t(`dashboard.${employee.status}`))}
+        
+        {/* Dates */}
+        {renderDetailBlock('form.interviewDate', employee.interviewDate, (v) => formatDate(v, t))}
+        {renderDetailBlock('form.testDate', employee.testDate, (v) => formatDate(v, t))}
+        {renderDetailBlock('form.admissionDate', employee.admissionDate, (v) => formatDate(v, t))}
+        
+        {/* Email and Phone */}
+        {renderDetailBlock('form.email', employee.email)}
+        {renderDetailBlock('form.phone', employee.phone, formatPhone)}
+        
+        {/* Address (Full Width) */}
+        {renderDetailBlock('form.address', employee.address, undefined, true)}
       </div>
-
-      {/* Documents section removed as requested */}
       
       {/* Footer / Print Date */}
       <div className="mt-12 pt-4 border-t border-gray-300 text-xs text-gray-500 text-center">
