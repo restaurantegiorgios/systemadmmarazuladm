@@ -46,6 +46,8 @@ const translations = {
     'dashboard.deleteConfirm': 'Tem certeza que deseja deletar este funcionário?',
     'dashboard.deleteSuccess': 'Funcionário deletado com sucesso!',
     'dashboard.copy': 'Copiar', // Added copy key
+    'dashboard.totalEmployees': 'Total de Funcionários', // NEW
+    'dashboard.uniquePositions': 'Cargos Únicos', // NEW
     
     // Employee Form
     'form.title.new': 'Novo Funcionário',
@@ -194,7 +196,9 @@ const translations = {
     'dashboard.deleteConfirm': 'Are you sure you want to delete this employee?',
     'dashboard.deleteSuccess': 'Employee deleted successfully!',
     'dashboard.copy': 'Copy', // Added copy key
-    
+    'dashboard.totalEmployees': 'Total Employees', // NEW
+    'dashboard.uniquePositions': 'Unique Positions', // NEW
+
     // Employee Form
     'form.title.new': 'New Employee',
     'form.title.edit': 'Edit Employee',

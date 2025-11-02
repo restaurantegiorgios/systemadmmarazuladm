@@ -35,6 +35,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import EmployeeFormModal from '@/components/EmployeeFormModal';
+import DashboardStats from '@/components/DashboardStats'; // Import the new component
 
 type SortKey = 'fullName' | 'position' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -160,6 +161,9 @@ const Dashboard = () => {
             {t('dashboard.addNew')}
           </Button>
         </div>
+        
+        {/* Dashboard Stats Cards */}
+        <DashboardStats employees={employees} />
 
         <div className="bg-card rounded-lg shadow-soft p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4">
