@@ -192,8 +192,8 @@ const ReceiptPassageTemplate = React.forwardRef<HTMLDivElement, ReceiptPassageTe
       <ReceiptPassageContent {...props} />
 
       {/* Linha de Corte (Apenas visível na impressão) */}
-      <div className="hidden print:block my-8 border-t border-dashed border-gray-500 text-center text-xs text-gray-500">
-        {/* Linha de corte sem texto descritivo */}
+      <div className="hidden print:block my-8 relative left-[-2cm] w-[calc(100%+4cm)]">
+        <div className="border-t border-dashed border-gray-500"></div>
       </div>
 
       {/* Segunda Via */}
