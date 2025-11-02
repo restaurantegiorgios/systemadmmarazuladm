@@ -1,6 +1,5 @@
 import React from 'react';
 import { Employee } from '@/contexts/EmployeeProvider';
-import logoRodape from '@/assets/logo_rodape.png'; // Import the logo
 import { cn } from '@/lib/utils';
 
 interface ReceiptTemplateProps {
@@ -162,8 +161,8 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
       <div className="flex items-center justify-between mt-10 mb-10">
         {/* Left Side: Logo */}
         <div className="flex items-center w-1/2">
-          {/* Using the imported logo */}
-          <img src={logoRodape} alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
+          {/* Using the static path for the logo */}
+          <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
         </div>
         
         {/* Right Side: Date/Location */}
