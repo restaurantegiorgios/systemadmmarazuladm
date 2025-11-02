@@ -50,30 +50,33 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   const servicePeriod = `${formattedStartDate} a ${formattedEndDate}`;
 
 
-  // Helper component for underlined text
+  // Helper component for underlined text that adapts to content size
   const UnderlinedText: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = '' }) => (
     <span className={cn("inline-block border-b border-black px-1", className)}>
       {children}
     </span>
   );
   
-  const renderPaymentMethod = (method: string) => {
-    const methods = ['cash', 'pix', 'transfer'];
-    if (methods.includes(method)) {
+  const renderPaymentMethod = () => {
+    if (paymentMethod === 'other') {
       return (
-        <>
-          ( {method === paymentMethod ? 'X' : ' ' } ) {t(`receipt.passage.paymentMethod.${method}`)}
-        </>
-      );
-    } else if (method === 'other') {
-      return (
-        <>
-          ( {method === paymentMethod ? 'X' : ' ' } ) {t('receipt.passage.paymentMethod.other')} 
-          <UnderlinedText className="min-w-[100px]">{otherPaymentMethod}</UnderlinedText>
-        </>
+        <p className="leading-relaxed">
+          {t('receipt.passage.paymentMethod.other')} 
+          <UnderlinedText className="min-w-[100px] text-base font-bold">
+            {otherPaymentMethod.toUpperCase()}
+          </UnderlinedText>
+        </p>
       );
     }
-    return null;
+    // If cash, pix, or transfer, display the method name underlined
+    return (
+      <p className="leading-relaxed">
+        {t('receipt.passage.paymentMethod')} 
+        <UnderlinedText className="min-w-[100px] text-base font-bold">
+          {t(`receipt.passage.paymentMethod.${paymentMethod}`).toUpperCase()}
+        </UnderlinedText>
+      </p>
+    );
   };
 
   return (
@@ -82,73 +85,71 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
       {/* Header */}
       <h2 className="text-xl font-bold text-center mb-6">{t('receipt.passage.declarationTitle')}</h2>
 
-      {/* Body Text */}
-      <p className="leading-relaxed mb-4">
-        {t('receipt.passage.receivedBy')} 
-        <UnderlinedText className="w-full text-base font-bold">
-          {employee.fullName.toUpperCase()}
-        </UnderlinedText>, 
-        {' '}
-        {t('receipt.passage.cpfHolder')} 
-        <UnderlinedText className="min-w-[120px] text-base font-bold">
-          {employee.cpf}
-        </UnderlinedText>, 
-        {' '}
-        {t('receipt.passage.receivedFrom')}
-        <UnderlinedText className="min-w-[100px] text-base font-bold">
-          {formattedValue.replace('R$', '').trim()}
-        </UnderlinedText>
-        {' '}
-        {t('receipt.passage.amount')}
-        <UnderlinedText className="min-w-[100px] text-base font-bold">
-          {formattedValue.replace('R$', '').trim()}
-        </UnderlinedText>
-        {' '}
-        {t('receipt.passage.dateRealized')}
-        <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>/
-        <UnderlinedText className="min-w-[20px]">{month}</UnderlinedText>/
-        <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
-        {t('receipt.passage.reference')}
-        <UnderlinedText className="w-full text-base font-bold">
-          {servicePeriod}
-        </UnderlinedText>.
-      </p>
-
-      {/* Payment Method */}
-      <div className="mb-4 space-y-2">
-        <p className="font-semibold">{t('receipt.passage.paymentMethod')}</p>
-        <div className="flex flex-wrap gap-x-6 gap-y-2">
-          {renderPaymentMethod('cash')}
-          {renderPaymentMethod('pix')}
-          {renderPaymentMethod('transfer')}
-          {renderPaymentMethod('other')}
-        </div>
-      </div>
-
-      {/* Origin, Destination, Passage Value */}
-      <div className="space-y-2 mb-6">
+      {/* Essential Information */}
+      <div className="space-y-4 mb-6">
         <p className="leading-relaxed">
-          {t('receipt.passage.origin')} 
-          <UnderlinedText className="min-w-[150px]">{origin}</UnderlinedText>
+          {t('dashboard.name')}: 
+          <UnderlinedText className="text-base font-bold">
+            {employee.fullName.toUpperCase()}
+          </UnderlinedText>
         </p>
+        
         <p className="leading-relaxed">
-          {t('receipt.passage.destination')} 
-          <UnderlinedText className="min-w-[150px]">{destination}</UnderlinedText>
+          {t('form.cpf')}: 
+          <UnderlinedText className="text-base font-bold">
+            {employee.cpf}
+          </UnderlinedText>
         </p>
+        
         <p className="leading-relaxed">
-          {t('receipt.passage.passageValue')} 
-          <UnderlinedText className="min-w-[100px] text-base font-bold">
-            {formattedPassageValue.replace('R$', '').trim()}
+          {t('receipt.value')}: 
+          <UnderlinedText className="text-base font-bold">
+            {formattedValue}
+          </UnderlinedText>
+        </p>
+        
+        <p className="leading-relaxed">
+          {t('receipt.passage.dateRealizedLabel')}: 
+          <UnderlinedText className="text-base font-bold">
+            {day}/{month}/{year}
+          </UnderlinedText>
+        </p>
+        
+        <p className="leading-relaxed">
+          {t('receipt.serviceDate')}: 
+          <UnderlinedText className="text-base font-bold">
+            {servicePeriod}
+          </UnderlinedText>
+        </p>
+        
+        <p className="leading-relaxed">
+          {t('receipt.passage.origin')}: 
+          <UnderlinedText className="text-base font-bold">
+            {origin}
+          </UnderlinedText>
+        </p>
+        
+        <p className="leading-relaxed">
+          {t('receipt.passage.destination')}: 
+          <UnderlinedText className="text-base font-bold">
+            {destination}
+          </UnderlinedText>
+        </p>
+        
+        <p className="leading-relaxed">
+          {t('receipt.passage.passageValue')}: 
+          <UnderlinedText className="text-base font-bold">
+            {formattedPassageValue}
           </UnderlinedText>
         </p>
       </div>
 
-      {/* Full Discharge Declaration */}
-      <p className="italic text-center mb-10">
-        {t('receipt.passage.fullDischarge')}
-      </p>
+      {/* Payment Method (Simplified) */}
+      <div className="mb-10 space-y-2">
+        {renderPaymentMethod()}
+      </div>
 
-      {/* Signature Lines */}
+      {/* Signature Lines (Only lines and labels) */}
       <div className="grid grid-cols-2 gap-8 mt-10">
         <div className="flex flex-col items-center">
           <div className="border-t border-black w-full"></div>
