@@ -5,7 +5,8 @@ import { cn } from '@/lib/utils';
 interface ReceiptTemplateProps {
   employee: Employee;
   value: number;
-  serviceDate: string;
+  serviceStartDate: string; // Changed from serviceDate
+  serviceEndDate: string;   // New field
   t: (key: string) => string;
 }
 
@@ -94,14 +95,19 @@ const numberToWords = (value: number): string => {
   return result;
 };
 
-const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, serviceDate, t }) => {
+const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, serviceStartDate, serviceEndDate, t }) => {
   const formattedValue = formatCurrency(value);
   const valueInWords = capitalizeWords(numberToWords(value));
   
-  const date = new Date(serviceDate);
+  // Use the end date for the location date, as is common in receipts
+  const date = new Date(serviceEndDate);
   const day = date.getDate();
   const month = date.toLocaleDateString('pt-BR', { month: 'long' });
   const year = date.getFullYear();
+  
+  const formattedStartDate = new Date(serviceStartDate).toLocaleDateString('pt-BR');
+  const formattedEndDate = new Date(serviceEndDate).toLocaleDateString('pt-BR');
+  const servicePeriod = `${formattedStartDate} a ${formattedEndDate}`;
 
   // Helper component for underlined text
   const UnderlinedText: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = '' }) => (
@@ -147,8 +153,8 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         {t('receipt.service.serviceReference')}
         {' '}
         {t('receipt.service.serviceDateLabel')}
-        <UnderlinedText className="min-w-[100px] text-base font-bold">
-          {new Date(serviceDate).toLocaleDateString('pt-BR')}
+        <UnderlinedText className="min-w-[180px] text-base font-bold">
+          {servicePeriod}
         </UnderlinedText>.
       </p>
 

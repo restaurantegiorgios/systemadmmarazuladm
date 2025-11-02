@@ -86,7 +86,7 @@ const translations = {
     'receipt.type.passage': 'Recibo de Passagem',
     'receipt.selectEmployee': 'Selecione o Funcionário',
     'receipt.value': 'Valor do Pagamento (R$)',
-    'receipt.serviceDate': 'Data da Prestação do Serviço',
+    'receipt.serviceDate': 'Período da Prestação do Serviço', // UPDATED
     'receipt.generate': 'Gerar Recibo',
     'receipt.print': 'Imprimir Recibo',
     'receipt.error.selectEmployee': 'Selecione um funcionário para gerar o recibo.',
@@ -100,7 +100,7 @@ const translations = {
     'receipt.service.cpfHolder': 'Portador do CPF:',
     'receipt.service.receivedFrom': 'Recebi de GIORGIOS RESTAURANT LTDA a importância de',
     'receipt.service.serviceReference': 'referente a OS SERVICOS PRESTADOS NO ESTABELECIMENTO.',
-    'receipt.service.serviceDateLabel': 'Data da Prestação do Serviço:',
+    'receipt.service.serviceDateLabel': 'Período da Prestação do Serviço:', // UPDATED
     'receipt.service.note': 'Obs.: DOU PLENA QUITAR DO VALOR ACIMA CITADOS.',
     'receipt.service.location': 'PORTO DE GALINHAS – IPOJUCA – PE,',
     
@@ -226,7 +226,7 @@ const translations = {
     'receipt.type.passage': 'Passage Receipt',
     'receipt.selectEmployee': 'Select Employee',
     'receipt.value': 'Payment Value (R$)',
-    'receipt.serviceDate': 'Service Date',
+    'receipt.serviceDate': 'Service Provision Period', // UPDATED
     'receipt.generate': 'Generate Receipt',
     'receipt.print': 'Print Receipt',
     'receipt.error.selectEmployee': 'Select an employee to generate the receipt.',
@@ -240,7 +240,7 @@ const translations = {
     'receipt.service.cpfHolder': 'CPF Holder:',
     'receipt.service.receivedFrom': 'Received from GIORGIOS RESTAURANT LTDA the amount of',
     'receipt.service.serviceReference': 'referring to SERVICES PROVIDED AT THE ESTABLISHMENT.',
-    'receipt.service.serviceDateLabel': 'Service Provision Date:',
+    'receipt.service.serviceDateLabel': 'Service Provision Period:', // UPDATED
     'receipt.service.note': 'Note: I GIVE FULL DISCHARGE OF THE ABOVE CITED VALUE.',
     'receipt.service.location': 'PORTO DE GALINHAS – IPOJUCA – PE,',
     
@@ -262,7 +262,7 @@ const translations = {
     'receipt.passage.passageValue': 'Passage Value: R$',
     'receipt.passage.fullDischarge': 'I declare that I received the value described above, giving full and general discharge.',
     'receipt.passage.receiver': 'Receiver:',
-    'receipt.passage.responsible': 'RESPONSIBLE:',
+    'receipt.passage.responsible': 'RESPONSÁVEL:',
     'receipt.passage.daysPlaceholder': 'Service Days (e.g.: 01/01/2024, 02/01/2024)',
     'receipt.passage.originPlaceholder': 'Ex: Home',
     'receipt.passage.destinationPlaceholder': 'Ex: Restaurant',
