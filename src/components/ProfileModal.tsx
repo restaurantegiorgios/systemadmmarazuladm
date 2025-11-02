@@ -114,55 +114,57 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
           <DialogTitle>{t('profile')}</DialogTitle>
           <DialogDescription>{t('form.personalData')}</DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-4">
-          <div className="flex flex-col items-center space-y-2">
-            <Avatar className="w-24 h-24">
-              <AvatarImage src={photoPreview} />
-              <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
-                {currentFirstName?.[0]}{currentLastName?.[0]}
-              </AvatarFallback>
-            </Avatar>
-            <Label htmlFor="photo-upload" className="cursor-pointer">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                <Upload className="w-4 h-4" />
-                <span>{t('userProfile.changePhoto')}</span>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="max-h-[70vh] overflow-y-auto p-1 pr-4 -mr-4 space-y-6">
+            <div className="flex flex-col items-center space-y-2">
+              <Avatar className="w-24 h-24">
+                <AvatarImage src={photoPreview} />
+                <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
+                  {currentFirstName?.[0]}{currentLastName?.[0]}
+                </AvatarFallback>
+              </Avatar>
+              <Label htmlFor="photo-upload" className="cursor-pointer">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Upload className="w-4 h-4" />
+                  <span>{t('userProfile.changePhoto')}</span>
+                </div>
+                <Input id="photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+              </Label>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">{t('form.fullName').split(' ')[0]}</Label> {/* Usando apenas 'Nome' */}
+                <Input id="firstName" {...register('firstName')} />
+                {errors.firstName && <p className="text-sm text-destructive">{errors.firstName.message}</p>}
               </div>
-              <Input id="photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-            </Label>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">{t('form.fullName').split(' ').slice(1).join(' ')}</Label> {/* Usando 'Sobrenome' (ou o resto do nome) */}
+                <Input id="lastName" {...register('lastName')} />
+                {errors.lastName && <p className="text-sm text-destructive">{errors.lastName.message}</p>}
+              </div>
+            </div>
 
-          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">{t('form.fullName').split(' ')[0]}</Label> {/* Usando apenas 'Nome' */}
-              <Input id="firstName" {...register('firstName')} />
-              {errors.firstName && <p className="text-sm text-destructive">{errors.firstName.message}</p>}
+              <Label htmlFor="email">{t('login.email')}</Label>
+              <Input id="email" type="email" {...register('email')} />
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName">{t('form.fullName').split(' ').slice(1).join(' ')}</Label> {/* Usando 'Sobrenome' (ou o resto do nome) */}
-              <Input id="lastName" {...register('lastName')} />
-              {errors.lastName && <p className="text-sm text-destructive">{errors.lastName.message}</p>}
-            </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email">{t('login.email')}</Label>
-            <Input id="email" type="email" {...register('email')} />
-            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">{t('forgotPassword.newPassword')}</Label>
-              <Input id="password" type="password" {...register('password')} />
-              {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t('forgotPassword.confirmNewPassword')}</Label>
-              <Input id="confirmPassword" type="password" {...register('confirmPassword')} />
-              {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="password">{t('forgotPassword.newPassword')}</Label>
+                <Input id="password" type="password" {...register('password')} />
+                {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">{t('forgotPassword.confirmNewPassword')}</Label>
+                <Input id="confirmPassword" type="password" {...register('confirmPassword')} />
+                {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
+              </div>
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="pt-6">
             <Button type="submit" className="bg-gradient-to-r from-primary to-accent">{t('form.save')}</Button>
           </DialogFooter>
         </form>

@@ -143,142 +143,144 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
           <DialogDescription>{t('form.personalData')}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
-            <div className="flex flex-col items-center space-y-2 mb-6">
-              <Avatar className="w-24 h-24">
-                <AvatarImage src={photoValue} />
-                <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
-                  {getInitials(fullNameValue)}
-                </AvatarFallback>
-              </Avatar>
-              <Label htmlFor="employee-photo-upload" className="cursor-pointer">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  <Upload className="w-4 h-4" />
-                  <span>{t('userProfile.changePhoto')} ({t('form.optional')})</span>
-                </div>
-                <Input id="employee-photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-              </Label>
-            </div>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="max-h-[70vh] overflow-y-auto p-1 pr-4 -mr-4 space-y-4">
+              <div className="flex flex-col items-center space-y-2 mb-6">
+                <Avatar className="w-24 h-24">
+                  <AvatarImage src={photoValue} />
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
+                    {getInitials(fullNameValue)}
+                  </AvatarFallback>
+                </Avatar>
+                <Label htmlFor="employee-photo-upload" className="cursor-pointer">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    <Upload className="w-4 h-4" />
+                    <span>{t('userProfile.changePhoto')} ({t('form.optional')})</span>
+                  </div>
+                  <Input id="employee-photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                </Label>
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <FormField control={form.control} name="fullName" render={({ field }) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <FormField control={form.control} name="fullName" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('form.fullName')}</FormLabel>
+                      <FormControl><Input {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
+                <FormField control={form.control} name="cpf" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('form.fullName')}</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
+                    <FormLabel>{t('form.cpf')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} onChange={e => field.onChange(formatCPF(e.target.value))} maxLength={14} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
-              </div>
-              <FormField control={form.control} name="cpf" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.cpf')}</FormLabel>
-                  <FormControl>
-                    <Input {...field} onChange={e => field.onChange(formatCPF(e.target.value))} maxLength={14} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="birthDate" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.birthDate')}</FormLabel>
-                  <FormControl><Input type="date" {...field} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="position" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.position')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                    <SelectContent>
-                      <SelectItem value="waiter">{t('position.waiter')}</SelectItem>
-                      <SelectItem value="chef">{t('position.chef')}</SelectItem>
-                      <SelectItem value="souschef">{t('position.souschef')}</SelectItem>
-                      <SelectItem value="cook">{t('position.cook')}</SelectItem>
-                      <SelectItem value="dishwasher">{t('position.dishwasher')}</SelectItem>
-                      <SelectItem value="manager">{t('position.manager')}</SelectItem>
-                      <SelectItem value="host">{t('position.host')}</SelectItem>
-                      <SelectItem value="bartender">{t('position.bartender')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="interviewDate" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.interviewDate')}</FormLabel>
-                  <FormControl><Input type="date" {...field} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="testDate" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.testDate')}</FormLabel>
-                  <FormControl><Input type="date" {...field} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="admissionDate" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.admissionDate')}</FormLabel>
-                  <FormControl><Input type="date" {...field} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="workSchedule" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.workSchedule')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                    <SelectContent>
-                      <SelectItem value="escala 6x1">{t('schedule.escala 6x1')}</SelectItem>
-                      <SelectItem value="escala 5x2">{t('schedule.escala 5x2')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="email" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.email')}</FormLabel>
-                  <FormControl><Input type="email" {...field} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="phone" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.phone')}</FormLabel>
-                  <FormControl>
-                    <Input {...field} onChange={e => field.onChange(formatPhone(e.target.value))} maxLength={15} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="status" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.status')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                    <SelectContent>
-                      <SelectItem value="active">{t('dashboard.active')}</SelectItem>
-                      <SelectItem value="inactive">{t('dashboard.inactive')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <div className="md:col-span-2">
-                <FormField control={form.control} name="address" render={({ field }) => (
+                <FormField control={form.control} name="birthDate" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('form.address')}</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
+                    <FormLabel>{t('form.birthDate')}</FormLabel>
+                    <FormControl><Input type="date" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
+                <FormField control={form.control} name="position" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.position')}</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                      <SelectContent>
+                        <SelectItem value="waiter">{t('position.waiter')}</SelectItem>
+                        <SelectItem value="chef">{t('position.chef')}</SelectItem>
+                        <SelectItem value="souschef">{t('position.souschef')}</SelectItem>
+                        <SelectItem value="cook">{t('position.cook')}</SelectItem>
+                        <SelectItem value="dishwasher">{t('position.dishwasher')}</SelectItem>
+                        <SelectItem value="manager">{t('position.manager')}</SelectItem>
+                        <SelectItem value="host">{t('position.host')}</SelectItem>
+                        <SelectItem value="bartender">{t('position.bartender')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="interviewDate" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.interviewDate')}</FormLabel>
+                    <FormControl><Input type="date" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="testDate" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.testDate')}</FormLabel>
+                    <FormControl><Input type="date" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="admissionDate" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.admissionDate')}</FormLabel>
+                    <FormControl><Input type="date" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="workSchedule" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.workSchedule')}</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                      <SelectContent>
+                        <SelectItem value="escala 6x1">{t('schedule.escala 6x1')}</SelectItem>
+                        <SelectItem value="escala 5x2">{t('schedule.escala 5x2')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="email" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.email')}</FormLabel>
+                    <FormControl><Input type="email" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="phone" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.phone')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} onChange={e => field.onChange(formatPhone(e.target.value))} maxLength={15} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="status" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.status')}</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                      <SelectContent>
+                        <SelectItem value="active">{t('dashboard.active')}</SelectItem>
+                        <SelectItem value="inactive">{t('dashboard.inactive')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <div className="md:col-span-2">
+                  <FormField control={form.control} name="address" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('form.address')}</FormLabel>
+                      <FormControl><Input {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
               </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="pt-4">
               <Button type="button" variant="outline" onClick={onClose}>{t('form.cancel')}</Button>
               <Button type="submit" className="bg-gradient-to-r from-primary to-accent">{t('form.save')}</Button>
             </DialogFooter>

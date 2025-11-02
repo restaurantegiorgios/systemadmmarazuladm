@@ -21,9 +21,9 @@ import {
 
 // Import modular components
 import EmployeeProfileHeader from '@/components/employee/EmployeeProfileHeader';
-import EmployeeDetailsTab from '@/components/employee/EmployeeDetailsTab';
 import EmployeeDocumentsTab from '@/components/employee/EmployeeDocumentsTab';
-import EmployeePrintTemplate from '@/components/employee/EmployeePrintTemplate'; // Import the new template
+import EmployeePrintTemplate from '@/components/employee/EmployeePrintTemplate';
+import EmployeeDetailsTab from '@/components/employee/EmployeeDetailsTab';
 
 type DocumentTypeKey = 'all' | 'rg' | 'cpf' | 'medical' | 'contract' | 'other';
 
@@ -327,7 +327,7 @@ const EmployeeProfile = () => {
           </Button>
         </div>
 
-        <Card className="max-w-4xl mx-auto shadow-elegant">
+        <Card className="max-w-5xl mx-auto shadow-elegant">
           <CardContent className="p-6">
             
             <EmployeeProfileHeader
