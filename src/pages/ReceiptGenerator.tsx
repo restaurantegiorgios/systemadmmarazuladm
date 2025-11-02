@@ -198,8 +198,9 @@ const ReceiptGenerator = () => {
         // CSS para tentar suprimir cabeçalhos/rodapés e garantir fundo branco
         printWindow.document.write(`
           @media print { 
+            /* Define margens mínimas para a página */
             @page { 
-              margin: 0; 
+              margin: 0.5cm !important; /* Margem de 0.5cm em todos os lados */
             }
             body { 
               margin: 0; 
@@ -220,7 +221,8 @@ const ReceiptGenerator = () => {
           }
         `);
         printWindow.document.write('</style>');
-        printWindow.document.write('<div class="p-4 print:p-0">');
+        // Remove o padding do container principal na impressão para usar a margem definida no @page
+        printWindow.document.write('<div class="print:p-0">'); 
         printWindow.document.write(printContent);
         printWindow.document.write('</div>');
         printWindow.document.write('</body></html>');
