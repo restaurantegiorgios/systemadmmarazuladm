@@ -105,6 +105,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
         </UnderlinedText>
         {' '}
         {t('receipt.passage.dateRealized')}
+        {/* Applying whitespace-nowrap to the date realization part */}
         <span className="whitespace-nowrap">
           <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>/
           <UnderlinedText className="min-w-[20px]">{month}</UnderlinedText>/
@@ -179,20 +180,16 @@ const ReceiptPassageTemplate = React.forwardRef<HTMLDivElement, ReceiptPassageTe
       ref={ref} 
       className="w-full mx-auto shadow-lg print:shadow-none print:w-auto print:max-w-none"
     >
-      {/* Primeira Via - Envolvida em um contêiner de altura forçada para impressão */}
-      <div className="print:h-[50vh] print:flex print:flex-col print:justify-between">
-        <ReceiptPassageContent {...props} />
-      </div>
+      {/* Primeira Via */}
+      <ReceiptPassageContent {...props} />
 
       {/* Linha de Corte (Apenas visível na impressão) */}
-      <div className="hidden print:block my-8 border-t border-dashed border-gray-500">
+      <div className="hidden print:block my-8 border-t border-dashed border-gray-500 text-center text-xs text-gray-500">
         {/* Linha de corte sem texto descritivo */}
       </div>
 
-      {/* Segunda Via - Envolvida em um contêiner de altura forçada para impressão */}
-      <div className="print:h-[50vh] print:flex print:flex-col print:justify-between">
-        <ReceiptPassageContent {...props} />
-      </div>
+      {/* Segunda Via */}
+      <ReceiptPassageContent {...props} />
     </div>
   );
 });
