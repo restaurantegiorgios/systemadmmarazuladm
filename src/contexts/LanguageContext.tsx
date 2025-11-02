@@ -85,6 +85,7 @@ const translations = {
     'form.success': 'Funcionário salvo com sucesso!',
     'form.error': 'Erro ao salvar funcionário',
     'form.optional': 'Opcional',
+    'form.notAvailable': 'Não Informado', // NEW
     
     // Employee Profile
     'profile.title': 'Perfil do Funcionário',
@@ -261,6 +262,7 @@ const translations = {
     'form.success': 'Employee saved successfully!',
     'form.error': 'Error saving employee',
     'form.optional': 'Optional',
+    'form.notAvailable': 'Not Available', // NEW
     
     // Employee Profile
     'profile.title': 'Employee Profile',

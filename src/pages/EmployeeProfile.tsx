@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmployees, Employee, Document } from '@/contexts/EmployeeProvider';
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Printer } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,10 +19,11 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-// Import new modular components
+// Import modular components
 import EmployeeProfileHeader from '@/components/employee/EmployeeProfileHeader';
 import EmployeeDetailsTab from '@/components/employee/EmployeeDetailsTab';
 import EmployeeDocumentsTab from '@/components/employee/EmployeeDocumentsTab';
+import EmployeePrintTemplate from '@/components/employee/EmployeePrintTemplate'; // Import the new template
 
 type DocumentTypeKey = 'all' | 'rg' | 'cpf' | 'medical' | 'contract' | 'other';
 
@@ -35,6 +36,7 @@ const EmployeeProfile = () => {
   const navigate = useNavigate();
   
   const initialEmployee = id ? getEmployeeById(id) : null;
+  const printRef = useRef<HTMLDivElement>(null); // Ref for the print template
 
   const [isEditing, setIsEditing] = useState(false);
   const [editableData, setEditableData] = useState<Partial<Employee>>({});
@@ -231,6 +233,57 @@ const EmployeeProfile = () => {
     }
   };
   // ----------------------------------
+  
+  // --- Print Handler ---
+  const handlePrint = () => {
+    if (initialEmployee && printRef.current) {
+      const printContent = printRef.current.innerHTML;
+      const printWindow = window.open('', '', 'height=800,width=600');
+      
+      if (printWindow) {
+        printWindow.document.write('<html><head><title>Perfil do Funcionário</title>');
+        // Include the application\'s CSS for Tailwind print styles to work
+        printWindow.document.write('<link rel="stylesheet" href="/src/index.css" />');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write('<style>');
+        // CSS para impressão
+        printWindow.document.write(`
+          @media print { 
+            @page { 
+              margin: 1cm !important;
+            }
+            body { 
+              margin: 0; 
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+              background-color: white !important;
+              font-family: sans-serif;
+            } 
+            /* Força a exibição do conteúdo do template */
+            .print-container {
+              width: 100%;
+              margin: 0;
+              padding: 0;
+            }
+          }
+        `);
+        printWindow.document.write('</style>');
+        printWindow.document.write('<div class="print-container">'); 
+        printWindow.document.write(printContent);
+        printWindow.document.write('</div>');
+        printWindow.document.write('</body></html>');
+        
+        printWindow.document.close();
+        
+        printWindow.onload = () => {
+          printWindow.print();
+        };
+      } else {
+        toast.error("Não foi possível abrir a janela de impressão. Verifique se o bloqueador de pop-ups está ativo.");
+      }
+    }
+  };
+  // ---------------------
 
   if (!initialEmployee) {
     return (
@@ -251,14 +304,26 @@ const EmployeeProfile = () => {
       <Header />
       
       <main className="container mx-auto px-4 py-8 animate-fade-in">
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/dashboard')}
-          className="mb-6"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {t('form.cancel')}
-        </Button>
+        <div className="flex justify-between items-center mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/dashboard')}
+            className="mb-0"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {t('form.cancel')}
+          </Button>
+          
+          {/* Print Button */}
+          <Button 
+            onClick={handlePrint} 
+            variant="secondary" 
+            className="bg-accent hover:bg-accent/90 text-white"
+          >
+            <Printer className="mr-2 h-4 w-4" />
+            {t('receipt.print')}
+          </Button>
+        </div>
 
         <Card className="max-w-4xl mx-auto shadow-elegant">
           <CardContent className="p-6">
@@ -315,6 +380,16 @@ const EmployeeProfile = () => {
           </CardContent>
         </Card>
       </main>
+      
+      {/* Hidden Print Template (Rendered outside the main view, but inside the component) */}
+      <div className="hidden print:block">
+        <EmployeePrintTemplate 
+          ref={printRef}
+          employee={initialEmployee}
+          t={t}
+          getInitials={getInitials}
+        />
+      </div>
       
       {/* Confirmation Dialog for Document Deletion */}
       <AlertDialog open={!!docToDelete} onOpenChange={() => setDocToDelete(null)}>
