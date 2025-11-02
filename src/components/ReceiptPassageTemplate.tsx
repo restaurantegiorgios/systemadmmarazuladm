@@ -105,9 +105,12 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
         </UnderlinedText>
         {' '}
         {t('receipt.passage.dateRealized')}
-        <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>/
-        <UnderlinedText className="min-w-[20px]">{month}</UnderlinedText>/
-        <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
+        {/* Applying whitespace-nowrap to the date realization part */}
+        <span className="whitespace-nowrap">
+          <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>/
+          <UnderlinedText className="min-w-[20px]">{month}</UnderlinedText>/
+          <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
+        </span>
         {t('receipt.passage.reference')}
         <UnderlinedText className="w-full text-base font-bold">
           {servicePeriod}
