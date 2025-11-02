@@ -156,15 +156,17 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
         </p>
       </div>
       
-      {/* Full Discharge Declaration and Logo (on the same line) */}
-      <div className="flex items-center justify-between mt-2 mb-6">
-        {/* Full Discharge Declaration (Centered within its space) */}
-        <p className="italic text-center flex-1">
+      {/* Declaration and Logo Section */}
+      <div className="relative mt-6 mb-4">
+        {/* Logo - Positioned absolutely */}
+        <div className="absolute right-0 -top-6">
+          <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
+        </div>
+
+        {/* Full Discharge Declaration */}
+        <p className="italic text-center pt-2">
           {t('receipt.passage.fullDischarge')}
         </p>
-        
-        {/* Logo (Aligned right) */}
-        <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto flex-shrink-0" />
       </div>
 
       {/* Signature Lines */}
