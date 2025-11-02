@@ -164,7 +164,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
   );
 
   return (
-    <div className="p-6 border border-gray-300 bg-white text-black mx-auto print:border-none print:p-0 text-sm w-full">
+    <div className="p-6 border border-black bg-white text-black mx-auto print:border print:p-6 text-sm w-full">
       
       {/* Header: RECIBO R$: ________ */}
       <div className="relative flex justify-center items-end mb-6">
