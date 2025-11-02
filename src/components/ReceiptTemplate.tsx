@@ -112,7 +112,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
 
   // Helper component for underlined text (used only for body text now)
   const UnderlinedText: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = '' }) => (
-    <span className={cn("inline-block border-b border-black px-1", className)}>
+    <span className={cn("border-b border-black px-1", className)}>
       {children}
     </span>
   );

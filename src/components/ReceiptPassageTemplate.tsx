@@ -27,7 +27,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   employee,
   value,
   serviceStartDate,
-  serviceEndDate,
+  serviceEndDate, // <-- Added serviceEndDate here
   paymentMethod,
   otherPaymentMethod,
   origin,
@@ -52,7 +52,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
 
   // Helper component for underlined text
   const UnderlinedText: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = '' }) => (
-    <span className={cn("inline-block border-b border-black px-1", className)}>
+    <span className={cn("border-b border-black px-1", className)}>
       {children}
     </span>
   );
