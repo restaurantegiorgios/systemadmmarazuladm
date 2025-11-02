@@ -246,18 +246,22 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {renderField('fullName', 'form.fullName')}
         {renderField('cpf', 'form.cpf', 'text', 14)}
-        {renderField('birthDate', 'form.birthDate', 'date')} {/* NEW FIELD */}
+        {renderField('birthDate', 'form.birthDate', 'date')}
         {renderField('position', 'form.position')}
         {renderField('workSchedule', 'form.workSchedule')}
         {renderField('interviewDate', 'form.interviewDate', 'date')}
         {renderField('testDate', 'form.testDate', 'date')}
         {renderField('admissionDate', 'form.admissionDate', 'date')}
         {renderField('email', 'form.email', 'email')}
+        
+        {/* Phone and Status on the same row */}
         {renderField('phone', 'form.phone', 'text', 15)}
+        {renderField('status', 'form.status')}
+        
+        {/* Address spanning two columns */}
         <div className="md:col-span-2">
           {renderField('address', 'form.address')}
         </div>
-        {renderField('status', 'form.status')}
       </div>
     </div>
   );
