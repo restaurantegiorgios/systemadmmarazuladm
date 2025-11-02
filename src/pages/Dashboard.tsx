@@ -120,11 +120,11 @@ const Dashboard = () => {
     </TableHead>
   );
   
-  const getInitials = (fullName: string) => {
-    const parts = fullName.split(' ').filter(p => p.length > 0);
-    if (parts.length === 0) return '';
-    if (parts.length === 1) return parts[0][0].toUpperCase();
-    return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
+  const handleWhatsAppRedirect = (phone: string) => {
+    // Remove todos os caracteres não numéricos e adiciona o código do país (55 para Brasil)
+    const cleanPhone = phone.replace(/\D/g, '');
+    const whatsappLink = `https://wa.me/55${cleanPhone}`;
+    window.open(whatsappLink, '_blank');
   };
 
   const handleDelete = () => {
@@ -246,7 +246,12 @@ const Dashboard = () => {
                   <TableCell className="font-medium">{employee.fullName}</TableCell>
                   <TableCell className="hidden md:table-cell">{t(`position.${employee.position}`)}</TableCell>
                   <TableCell className="hidden lg:table-cell">{employee.email}</TableCell>
-                  <TableCell className="hidden lg:table-cell">{employee.phone}</TableCell>
+                  <TableCell 
+                    className="hidden lg:table-cell text-blue-600 hover:text-blue-800 cursor-pointer hover:underline"
+                    onClick={() => handleWhatsAppRedirect(employee.phone)}
+                  >
+                    {employee.phone}
+                  </TableCell>
                   <TableCell>
                     <Badge variant={employee.status === 'active' ? 'default' : 'secondary'}>
                       {t(`dashboard.${employee.status}`)}
