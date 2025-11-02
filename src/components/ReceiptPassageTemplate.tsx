@@ -27,7 +27,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   employee,
   value,
   serviceStartDate,
-  serviceEndDate, // Adicionado serviceEndDate aqui
+  serviceEndDate,
   paymentMethod,
   otherPaymentMethod,
   origin,
@@ -38,7 +38,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   const formattedValue = formatCurrency(value);
   const formattedPassageValue = formatCurrency(passageValue);
   
-  // Use serviceStartDate as the date realized
+  // Date Realized (using serviceStartDate)
   const dateRealized = new Date(serviceStartDate);
   const day = dateRealized.getDate().toString().padStart(2, '0');
   const month = (dateRealized.getMonth() + 1).toString().padStart(2, '0');
@@ -95,6 +95,11 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
         </UnderlinedText>, 
         {' '}
         {t('receipt.passage.receivedFrom')}
+        <UnderlinedText className="min-w-[100px] text-base font-bold">
+          {formattedValue.replace('R$', '').trim()}
+        </UnderlinedText>
+        {' '}
+        {t('receipt.passage.amount')}
         <UnderlinedText className="min-w-[100px] text-base font-bold">
           {formattedValue.replace('R$', '').trim()}
         </UnderlinedText>
