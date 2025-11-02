@@ -212,7 +212,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
           <p className="mb-2">
             {t('receipt.service.location')} 
             <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>, 
-            <UnderlinedText className="min-w-[80px]">{month.toUpperCase()}</UnderlinedText> DE 
+            <UnderlinedText className="min-w-[80px]">{month.toUpperCase()}</UnderlinedText> DE&nbsp;
             <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
           </p>
         </div>
