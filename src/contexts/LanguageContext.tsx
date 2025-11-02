@@ -56,6 +56,9 @@ const translations = {
     'form.cpf': 'CPF',
     'form.position': 'Cargo',
     'form.admissionDate': 'Data de Admissão',
+    'form.interviewDate': 'Data de Entrevista', // NEW
+    'form.testDate': 'Data de Teste',           // NEW
+    'form.workSchedule': 'Escala de Trabalho',  // NEW
     'form.email': 'Email',
     'form.phone': 'Telefone',
     'form.address': 'Endereço',
@@ -141,6 +144,10 @@ const translations = {
     'position.manager': 'Gerente',
     'position.host': 'Recepcionista',
     'position.bartender': 'Barman',
+
+    // Work Schedules
+    'schedule.escala 6x1': 'Escala 6x1',
+    'schedule.escala 5x2': 'Escala 5x2',
     
     // Document Types
     'docType.all': 'Todos os Documentos',
@@ -197,6 +204,9 @@ const translations = {
     'form.cpf': 'Tax ID',
     'form.position': 'Position',
     'form.admissionDate': 'Admission Date',
+    'form.interviewDate': 'Interview Date', // NEW
+    'form.testDate': 'Test Date',           // NEW
+    'form.workSchedule': 'Work Schedule',  // NEW
     'form.email': 'Email',
     'form.phone': 'Phone',
     'form.address': 'Address',
@@ -282,6 +292,10 @@ const translations = {
     'position.manager': 'Manager',
     'position.host': 'Host',
     'position.bartender': 'Bartender',
+
+    // Work Schedules
+    'schedule.escala 6x1': 'Schedule 6x1',
+    'schedule.escala 5x2': 'Schedule 5x2',
     
     // Document Types
     'docType.all': 'All Documents',

@@ -12,6 +12,11 @@ export interface Employee {
   status: 'active' | 'inactive';
   documents: Document[];
   photo?: string; // Added photo field
+  
+  // New fields
+  interviewDate: string; // Data de Entrevista
+  testDate: string;      // Data de Teste
+  workSchedule: 'escala 6x1' | 'escala 5x2'; // Escala de Trabalho
 }
 
 export interface Document {
@@ -51,6 +56,9 @@ const mockEmployees: Employee[] = [
       { id: 'd2', type: 'cpf', fileName: 'CPF_Carlos.pdf', fileData: mockFilePlaceholder, uploadDate: '2023-01-10' },
     ],
     photo: undefined,
+    interviewDate: '2023-01-10',
+    testDate: '2023-01-12',
+    workSchedule: 'escala 6x1',
   },
   {
     id: '2',
@@ -67,6 +75,9 @@ const mockEmployees: Employee[] = [
       { id: 'd4', type: 'medical', fileName: 'Exame_Maria.pdf', fileData: mockFilePlaceholder, uploadDate: '2022-05-25' },
     ],
     photo: undefined,
+    interviewDate: '2022-05-20',
+    testDate: '2022-05-25',
+    workSchedule: 'escala 5x2',
   },
   {
     id: '3',
@@ -80,6 +91,9 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    interviewDate: '2023-03-05',
+    testDate: '2023-03-08',
+    workSchedule: 'escala 6x1',
   },
   {
     id: '4',
@@ -95,6 +109,9 @@ const mockEmployees: Employee[] = [
       { id: 'd5', type: 'contract', fileName: 'Contrato_Ana.pdf', fileData: mockFilePlaceholder, uploadDate: '2021-09-10' },
     ],
     photo: undefined,
+    interviewDate: '2021-09-01',
+    testDate: '2021-09-10',
+    workSchedule: 'escala 5x2',
   },
   {
     id: '5',
@@ -108,6 +125,9 @@ const mockEmployees: Employee[] = [
     status: 'inactive',
     documents: [],
     photo: undefined,
+    interviewDate: '2022-11-10',
+    testDate: '2022-11-15',
+    workSchedule: 'escala 6x1',
   },
   {
     id: '6',
@@ -121,6 +141,9 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    interviewDate: '2023-01-25',
+    testDate: '2023-01-28',
+    workSchedule: 'escala 5x2',
   },
   {
     id: '7',
@@ -136,6 +159,9 @@ const mockEmployees: Employee[] = [
       { id: 'd6', type: 'rg', fileName: 'RG_Fernando.pdf', fileData: mockFilePlaceholder, uploadDate: '2022-08-05' },
     ],
     photo: undefined,
+    interviewDate: '2022-08-01',
+    testDate: '2022-08-05',
+    workSchedule: 'escala 6x1',
   },
   {
     id: '8',
@@ -149,6 +175,9 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    interviewDate: '2023-04-10',
+    testDate: '2023-04-12',
+    workSchedule: 'escala 6x1',
   },
   {
     id: '9',
@@ -162,6 +191,9 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    interviewDate: '2023-05-15',
+    testDate: '2023-05-18',
+    workSchedule: 'escala 5x2',
   },
   {
     id: '10',
@@ -175,6 +207,9 @@ const mockEmployees: Employee[] = [
     status: 'inactive',
     documents: [],
     photo: undefined,
+    interviewDate: '2022-11-25',
+    testDate: '2022-11-28',
+    workSchedule: 'escala 6x1',
   },
   {
     id: '11',
@@ -188,6 +223,9 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    interviewDate: '2023-05-25',
+    testDate: '2023-05-28',
+    workSchedule: 'escala 5x2',
   },
   {
     id: '12',
@@ -201,6 +239,9 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    interviewDate: '2023-07-05',
+    testDate: '2023-07-08',
+    workSchedule: 'escala 6x1',
   },
   {
     id: '13',
@@ -214,6 +255,9 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    interviewDate: '2022-10-10',
+    testDate: '2022-10-12',
+    workSchedule: 'escala 5x2',
   },
   {
     id: '14',
@@ -227,6 +271,9 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    interviewDate: '2023-07-25',
+    testDate: '2023-07-28',
+    workSchedule: 'escala 6x1',
   },
   {
     id: '15',
@@ -240,6 +287,9 @@ const mockEmployees: Employee[] = [
     status: 'active',
     documents: [],
     photo: undefined,
+    interviewDate: '2023-08-25',
+    testDate: '2023-08-28',
+    workSchedule: 'escala 5x2',
   },
 ];
 
@@ -253,7 +303,7 @@ export const EmployeeProvider: React.FC<{ children: ReactNode }> = ({ children }
       ...employeeData,
       id: Date.now().toString(),
       documents: [],
-    };
+    } as Employee; // Cast needed because Omit doesn't guarantee all fields are present, but we fill them here.
     setEmployees([...employees, newEmployee]);
   };
 

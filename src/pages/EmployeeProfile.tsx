@@ -60,6 +60,10 @@ const EmployeeProfile = () => {
         address: initialEmployee.address,
         status: initialEmployee.status,
         photo: initialEmployee.photo,
+        // NEW FIELDS
+        interviewDate: initialEmployee.interviewDate,
+        testDate: initialEmployee.testDate,
+        workSchedule: initialEmployee.workSchedule,
       });
     }
   }, [initialEmployee]);
@@ -131,7 +135,7 @@ const EmployeeProfile = () => {
     if (!id || !initialEmployee) return;
 
     // Basic validation check for required fields
-    if (!editableData.fullName || !editableData.cpf || !editableData.admissionDate || !editableData.email || !editableData.phone || !editableData.address) {
+    if (!editableData.fullName || !editableData.cpf || !editableData.admissionDate || !editableData.email || !editableData.phone || !editableData.address || !editableData.interviewDate || !editableData.testDate || !editableData.workSchedule) {
         toast.error(t('form.error'));
         return;
     }
@@ -154,6 +158,10 @@ const EmployeeProfile = () => {
       address: initialEmployee.address,
       status: initialEmployee.status,
       photo: initialEmployee.photo,
+      // NEW FIELDS RESET
+      interviewDate: initialEmployee.interviewDate,
+      testDate: initialEmployee.testDate,
+      workSchedule: initialEmployee.workSchedule,
     });
     setIsEditing(false);
   };

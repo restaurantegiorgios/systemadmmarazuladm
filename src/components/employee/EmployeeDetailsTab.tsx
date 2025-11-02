@@ -30,6 +30,8 @@ const positions = [
   'dishwasher', 'manager', 'host', 'bartender'
 ];
 
+const schedules = ['escala 6x1', 'escala 5x2'];
+
 const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
   employee,
   editableData,
@@ -82,7 +84,9 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
         displayValue = t(`position.${value}`);
       } else if (id === 'status') {
         displayValue = t(`dashboard.${value}`);
-      } else if (id === 'admissionDate' && typeof value === 'string') {
+      } else if (id === 'workSchedule') {
+        displayValue = t(`schedule.${value}`);
+      } else if (['admissionDate', 'interviewDate', 'testDate'].includes(id) && typeof value === 'string') {
         displayValue = new Date(value).toLocaleDateString();
       }
       
@@ -130,8 +134,8 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
     }
 
     // Editing mode
-    if (id === 'position' || id === 'status') {
-      const selectOptions = id === 'position' ? positions : ['active', 'inactive'];
+    if (id === 'position') {
+      const selectOptions = positions;
       
       return (
         <div>
@@ -144,7 +148,53 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
             <SelectContent>
               {selectOptions.map(option => (
                 <SelectItem key={option} value={option}>
-                  {t(id === 'position' ? `position.${option}` : `dashboard.${option}`)}
+                  {t(`position.${option}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      );
+    }
+    
+    if (id === 'workSchedule') {
+      const selectOptions = schedules;
+      
+      return (
+        <div>
+          <Label htmlFor={id}>{t(labelKey)}</Label>
+          <Select 
+            value={String(value)} 
+            onValueChange={(val) => handleSelectChange(id, val)}
+          >
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {selectOptions.map(option => (
+                <SelectItem key={option} value={option}>
+                  {t(`schedule.${option}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      );
+    }
+
+    if (id === 'status') {
+      const selectOptions = ['active', 'inactive'];
+      
+      return (
+        <div>
+          <Label htmlFor={id}>{t(labelKey)}</Label>
+          <Select 
+            value={String(value)} 
+            onValueChange={(val) => handleSelectChange(id, val)}
+          >
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {selectOptions.map(option => (
+                <SelectItem key={option} value={option}>
+                  {t(`dashboard.${option}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -197,6 +247,9 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
         {renderField('fullName', 'form.fullName')}
         {renderField('cpf', 'form.cpf', 'text', 14)}
         {renderField('position', 'form.position')}
+        {renderField('workSchedule', 'form.workSchedule')} {/* NEW */}
+        {renderField('interviewDate', 'form.interviewDate', 'date')} {/* NEW */}
+        {renderField('testDate', 'form.testDate', 'date')} {/* NEW */}
         {renderField('admissionDate', 'form.admissionDate', 'date')}
         {renderField('email', 'form.email', 'email')}
         {renderField('phone', 'form.phone', 'text', 15)}

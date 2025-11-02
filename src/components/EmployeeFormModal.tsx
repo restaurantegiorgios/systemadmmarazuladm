@@ -33,17 +33,22 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
   const { t } = useLanguage();
   const { addEmployee, updateEmployee } = useEmployees();
   const isEdit = !!employee;
+  
+  const today = new Date().toISOString().split('T')[0];
 
   const [formData, setFormData] = useState({
     fullName: '',
     cpf: '',
     position: 'waiter',
-    admissionDate: '',
+    admissionDate: today,
+    interviewDate: today, // NEW
+    testDate: today,      // NEW
+    workSchedule: 'escala 6x1' as 'escala 6x1' | 'escala 5x2', // NEW
     email: '',
     phone: '',
     address: '',
     status: 'active' as 'active' | 'inactive',
-    photo: '' as string | undefined, // Added photo field
+    photo: '' as string | undefined,
   });
 
   useEffect(() => {
@@ -53,6 +58,9 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
         cpf: employee.cpf,
         position: employee.position,
         admissionDate: employee.admissionDate,
+        interviewDate: employee.interviewDate, // Load existing data
+        testDate: employee.testDate,           // Load existing data
+        workSchedule: employee.workSchedule,   // Load existing data
         email: employee.email,
         phone: employee.phone,
         address: employee.address,
@@ -64,7 +72,10 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
         fullName: '',
         cpf: '',
         position: 'waiter',
-        admissionDate: '',
+        admissionDate: today,
+        interviewDate: today, // Default for new
+        testDate: today,      // Default for new
+        workSchedule: 'escala 6x1', // Default for new
         email: '',
         phone: '',
         address: '',
@@ -106,7 +117,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
     e.preventDefault();
     
     // Basic validation check for required fields
-    if (!formData.fullName || !formData.cpf || !formData.admissionDate || !formData.email || !formData.phone || !formData.address) {
+    if (!formData.fullName || !formData.cpf || !formData.admissionDate || !formData.email || !formData.phone || !formData.address || !formData.interviewDate || !formData.testDate || !formData.workSchedule) {
         toast.error(t('form.error'));
         return;
     }
@@ -167,7 +178,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-2">
               <Label htmlFor="fullName">{t('form.fullName')}</Label>
               <Input id="fullName" required value={formData.fullName} onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} />
             </div>
@@ -191,10 +202,33 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
                 </SelectContent>
               </Select>
             </div>
+            
+            {/* NEW DATE FIELDS */}
+            <div className="space-y-2">
+              <Label htmlFor="interviewDate">{t('form.interviewDate')}</Label>
+              <Input id="interviewDate" type="date" required value={formData.interviewDate} onChange={(e) => setFormData({ ...formData, interviewDate: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="testDate">{t('form.testDate')}</Label>
+              <Input id="testDate" type="date" required value={formData.testDate} onChange={(e) => setFormData({ ...formData, testDate: e.target.value })} />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="admissionDate">{t('form.admissionDate')}</Label>
               <Input id="admissionDate" type="date" required value={formData.admissionDate} onChange={(e) => setFormData({ ...formData, admissionDate: e.target.value })} />
             </div>
+            
+            {/* NEW SCHEDULE FIELD */}
+            <div className="space-y-2">
+              <Label htmlFor="workSchedule">{t('form.workSchedule')}</Label>
+              <Select value={formData.workSchedule} onValueChange={(value: 'escala 6x1' | 'escala 5x2') => setFormData({ ...formData, workSchedule: value })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="escala 6x1">{t('schedule.escala 6x1')}</SelectItem>
+                  <SelectItem value="escala 5x2">{t('schedule.escala 5x2')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
             <div className="space-y-2">
               <Label htmlFor="email">{t('form.email')}</Label>
               <Input id="email" type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
