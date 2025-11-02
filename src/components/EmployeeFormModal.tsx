@@ -70,14 +70,15 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
         photo: employee.photo,
       });
     } else {
+      // Initialize dates as empty strings for new employee creation
       setFormData({
         fullName: '',
         cpf: '',
         position: 'waiter',
-        admissionDate: today,
-        birthDate: today, // Default for new
-        interviewDate: today, 
-        testDate: today,      
+        admissionDate: '', // Empty
+        birthDate: '',     // Empty
+        interviewDate: '', // Empty
+        testDate: '',      // Empty
         workSchedule: 'escala 6x1', 
         email: '',
         phone: '',
