@@ -125,7 +125,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
         </div>
       </div>
 
-      {/* Origin, Destination, Passage Value & Logo */}
+      {/* Origin, Destination, Passage Value */}
       <div className="space-y-2 mb-6">
         <p className="leading-relaxed">
           {t('receipt.passage.origin')} 
@@ -136,20 +136,18 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
           <UnderlinedText className="min-w-[150px]">{destination}</UnderlinedText>
         </p>
         
-        {/* Passage Value and Logo on the same line */}
-        <div className="flex justify-between items-center">
-          <p className="leading-relaxed">
-            {t('receipt.passage.passageValue')} 
-            <UnderlinedText className="min-w-[100px] text-base font-bold">
-              {formattedPassageValue.replace('R$', '').trim()}
-            </UnderlinedText>
-          </p>
-          
-          {/* Logo */}
-          <div className="flex items-center">
-            <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
-          </div>
-        </div>
+        {/* Passage Value */}
+        <p className="leading-relaxed">
+          {t('receipt.passage.passageValue')} 
+          <UnderlinedText className="min-w-[100px] text-base font-bold">
+            {formattedPassageValue.replace('R$', '').trim()}
+          </UnderlinedText>
+        </p>
+      </div>
+      
+      {/* Logo (Moved to a separate line, aligned right) */}
+      <div className="flex justify-end mb-10">
+        <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
       </div>
 
       {/* Full Discharge Declaration */}
