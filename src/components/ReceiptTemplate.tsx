@@ -121,7 +121,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
       
       <p className="leading-relaxed mb-4">
         {t('receipt.cpfHolder')} 
-        <UnderlinedText className="min-w-[150px] text-base font-bold">
+        <UnderlinedText className="min-w-[120px] text-base font-bold">
           {employee.cpf}
         </UnderlinedText>
         {' '}
