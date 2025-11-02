@@ -210,15 +210,15 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
       {/* Footer: Logo and Date/Location (Same Line) */}
       <div className="flex items-center justify-between mt-10 mb-10">
         {/* Left Side: Logo */}
-        <div className="flex items-center w-1/2">
+        <div className="flex items-center w-1/3">
           {/* Using the static path for the logo */}
           <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
         </div>
         
         {/* Right Side: Date/Location */}
-        <div className="text-right text-sm w-1/2">
+        <div className="text-right text-sm w-2/3">
           {/* Corrigindo o espaçamento para a formatação correta */}
-          <p className="mb-2">
+          <p className="mb-2 whitespace-nowrap">
             {t('receipt.service.location')}{' '}
             <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>,{' '}
             <UnderlinedText className="min-w-[80px]">{month.toUpperCase()}</UnderlinedText> DE{' '}
