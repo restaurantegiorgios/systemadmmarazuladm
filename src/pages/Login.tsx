@@ -127,12 +127,12 @@ const Login = () => {
 
       <Card className="w-full max-w-md shadow-2xl relative z-10 animate-fade-in">
         <CardHeader className="space-y-1 text-center">
-          {/* Removendo a moldura circular, mantendo apenas a imagem centralizada */}
+          {/* Contêiner da logo */}
           <div className="mx-auto w-52 h-52 flex items-center justify-center mb-4">
             <img 
               src="/logo_giorgios_centralizada.png" 
               alt="Logo Giorgio's Mar Azul" 
-              className="h-full w-auto object-contain"
+              className="h-full w-auto object-contain drop-shadow-xl"
             />
           </div>
           <CardTitle className="text-3xl font-bold">{t('login.title')}</CardTitle>
