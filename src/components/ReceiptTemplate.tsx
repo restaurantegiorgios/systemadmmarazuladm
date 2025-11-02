@@ -156,9 +156,10 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         {t('receipt.note')}
       </p>
 
-      {/* Footer: Logo and Date/Location */}
+      {/* Footer: Logo, Signature and Date/Location */}
       <div className="flex items-end justify-between mt-10">
-        <div className="flex flex-col items-center">
+        {/* Left Side: Logo and Signature */}
+        <div className="flex flex-col items-center w-1/2 pr-4">
           <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
           <div className="mt-12 w-full text-center">
             <div className="border-t border-black w-full"></div>
@@ -166,17 +167,15 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
           </div>
         </div>
         
-        <div className="text-right text-sm">
+        {/* Right Side: Date/Location */}
+        <div className="text-right text-sm w-1/2 pl-4">
           <p className="mb-2">
             {t('receipt.location')} 
             <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>, 
             <UnderlinedText className="min-w-[80px]">{month.toUpperCase()}</UnderlinedText> DE 
             <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
           </p>
-          <div className="mt-8 border-t border-black pt-2">
-            {/* Signature line */}
-            <UnderlinedText className="w-full min-h-[1.5em] block">{''}</UnderlinedText>
-          </div>
+          {/* Removed the duplicate signature line here */}
         </div>
       </div>
     </div>
