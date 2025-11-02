@@ -111,7 +111,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         </div>
       </div>
 
-      {/* Body Text */}
+      {/* Body Text - Employee Name */}
       <p className="leading-relaxed mb-4">
         {t('receipt.receivedBy')} 
         <UnderlinedText className="w-full text-base font-bold">
@@ -119,6 +119,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         </UnderlinedText>
       </p>
       
+      {/* Body Text - CPF and Value in Words */}
       <p className="leading-relaxed mb-4">
         {t('receipt.cpfHolder')} 
         <UnderlinedText className="min-w-[120px] text-base font-bold">
@@ -126,13 +127,10 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         </UnderlinedText>
         {' '}
         {t('receipt.receivedFrom')}
-      </p>
-      
-      <p className="leading-relaxed mb-4">
-        <UnderlinedText className="w-full text-base font-bold">
+        <UnderlinedText className="text-base font-bold">
           {valueInWords.toUpperCase()}
         </UnderlinedText>,
-        <br />
+        {' '}
         {t('receipt.serviceReference')}
         {' '}
         {t('receipt.serviceDateLabel')}
