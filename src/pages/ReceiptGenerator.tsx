@@ -298,7 +298,7 @@ const ReceiptGenerator = () => {
   
   const renderServiceDateFields = () => (
     <>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="service-start-date">{t('receipt.serviceDate')} (Início)</Label>
           <Input
@@ -349,7 +349,7 @@ const ReceiptGenerator = () => {
 
   const renderPassageFields = () => (
     <>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="service-start-date">{t('receipt.serviceDate')} (Início)</Label>
           <Input
@@ -431,7 +431,7 @@ const ReceiptGenerator = () => {
         )}
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="passage-origin">{t('receipt.passage.origin')}</Label>
           <Input 
@@ -553,7 +553,9 @@ const ReceiptGenerator = () => {
                 <CardTitle>{t('receipt.receiptTemplate')}</CardTitle>
               </CardHeader>
               <CardContent className="flex justify-center">
-                {renderReceiptTemplate()}
+                <div className="overflow-x-auto w-full">
+                  {renderReceiptTemplate()}
+                </div>
               </CardContent>
             </Card>
             

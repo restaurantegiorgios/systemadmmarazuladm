@@ -208,7 +208,7 @@ const Dashboard = () => {
                 ))}
               </SelectContent>
             </Select>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               {statusOptions.map(option => (
                 <Button
                   key={option.value}
@@ -223,75 +223,77 @@ const Dashboard = () => {
         </div>
 
         <div className="bg-card rounded-lg shadow-elegant overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead> {/* New Photo Column */}
-                <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
-                <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
-                <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
-                <SortableHeader sortKey="phone" className="hidden lg:table-cell">{t('dashboard.phone')}</SortableHeader>
-                <SortableHeader sortKey="status">{t('dashboard.status')}</SortableHeader>
-                <TableHead className="text-right">{t('dashboard.actions')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedEmployees.map((employee) => (
-                <TableRow key={employee.id} className="hover:bg-muted/50 transition-colors">
-                  <TableCell>
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={employee.photo} />
-                      <AvatarFallback className="bg-secondary text-secondary-foreground">
-                        {employee.photo ? '' : <User className="h-4 w-4" />}
-                      </AvatarFallback>
-                    </Avatar>
-                  </TableCell>
-                  <TableCell className="font-medium">{employee.fullName}</TableCell>
-                  <TableCell className="hidden md:table-cell">{t(`position.${employee.position}`)}</TableCell>
-                  <TableCell className="hidden lg:table-cell">{employee.email}</TableCell>
-                  <TableCell 
-                    className="hidden lg:table-cell text-blue-600 hover:text-blue-800 cursor-pointer hover:underline"
-                    onClick={() => handleWhatsAppRedirect(employee.phone)}
-                  >
-                    {employee.phone}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={employee.status === 'active' ? 'default' : 'secondary'}>
-                      {t(`dashboard.${employee.status}`)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => navigate(`/employee/${employee.id}`)}
-                        title={t('dashboard.view')}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEdit(employee)}
-                        title={t('dashboard.edit')}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setDeleteId(employee.id)}
-                        title={t('dashboard.delete')}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead> {/* New Photo Column */}
+                  <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
+                  <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
+                  <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
+                  <SortableHeader sortKey="phone" className="hidden lg:table-cell">{t('dashboard.phone')}</SortableHeader>
+                  <SortableHeader sortKey="status">{t('dashboard.status')}</SortableHeader>
+                  <TableHead className="text-right">{t('dashboard.actions')}</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {sortedEmployees.map((employee) => (
+                  <TableRow key={employee.id} className="hover:bg-muted/50 transition-colors">
+                    <TableCell>
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={employee.photo} />
+                        <AvatarFallback className="bg-secondary text-secondary-foreground">
+                          {employee.photo ? '' : <User className="h-4 w-4" />}
+                        </AvatarFallback>
+                      </Avatar>
+                    </TableCell>
+                    <TableCell className="font-medium">{employee.fullName}</TableCell>
+                    <TableCell className="hidden md:table-cell">{t(`position.${employee.position}`)}</TableCell>
+                    <TableCell className="hidden lg:table-cell">{employee.email}</TableCell>
+                    <TableCell 
+                      className="hidden lg:table-cell text-blue-600 hover:text-blue-800 cursor-pointer hover:underline"
+                      onClick={() => handleWhatsAppRedirect(employee.phone)}
+                    >
+                      {employee.phone}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={employee.status === 'active' ? 'default' : 'secondary'}>
+                        {t(`dashboard.${employee.status}`)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => navigate(`/employee/${employee.id}`)}
+                          title={t('dashboard.view')}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEdit(employee)}
+                          title={t('dashboard.edit')}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setDeleteId(employee.id)}
+                          title={t('dashboard.delete')}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </main>
 

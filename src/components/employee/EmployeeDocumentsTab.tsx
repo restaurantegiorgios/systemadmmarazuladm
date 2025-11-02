@@ -95,9 +95,9 @@ const EmployeeDocumentsTab: React.FC<EmployeeDocumentsTabProps> = ({
       </Card>
 
       <div>
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
           <h3 className="text-lg font-semibold">{t('profile.uploadedDocs')}</h3>
-          <div className="w-[200px]">
+          <div className="w-full sm:w-[200px]">
             <Select 
               value={documentFilter} 
               onValueChange={(value: DocumentTypeKey) => setDocumentFilter(value)}
@@ -124,18 +124,18 @@ const EmployeeDocumentsTab: React.FC<EmployeeDocumentsTabProps> = ({
           <div className="space-y-2">
             {filteredDocuments.map((doc) => (
               <Card key={doc.id} className="hover:shadow-soft transition-shadow">
-                <CardContent className="p-4 flex items-center justify-between">
+                <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   {/* Clicar no item abre a visualização */}
                   <div className="flex items-center gap-3 cursor-pointer" onClick={() => handleViewDoc(doc)}>
-                    <FileText className="h-8 w-8 text-primary" />
+                    <FileText className="h-8 w-8 text-primary flex-shrink-0" />
                     <div>
-                      <p className="font-medium hover:underline">{doc.fileName}</p>
+                      <p className="font-medium hover:underline break-all">{doc.fileName}</p>
                       <p className="text-sm text-muted-foreground">
                         {t(`docType.${doc.type}`)} • {new Date(doc.uploadDate).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 self-end sm:self-center">
                     {/* Botão de Download */}
                     <Button
                       variant="ghost"
