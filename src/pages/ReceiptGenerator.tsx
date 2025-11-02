@@ -257,7 +257,7 @@ const ReceiptGenerator = () => {
   const renderServiceDateFields = () => (
     <div className="grid grid-cols-2 gap-4">
       <div className="space-y-2">
-        <Label htmlFor="service-start-date">{t('receipt.serviceDate')} ({t('form.start')})</Label>
+        <Label htmlFor="service-start-date">{t('receipt.serviceDate')} (Início)</Label>
         <Input
           id="service-start-date"
           type="date"
@@ -267,7 +267,7 @@ const ReceiptGenerator = () => {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="service-end-date">{t('receipt.serviceDate')} ({t('form.end')})</Label>
+        <Label htmlFor="service-end-date">{t('receipt.serviceDate')} (Fim)</Label>
         <Input
           id="service-end-date"
           type="date"
