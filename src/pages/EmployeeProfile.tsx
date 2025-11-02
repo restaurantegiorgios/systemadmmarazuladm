@@ -63,6 +63,7 @@ const EmployeeProfile = () => {
         status: initialEmployee.status,
         photo: initialEmployee.photo,
         // NEW FIELDS
+        birthDate: initialEmployee.birthDate, // Ensure birthDate is loaded
         interviewDate: initialEmployee.interviewDate,
         testDate: initialEmployee.testDate,
         workSchedule: initialEmployee.workSchedule,
@@ -137,7 +138,7 @@ const EmployeeProfile = () => {
     if (!id || !initialEmployee) return;
 
     // Basic validation check for required fields
-    if (!editableData.fullName || !editableData.cpf || !editableData.admissionDate || !editableData.email || !editableData.phone || !editableData.address || !editableData.interviewDate || !editableData.testDate || !editableData.workSchedule) {
+    if (!editableData.fullName || !editableData.cpf || !editableData.admissionDate || !editableData.email || !editableData.phone || !editableData.address || !editableData.interviewDate || !editableData.testDate || !editableData.workSchedule || !editableData.birthDate) {
         toast.error(t('form.error'));
         return;
     }
@@ -161,6 +162,7 @@ const EmployeeProfile = () => {
       status: initialEmployee.status,
       photo: initialEmployee.photo,
       // NEW FIELDS RESET
+      birthDate: initialEmployee.birthDate,
       interviewDate: initialEmployee.interviewDate,
       testDate: initialEmployee.testDate,
       workSchedule: initialEmployee.workSchedule,
@@ -321,7 +323,7 @@ const EmployeeProfile = () => {
             className="bg-accent hover:bg-accent/90 text-white"
           >
             <Printer className="mr-2 h-4 w-4" />
-            {t('receipt.print')}
+            Imprimir Perfil
           </Button>
         </div>
 
