@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmployees, Employee } from '@/contexts/EmployeeProvider';
 import { Header } from '@/components/Header';
@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -60,6 +60,9 @@ const ReceiptGenerator = () => {
   const [serviceStartDate, setServiceStartDate] = useState<string>(today);
   const [serviceEndDate, setServiceEndDate] = useState<string>(today);
   
+  // Service Receipt specific state
+  const [useCurrentDate, setUseCurrentDate] = useState<boolean>(true);
+
   // Passage Receipt specific states
   const [passagePaymentMethod, setPassagePaymentMethod] = useState('');
   const [passageOtherPaymentMethod, setPassageOtherPaymentMethod] = useState('');
@@ -68,6 +71,13 @@ const ReceiptGenerator = () => {
   const [passageValueInput, setPassageValueInput] = useState<string>('');
 
   const [generatedReceipt, setGeneratedReceipt] = useState<GeneratedReceipt>(null);
+
+  // Effect to update the end date when the toggle is switched back to 'on'
+  useEffect(() => {
+    if (useCurrentDate) {
+      setServiceEndDate(new Date().toISOString().split('T')[0]);
+    }
+  }, [useCurrentDate]);
 
   const selectedEmployee = selectedEmployeeId ? getEmployeeById(selectedEmployeeId) : null;
 
@@ -279,7 +289,7 @@ const ReceiptGenerator = () => {
   };
   
   const renderServiceDateFields = () => (
-    <div className="grid grid-cols-2 gap-4">
+    <>
       <div className="space-y-2">
         <Label htmlFor="service-start-date">{t('receipt.serviceDate')} (Início)</Label>
         <Input
@@ -290,17 +300,31 @@ const ReceiptGenerator = () => {
           required
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="service-end-date">{t('receipt.serviceDate')} (Fim)</Label>
-        <Input
-          id="service-end-date"
-          type="date"
-          value={serviceEndDate}
-          onChange={(e) => setServiceEndDate(e.target.value)}
-          required
+
+      <div className="flex items-center justify-between rounded-lg border p-3">
+        <div className="space-y-0.5">
+          <Label htmlFor="use-current-date-switch">Recibo com data atual</Label>
+        </div>
+        <Switch
+          id="use-current-date-switch"
+          checked={useCurrentDate}
+          onCheckedChange={setUseCurrentDate}
         />
       </div>
-    </div>
+
+      {!useCurrentDate && (
+        <div className="space-y-2 animate-fade-in">
+          <Label htmlFor="service-end-date">{t('receipt.serviceDate')} (Fim)</Label>
+          <Input
+            id="service-end-date"
+            type="date"
+            value={serviceEndDate}
+            onChange={(e) => setServiceEndDate(e.target.value)}
+            required
+          />
+        </div>
+      )}
+    </>
   );
 
   const renderPassageFields = () => (
