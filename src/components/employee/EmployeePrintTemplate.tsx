@@ -50,19 +50,8 @@ const EmployeePrintTemplate = React.forwardRef<HTMLDivElement, EmployeePrintTemp
     );
   };
 
-  const renderDocument = (doc: Document) => (
-    <div key={doc.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-md bg-gray-50 mb-2">
-      <div className="flex items-center gap-3">
-        <FileText className="h-5 w-5 text-primary" />
-        <div>
-          <p className="font-medium text-sm">{doc.fileName}</p>
-          <p className="text-xs text-gray-500">
-            {t(`docType.${doc.type}`)} • {formatDate(doc.uploadDate, t)}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+  // Document rendering function is no longer needed, but keeping the structure clean.
+  // const renderDocument = (doc: Document) => (...);
 
   return (
     <div 
@@ -115,15 +104,7 @@ const EmployeePrintTemplate = React.forwardRef<HTMLDivElement, EmployeePrintTemp
         {renderDetail('form.admissionDate', employee.admissionDate, (v) => formatDate(v, t))}
       </div>
 
-      {/* Documents */}
-      <h3 className="text-lg font-bold mb-4 border-b pb-1">{t('profile.documents')} ({employee.documents.length})</h3>
-      {employee.documents.length > 0 ? (
-        <div className="space-y-2">
-          {employee.documents.map(renderDocument)}
-        </div>
-      ) : (
-        <p className="text-gray-500 italic">{t('profile.noDocuments')}</p>
-      )}
+      {/* Documents section removed as requested */}
       
       {/* Footer / Print Date */}
       <div className="mt-12 pt-4 border-t border-gray-300 text-xs text-gray-500 text-center">
