@@ -29,7 +29,8 @@ const Login = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [photo, setPhoto] = useState<string>('');
   
-  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false); // NEW State
+  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login'); // State to track active tab
 
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
@@ -98,6 +99,7 @@ const Login = () => {
       setRegisterPassword('');
       setConfirmPassword('');
       setPhoto('');
+      setActiveTab('login'); // Switch back to login after successful registration
     } else {
       toast.error(result.error || 'Erro ao cadastrar');
     }
@@ -127,19 +129,26 @@ const Login = () => {
 
       <Card className="w-full max-w-md shadow-2xl relative z-10 animate-fade-in">
         <CardHeader className="space-y-1 text-center">
-          {/* Contêiner da logo: Reduzido para w-48 h-48 */}
-          <div className="mx-auto w-48 h-48 flex items-center justify-center mb-4 bg-white rounded-lg shadow-2xl overflow-hidden">
-            <img 
-              src="/logo_giorgios_centralizada.png" 
-              alt="Logo Giorgio's Mar Azul" 
-              className="w-full h-full object-cover"
-            />
-          </div>
+          {/* Renderiza a logo apenas se a aba ativa for 'login' */}
+          {activeTab === 'login' && (
+            <div className="mx-auto w-48 h-48 flex items-center justify-center mb-4 bg-white rounded-lg shadow-2xl overflow-hidden transition-opacity duration-300">
+              <img 
+                src="/logo_giorgios_centralizada.png" 
+                alt="Logo Giorgio's Mar Azul" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           <CardTitle className="text-3xl font-bold">{t('login.title')}</CardTitle>
           <CardDescription className="text-lg">{t('login.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs 
+            defaultValue="login" 
+            className="w-full"
+            value={activeTab} // Control the tab state
+            onValueChange={(value) => setActiveTab(value as 'login' | 'register')} // Update state on change
+          >
             <TabsList className="grid w-full grid-cols-2 mb-4">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Cadastro</TabsTrigger>
