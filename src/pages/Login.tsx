@@ -127,12 +127,12 @@ const Login = () => {
 
       <Card className="w-full max-w-md shadow-2xl relative z-10 animate-fade-in">
         <CardHeader className="space-y-1 text-center">
-          {/* Contêiner da logo: Aumentado para w-64 h-64, com fundo branco e sombra para destaque */}
-          <div className="mx-auto w-64 h-64 flex items-center justify-center mb-4 bg-white rounded-lg shadow-2xl p-4">
+          {/* Contêiner da logo: w-64 h-64, fundo branco e sombra. Removendo padding. */}
+          <div className="mx-auto w-64 h-64 flex items-center justify-center mb-4 bg-white rounded-lg shadow-2xl">
             <img 
               src="/logo_giorgios_centralizada.png" 
               alt="Logo Giorgio's Mar Azul" 
-              className="h-full w-auto object-contain"
+              className="w-full h-full object-contain"
             />
           </div>
           <CardTitle className="text-3xl font-bold">{t('login.title')}</CardTitle>
