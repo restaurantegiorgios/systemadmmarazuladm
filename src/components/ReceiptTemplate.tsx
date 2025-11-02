@@ -1,5 +1,7 @@
 import React from 'react';
 import { Employee } from '@/contexts/EmployeeProvider';
+import logoRodape from '@/assets/logo_rodape.png'; // Import the logo
+import { cn } from '@/lib/utils';
 
 interface ReceiptTemplateProps {
   employee: Employee;
@@ -104,7 +106,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
 
   // Helper component for underlined text
   const UnderlinedText: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = '' }) => (
-    <span className={`inline-block border-b border-black px-1 ${className}`}>
+    <span className={cn("inline-block border-b border-black px-1", className)}>
       {children}
     </span>
   );
@@ -114,7 +116,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
       
       {/* Header: RECIBO R$: ________ */}
       <div className="flex justify-between items-end mb-6">
-        <h2 className="text-2xl font-bold">{t('receipt.receiptTitle')}</h2>
+        <h2 className="text-2xl font-bold">{t('receipt.service.receiptTitle')}</h2>
         <div className="text-xl font-bold flex items-center">
           R$: 
           <UnderlinedText className="min-w-[100px] text-right text-lg font-extrabold">
@@ -125,7 +127,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
 
       {/* Body Text - Employee Name */}
       <p className="leading-relaxed mb-4">
-        {t('receipt.receivedBy')} 
+        {t('receipt.service.receivedBy')} 
         <UnderlinedText className="w-full text-base font-bold">
           {employee.fullName.toUpperCase()}
         </UnderlinedText>
@@ -133,19 +135,19 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
       
       {/* Body Text - CPF and Value in Words */}
       <p className="leading-relaxed mb-4">
-        {t('receipt.cpfHolder')} 
+        {t('receipt.service.cpfHolder')} 
         <UnderlinedText className="min-w-[120px] text-base font-bold">
           {employee.cpf}
         </UnderlinedText>
         {' '}
-        {t('receipt.receivedFrom')}
+        {t('receipt.service.receivedFrom')}
         <UnderlinedText className="text-base font-bold">
           {valueInWords}
         </UnderlinedText>,
         {' '}
-        {t('receipt.serviceReference')}
+        {t('receipt.service.serviceReference')}
         {' '}
-        {t('receipt.serviceDateLabel')}
+        {t('receipt.service.serviceDateLabel')}
         <UnderlinedText className="min-w-[100px] text-base font-bold">
           {new Date(serviceDate).toLocaleDateString('pt-BR')}
         </UnderlinedText>.
@@ -153,20 +155,21 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
 
       {/* Note */}
       <p className="font-semibold italic mt-6 mb-6">
-        {t('receipt.note')}
+        {t('receipt.service.note')}
       </p>
 
       {/* Footer: Logo and Date/Location (Same Line) */}
       <div className="flex items-center justify-between mt-10 mb-10">
         {/* Left Side: Logo */}
         <div className="flex items-center w-1/2">
-          <img src="/logo_rodape.png" className="w-24 h-auto" />
+          {/* Using the imported logo */}
+          <img src={logoRodape} alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
         </div>
         
         {/* Right Side: Date/Location */}
         <div className="text-right text-sm w-1/2">
           <p className="mb-2">
-            {t('receipt.location')} 
+            {t('receipt.service.location')} 
             <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>, 
             <UnderlinedText className="min-w-[80px]">{month.toUpperCase()}</UnderlinedText> DE 
             <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
@@ -196,7 +199,7 @@ const ReceiptTemplate = React.forwardRef<HTMLDivElement, ReceiptTemplateProps>((
 
       {/* Linha de Corte (Apenas visível na impressão) */}
       <div className="hidden print:block my-8 border-t border-dashed border-gray-500 text-center text-xs text-gray-500">
-        --- {props.t('receipt.receiptTitle')} (Corte Aqui) ---
+        --- {props.t('receipt.type.service')} (Corte Aqui) ---
       </div>
 
       {/* Segunda Via */}
