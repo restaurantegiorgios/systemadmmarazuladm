@@ -25,6 +25,17 @@ const translations = {
     'login.success': 'Login realizado com sucesso!',
     'login.error': 'Email ou senha incorretos',
     
+    // Forgot Password (NEW)
+    'forgotPassword.link': 'Esqueceu sua senha?',
+    'forgotPassword.title': 'Recuperar Senha',
+    'forgotPassword.description': 'Insira seu email e a nova senha desejada. Você será logado automaticamente após a redefinição.',
+    'forgotPassword.newPassword': 'Nova Senha',
+    'forgotPassword.confirmNewPassword': 'Confirmar Nova Senha',
+    'forgotPassword.resetButton': 'Redefinir Senha',
+    'forgotPassword.success': 'Senha redefinida com sucesso!',
+    'forgotPassword.error.emailNotFound': 'Email não encontrado no sistema.',
+    'forgotPassword.error.generic': 'Erro ao redefinir a senha.',
+    
     // Dashboard
     'dashboard.title': 'Funcionários',
     'dashboard.addNew': 'Novo Funcionário',
@@ -158,6 +169,11 @@ const translations = {
     'docType.medical': 'Exame Médico',
     'docType.contract': 'Contrato',
     'docType.other': 'Outro',
+    
+    // User Profile Errors (used by Forgot Password too)
+    'userProfile.error.invalidEmail': 'Email inválido.',
+    'userProfile.error.passwordLength': 'A senha deve ter pelo menos 6 caracteres.',
+    'userProfile.error.passwordMismatch': 'As senhas não coincidem.',
   },
   'en-US': {
     // Header
@@ -175,6 +191,17 @@ const translations = {
     'login.success': 'Login successful!',
     'login.error': 'Invalid email or password',
     
+    // Forgot Password (NEW)
+    'forgotPassword.link': 'Forgot your password?',
+    'forgotPassword.title': 'Password Recovery',
+    'forgotPassword.description': 'Enter your email and the desired new password. You will be automatically logged in after resetting.',
+    'forgotPassword.newPassword': 'New Password',
+    'forgotPassword.confirmNewPassword': 'Confirm New Password',
+    'forgotPassword.resetButton': 'Reset Password',
+    'forgotPassword.success': 'Password reset successfully!',
+    'forgotPassword.error.emailNotFound': 'Email not found in the system.',
+    'forgotPassword.error.generic': 'Error resetting password.',
+
     // Dashboard
     'dashboard.title': 'Employees',
     'dashboard.addNew': 'New Employee',
@@ -308,6 +335,11 @@ const translations = {
     'docType.medical': 'Medical Exam',
     'docType.contract': 'Contract',
     'docType.other': 'Other',
+    
+    // User Profile Errors (used by Forgot Password too)
+    'userProfile.error.invalidEmail': 'Invalid email.',
+    'userProfile.error.passwordLength': 'Password must be at least 6 characters.',
+    'userProfile.error.passwordMismatch': 'Passwords do not match.',
   },
 };
 

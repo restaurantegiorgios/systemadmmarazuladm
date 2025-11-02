@@ -16,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import ForgotPasswordModal from '@/components/ForgotPasswordModal'; // Import the new modal
 
 const Login = () => {
   const [loginEmail, setLoginEmail] = useState('');
@@ -28,6 +29,8 @@ const Login = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [photo, setPhoto] = useState<string>('');
   
+  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false); // NEW State
+
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const { login, register } = useUser();
@@ -161,6 +164,18 @@ const Login = () => {
                     className="transition-all"
                   />
                 </div>
+                
+                <div className="text-right">
+                  <Button 
+                    type="button" 
+                    variant="link" 
+                    className="text-sm p-0 h-auto text-primary hover:text-accent"
+                    onClick={() => setIsForgotPasswordModalOpen(true)} // Open modal
+                  >
+                    {t('forgotPassword.link')}
+                  </Button>
+                </div>
+
                 <Button type="submit" className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all">
                   {t('login.button')}
                 </Button>
@@ -255,6 +270,11 @@ const Login = () => {
           </Tabs>
         </CardContent>
       </Card>
+      
+      <ForgotPasswordModal 
+        isOpen={isForgotPasswordModalOpen} 
+        onClose={() => setIsForgotPasswordModalOpen(false)} 
+      />
     </div>
   );
 };

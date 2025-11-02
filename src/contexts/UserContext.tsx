@@ -16,6 +16,7 @@ interface UserContextType {
   logout: () => void;
   register: (userData: Omit<User, 'id'>) => { success: boolean; error?: string };
   updateUser: (userId: string, userData: Partial<Omit<User, 'id'>>) => { success: boolean; error?: string };
+  resetPassword: (email: string, newPassword: string) => { success: boolean; error?: string };
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -95,9 +96,31 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return { success: true };
   };
+  
+  const resetPassword = (email: string, newPassword: string): { success: boolean; error?: string } => {
+    const userIndex = users.findIndex(u => u.email === email);
+    
+    if (userIndex === -1) {
+      return { success: false, error: 'forgotPassword.error.emailNotFound' };
+    }
+    
+    const updatedUsers = [...users];
+    updatedUsers[userIndex] = { ...updatedUsers[userIndex], password: newPassword };
+    
+    setUsers(updatedUsers);
+    localStorage.setItem('systemUsers', JSON.stringify(updatedUsers));
+    
+    // If the current user is the one resetting the password, update their session too (though they should be logged out)
+    if (currentUser && currentUser.email === email) {
+      setCurrentUser(updatedUsers[userIndex]);
+      localStorage.setItem('currentUser', JSON.stringify(updatedUsers[userIndex]));
+    }
+    
+    return { success: true };
+  };
 
   return (
-    <UserContext.Provider value={{ users, currentUser, login, logout, register, updateUser }}>
+    <UserContext.Provider value={{ users, currentUser, login, logout, register, updateUser, resetPassword }}>
       {children}
     </UserContext.Provider>
   );
