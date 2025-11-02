@@ -160,7 +160,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
       <div className="flex items-center justify-between mt-10 mb-10">
         {/* Left Side: Logo */}
         <div className="flex items-center w-1/2">
-          <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
+          <img src="/logo_rodape.png" className="w-24 h-auto" />
         </div>
         
         {/* Right Side: Date/Location */}
