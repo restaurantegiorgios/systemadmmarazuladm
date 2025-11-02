@@ -127,11 +127,11 @@ const Login = () => {
         </DropdownMenu>
       </div>
 
-      <Card className="w-full max-w-md shadow-2xl relative z-10 animate-fade-in">
+      <Card className="w-full max-w-md sm:max-w-lg shadow-2xl relative z-10 animate-fade-in">
         <CardHeader className="space-y-1 text-center">
           {/* Renderiza a logo apenas se a aba ativa for 'login' */}
           {activeTab === 'login' && (
-            <div className="mx-auto w-48 h-48 flex items-center justify-center mb-4 bg-white rounded-lg shadow-2xl overflow-hidden transition-opacity duration-300">
+            <div className="mx-auto w-36 h-36 sm:w-48 sm:h-48 flex items-center justify-center mb-4 bg-white rounded-lg shadow-2xl overflow-hidden transition-opacity duration-300">
               <img 
                 src="/logo_giorgios_centralizada.png" 
                 alt="Logo Giorgio's Mar Azul" 
@@ -220,7 +220,7 @@ const Login = () => {
                   </Label>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">Nome *</Label>
                     <Input
