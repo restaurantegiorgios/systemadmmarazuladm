@@ -71,6 +71,11 @@ const ReceiptGenerator = () => {
 
   const selectedEmployee = selectedEmployeeId ? getEmployeeById(selectedEmployeeId) : null;
 
+  const handleReceiptTypeChange = (value: ReceiptType) => {
+    setReceiptType(value);
+    setGeneratedReceipt(null); // Clear generated receipt when type changes
+  };
+
   const formatCurrencyInput = (value: string): string => {
     let cleanValue = value.replace(/\D/g, '');
     if (cleanValue.length === 0) return '';
@@ -186,7 +191,7 @@ const ReceiptGenerator = () => {
       
       if (printWindow) {
         printWindow.document.write('<html><head><title>Recibo</title>');
-        // Include the application's CSS for Tailwind print styles to work
+        // Include the application\'s CSS for Tailwind print styles to work
         printWindow.document.write('<link rel="stylesheet" href="/src/index.css" />');
         printWindow.document.write('</head><body>');
         printWindow.document.write('<style>');
@@ -312,8 +317,6 @@ const ReceiptGenerator = () => {
         </div>
       </div>
       
-      {/* Removed: Days of Service Textarea */}
-      
       <div className="space-y-2">
         <Label>{t('receipt.passage.paymentMethod')}</Label>
         <RadioGroup 
@@ -410,8 +413,8 @@ const ReceiptGenerator = () => {
                 {/* Receipt Type Selection */}
                 <div className="space-y-2">
                   <Label>{t('receipt.type')}</Label>
-                  <Select value={receiptType} onValueChange={(value: ReceiptType) => setReceiptType(value)}>
-                    <SelectTrigger>
+                  <Select value={receiptType} onValueChange={handleReceiptTypeChange}>
+                    <SelectTrigger id="receipt-type-select">
                       <SelectValue placeholder={t('receipt.type')} />
                     </SelectTrigger>
                     <SelectContent>
