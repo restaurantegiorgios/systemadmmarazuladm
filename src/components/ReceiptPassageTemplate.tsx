@@ -70,7 +70,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   };
 
   return (
-    <div className="p-6 border border-gray-300 bg-white text-black max-w-xl mx-auto print:border-none print:p-0 text-sm">
+    <div className="p-6 border border-gray-300 bg-white text-black mx-auto print:border-none print:p-0 text-sm w-full">
       
       {/* Header */}
       <h2 className="text-xl font-bold text-center mb-6">{t('receipt.passage.declarationTitle')}</h2>
@@ -160,7 +160,7 @@ const ReceiptPassageTemplate = React.forwardRef<HTMLDivElement, ReceiptPassageTe
   return (
     <div 
       ref={ref} 
-      className="w-full max-w-xl mx-auto shadow-lg print:shadow-none print:w-auto print:max-w-none"
+      className="w-full mx-auto shadow-lg print:shadow-none print:w-auto print:max-w-none"
     >
       {/* Primeira Via */}
       <ReceiptPassageContent {...props} />
