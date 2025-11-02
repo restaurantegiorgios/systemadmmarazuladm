@@ -126,7 +126,8 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
       </div>
 
       {/* Origin, Destination, Passage Value */}
-      <div className="space-y-2 mb-6">
+      {/* Alterado mb-6 para mb-2 para reduzir o espaço após este bloco */}
+      <div className="space-y-2 mb-2">
         <p className="leading-relaxed">
           {t('receipt.passage.origin')} 
           <UnderlinedText className="min-w-[150px]">{origin}</UnderlinedText>
@@ -146,7 +147,8 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
       </div>
       
       {/* Full Discharge Declaration and Logo (on the same line) */}
-      <div className="flex items-center justify-between mt-10 mb-10">
+      {/* Alterado mt-10 para mt-2 e mb-10 para mb-6 para reduzir o espaço antes e depois */}
+      <div className="flex items-center justify-between mt-2 mb-6">
         {/* Full Discharge Declaration (Centered within its space) */}
         <p className="italic text-center flex-1">
           {t('receipt.passage.fullDischarge')}
