@@ -33,7 +33,11 @@ const capitalizeWords = (str: string): string => {
 
 // Utility function to convert number to written form (e.g., 100.50 -> cem reais e cinquenta centavos)
 const numberToWords = (value: number): string => {
-  if (value >= 1000) {
+  if (value < 0) return 'Valor negativo não suportado';
+  if (value === 0) return 'zero reais';
+
+  // Limite de 999.999,99
+  if (value >= 1000000) {
     return `VALOR EXCEDIDO (${formatCurrency(value)})`;
   }
 
@@ -45,16 +49,19 @@ const numberToWords = (value: number): string => {
   const integerPart = Math.floor(value);
   const decimalPart = Math.round((value - integerPart) * 100);
 
-  const convertHundreds = (n: number): string => {
+  const convertGroup = (n: number, suffix: string = ''): string => {
     if (n === 0) return '';
-    if (n === 100) return 'cem';
     
     let result = '';
     const h = Math.floor(n / 100);
     const t = n % 100;
 
     if (h > 0) {
-      result += hundreds[h];
+      if (h === 1 && t === 0) {
+        result += 'cem';
+      } else {
+        result += hundreds[h];
+      }
       if (t > 0) result += ' e ';
     }
 
@@ -70,19 +77,51 @@ const numberToWords = (value: number): string => {
         if (unit > 0) result += ' e ' + units[unit];
       }
     }
+    
+    if (result) {
+      result += suffix;
+    }
     return result;
   };
 
   let result = '';
-  
-  if (integerPart > 0) {
-    const reais = integerPart === 1 ? 'real' : 'reais';
-    result += convertHundreds(integerPart) + ' ' + reais;
+  let tempInteger = integerPart;
+
+  // Milhares (up to 999)
+  const thousands = Math.floor(tempInteger / 1000);
+  tempInteger %= 1000;
+
+  if (thousands > 0) {
+    if (thousands === 1) {
+      result += 'mil';
+    } else {
+      result += convertGroup(thousands) + ' mil';
+    }
+    if (tempInteger > 0) {
+      // Adiciona 'e' se o restante for menor que 100, ou 'e' se for maior que 100
+      if (tempInteger < 100) {
+        result += ' e ';
+      } else {
+        result += ' e '; // Mantendo a regra de 'e' entre grupos
+      }
+    }
   }
 
+  // Centenas (up to 999)
+  if (tempInteger > 0) {
+    result += convertGroup(tempInteger);
+  }
+  
+  // Adicionar a moeda (reais)
+  if (integerPart > 0) {
+    const reais = integerPart === 1 ? 'real' : 'reais';
+    result += ' ' + reais;
+  }
+
+  // Adicionar centavos
   if (decimalPart > 0) {
     const centavos = decimalPart === 1 ? 'centavo' : 'centavos';
-    const centavosWords = convertHundreds(decimalPart);
+    const centavosWords = convertGroup(decimalPart);
     
     if (integerPart > 0) {
       result += ' e ';
@@ -90,9 +129,8 @@ const numberToWords = (value: number): string => {
     result += centavosWords + ' ' + centavos;
   }
   
-  if (result === '') return 'zero reais';
-
-  return result;
+  // Limpeza final e capitalização
+  return result.trim();
 };
 
 const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, serviceStartDate, serviceEndDate, t }) => {
