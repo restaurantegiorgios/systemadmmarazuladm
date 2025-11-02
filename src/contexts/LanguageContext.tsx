@@ -95,6 +95,15 @@ const translations = {
     'profile.deleteDoc': 'Deletar documento',
     'profile.docDeleted': 'Documento deletado com sucesso!',
     
+    // User Profile (Used by ProfileModal) - NEW/MAPPED KEYS
+    'userProfile.title': 'Editar Perfil',
+    'userProfile.description': 'Atualize suas informações de conta.',
+    'userProfile.firstName': 'Nome',
+    'userProfile.lastName': 'Sobrenome',
+    'userProfile.changePhoto': 'Alterar Foto',
+    'userProfile.save': 'Salvar Alterações',
+    'userProfile.success': 'Perfil atualizado com sucesso!',
+    
     // Receipt Generator
     'receipt.title': 'Gerador de Recibos',
     'receipt.type': 'Tipo de Recibo',
@@ -174,6 +183,7 @@ const translations = {
     'userProfile.error.invalidEmail': 'Email inválido.',
     'userProfile.error.passwordLength': 'A senha deve ter pelo menos 6 caracteres.',
     'userProfile.error.passwordMismatch': 'As senhas não coincidem.',
+    'userProfile.error.required': 'Este campo é obrigatório.', // Added missing key
   },
   'en-US': {
     // Header
@@ -261,6 +271,15 @@ const translations = {
     'profile.deleteDoc': 'Delete document',
     'profile.docDeleted': 'Document deleted successfully!',
     
+    // User Profile (Used by ProfileModal) - NEW/MAPPED KEYS
+    'userProfile.title': 'Edit Profile',
+    'userProfile.description': 'Update your account information.',
+    'userProfile.firstName': 'First Name',
+    'userProfile.lastName': 'Last Name',
+    'userProfile.changePhoto': 'Change Photo',
+    'userProfile.save': 'Save Changes',
+    'userProfile.success': 'Profile updated successfully!',
+
     // Receipt Generator
     'receipt.title': 'Receipt Generator',
     'receipt.type': 'Receipt Type',
@@ -340,6 +359,7 @@ const translations = {
     'userProfile.error.invalidEmail': 'Invalid email.',
     'userProfile.error.passwordLength': 'Password must be at least 6 characters.',
     'userProfile.error.passwordMismatch': 'Passwords do not match.',
+    'userProfile.error.required': 'This field is required.', // Added missing key
   },
 };
 

@@ -29,6 +29,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const { currentUser, updateUser } = useUser();
   const [photoPreview, setPhotoPreview] = useState(currentUser?.photo || '');
 
+  // Define o schema de validação dentro do componente para que t() seja acessível
   const profileSchema = z.object({
     firstName: z.string().min(1, t('userProfile.error.required')),
     lastName: z.string().min(1, t('userProfile.error.required')),
@@ -49,7 +50,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
 
   type ProfileFormValues = z.infer<typeof profileSchema>;
 
-  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<ProfileFormValues>();
+  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+  });
 
   useEffect(() => {
     if (currentUser) {
@@ -96,7 +99,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
       toast.success(t('userProfile.success'));
       onClose();
     } else {
-      toast.error(result.error ? t(result.error) : t('userProfile.error'));
+      // Certifique-se de que 'userProfile.error' existe no LanguageContext
+      toast.error(result.error ? t(result.error) : t('form.error')); 
     }
   };
   
@@ -107,8 +111,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{t('userProfile.title')}</DialogTitle>
-          <DialogDescription>{t('userProfile.description')}</DialogDescription>
+          <DialogTitle>{t('profile')}</DialogTitle>
+          <DialogDescription>{t('form.personalData')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-4">
           <div className="flex flex-col items-center space-y-2">
@@ -129,12 +133,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">{t('userProfile.firstName')}</Label>
+              <Label htmlFor="firstName">{t('form.fullName').split(' ')[0]}</Label> {/* Usando apenas 'Nome' */}
               <Input id="firstName" {...register('firstName')} />
               {errors.firstName && <p className="text-sm text-destructive">{errors.firstName.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">{t('userProfile.lastName')}</Label>
+              <Label htmlFor="lastName">{t('form.fullName').split(' ').slice(1).join(' ')}</Label> {/* Usando 'Sobrenome' (ou o resto do nome) */}
               <Input id="lastName" {...register('lastName')} />
               {errors.lastName && <p className="text-sm text-destructive">{errors.lastName.message}</p>}
             </div>
@@ -148,18 +152,18 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="password">{t('userProfile.newPassword')}</Label>
+              <Label htmlFor="password">{t('forgotPassword.newPassword')}</Label>
               <Input id="password" type="password" {...register('password')} />
               {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t('userProfile.confirmNewPassword')}</Label>
+              <Label htmlFor="confirmPassword">{t('forgotPassword.confirmNewPassword')}</Label>
               <Input id="confirmPassword" type="password" {...register('confirmPassword')} />
               {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" className="bg-gradient-to-r from-primary to-accent">{t('userProfile.save')}</Button>
+            <Button type="submit" className="bg-gradient-to-r from-primary to-accent">{t('form.save')}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
