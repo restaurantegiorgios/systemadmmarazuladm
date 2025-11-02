@@ -5,9 +5,8 @@ import { cn } from '@/lib/utils';
 interface ReceiptPassageTemplateProps {
   employee: Employee;
   value: number;
-  serviceStartDate: string; // New: Used for date realized
-  serviceEndDate: string;   // New: Not explicitly used in text, but passed for consistency
-  days: string;
+  serviceStartDate: string; // Used for date realized and period start
+  serviceEndDate: string;   // Used for period end
   paymentMethod: string;
   otherPaymentMethod: string;
   origin: string;
@@ -28,7 +27,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   employee,
   value,
   serviceStartDate,
-  days,
+  serviceEndDate,
   paymentMethod,
   otherPaymentMethod,
   origin,
@@ -39,11 +38,17 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   const formattedValue = formatCurrency(value);
   const formattedPassageValue = formatCurrency(passageValue);
   
-  // Use serviceStartDate as the date realized
-  const date = new Date(serviceStartDate);
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear();
+  // Date Realized (using serviceStartDate)
+  const dateRealized = new Date(serviceStartDate);
+  const day = dateRealized.getDate().toString().padStart(2, '0');
+  const month = (dateRealized.getMonth() + 1).toString().padStart(2, '0');
+  const year = dateRealized.getFullYear();
+  
+  // Service Period
+  const formattedStartDate = new Date(serviceStartDate).toLocaleDateString('pt-BR');
+  const formattedEndDate = new Date(serviceEndDate).toLocaleDateString('pt-BR');
+  const servicePeriod = `${formattedStartDate} a ${formattedEndDate}`;
+
 
   // Helper component for underlined text
   const UnderlinedText: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = '' }) => (
@@ -105,7 +110,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
         <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
         {t('receipt.passage.reference')}
         <UnderlinedText className="w-full text-base font-bold">
-          {days}
+          {servicePeriod}
         </UnderlinedText>.
       </p>
 

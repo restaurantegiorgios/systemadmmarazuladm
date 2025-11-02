@@ -36,7 +36,6 @@ interface PassageReceiptData {
   value: number;
   serviceStartDate: string; // Changed from serviceDate
   serviceEndDate: string;   // New
-  days: string;
   paymentMethod: string;
   otherPaymentMethod: string;
   origin: string;
@@ -62,7 +61,6 @@ const ReceiptGenerator = () => {
   const [serviceEndDate, setServiceEndDate] = useState<string>(today);
   
   // Passage Receipt specific states
-  const [passageDays, setPassageDays] = useState('');
   const [passagePaymentMethod, setPassagePaymentMethod] = useState('');
   const [passageOtherPaymentMethod, setPassageOtherPaymentMethod] = useState('');
   const [passageOrigin, setPassageOrigin] = useState('');
@@ -145,10 +143,6 @@ const ReceiptGenerator = () => {
     } else if (receiptType === 'passage') {
       const numericPassageValue = cleanCurrencyValue(passageValueInput);
 
-      if (!passageDays) {
-        toast.error(t('receipt.passage.error.daysRequired'));
-        return;
-      }
       if (!passageOrigin) {
         toast.error(t('receipt.passage.error.originRequired'));
         return;
@@ -176,7 +170,6 @@ const ReceiptGenerator = () => {
         value: numericValue,
         serviceStartDate: serviceStartDate,
         serviceEndDate: serviceEndDate,
-        days: passageDays,
         paymentMethod: passagePaymentMethod,
         otherPaymentMethod: passageOtherPaymentMethod,
         origin: passageOrigin,
@@ -244,7 +237,6 @@ const ReceiptGenerator = () => {
           value={generatedReceipt.value}
           serviceStartDate={generatedReceipt.serviceStartDate} // Pass start date
           serviceEndDate={generatedReceipt.serviceEndDate}     // Pass end date
-          days={generatedReceipt.days}
           paymentMethod={generatedReceipt.paymentMethod}
           otherPaymentMethod={generatedReceipt.otherPaymentMethod}
           origin={generatedReceipt.origin}
@@ -296,7 +288,7 @@ const ReceiptGenerator = () => {
         />
       </div>
       
-      {/* New: Service Period Fields */}
+      {/* Service Period Fields */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="service-start-date">{t('receipt.serviceDate')} (Início)</Label>
@@ -320,16 +312,7 @@ const ReceiptGenerator = () => {
         </div>
       </div>
       
-      <div className="space-y-2">
-        <Label htmlFor="passage-days">{t('receipt.passage.daysPlaceholder')}</Label>
-        <Textarea 
-          id="passage-days" 
-          value={passageDays} 
-          onChange={(e) => setPassageDays(e.target.value)} 
-          placeholder={t('receipt.passage.daysPlaceholder')}
-          required
-        />
-      </div>
+      {/* Removed: Days of Service Textarea */}
       
       <div className="space-y-2">
         <Label>{t('receipt.passage.paymentMethod')}</Label>
