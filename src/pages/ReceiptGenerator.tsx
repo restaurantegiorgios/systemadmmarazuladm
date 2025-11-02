@@ -195,8 +195,30 @@ const ReceiptGenerator = () => {
         printWindow.document.write('<link rel="stylesheet" href="/src/index.css" />');
         printWindow.document.write('</head><body>');
         printWindow.document.write('<style>');
-        // Hide everything except the receipt content when printing
-        printWindow.document.write('@media print { body { margin: 0; } .print-only { display: block !important; } }');
+        // CSS para tentar suprimir cabeçalhos/rodapés e garantir fundo branco
+        printWindow.document.write(`
+          @media print { 
+            @page { 
+              margin: 0; 
+            }
+            body { 
+              margin: 0; 
+              -webkit-print-color-adjust: exact; /* Força a impressão de cores/fundos */
+              print-color-adjust: exact;
+              background-color: white !important;
+            } 
+            .print-only { 
+              display: block !important; 
+            } 
+            /* Tenta forçar a impressão de fundos e cores */
+            * {
+              color: #000 !important;
+              background: transparent !important;
+              box-shadow: none !important;
+              text-shadow: none !important;
+            }
+          }
+        `);
         printWindow.document.write('</style>');
         printWindow.document.write('<div class="p-4 print:p-0">');
         printWindow.document.write(printContent);

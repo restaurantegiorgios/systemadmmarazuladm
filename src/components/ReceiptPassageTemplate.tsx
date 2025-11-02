@@ -126,7 +126,6 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
       </div>
 
       {/* Origin, Destination, Passage Value */}
-      {/* Alterado mb-6 para mb-2 para reduzir o espaço após este bloco */}
       <div className="space-y-2 mb-2">
         <p className="leading-relaxed">
           {t('receipt.passage.origin')} 
@@ -147,7 +146,6 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
       </div>
       
       {/* Full Discharge Declaration and Logo (on the same line) */}
-      {/* Alterado mt-10 para mt-2 e mb-10 para mb-6 para reduzir o espaço antes e depois */}
       <div className="flex items-center justify-between mt-2 mb-6">
         {/* Full Discharge Declaration (Centered within its space) */}
         <p className="italic text-center flex-1">
@@ -184,7 +182,7 @@ const ReceiptPassageTemplate = React.forwardRef<HTMLDivElement, ReceiptPassageTe
 
       {/* Linha de Corte (Apenas visível na impressão) */}
       <div className="hidden print:block my-8 border-t border-dashed border-gray-500 text-center text-xs text-gray-500">
-        --- {props.t('receipt.type.passage')} (Corte Aqui) ---
+        {/* Linha de corte sem texto descritivo */}
       </div>
 
       {/* Segunda Via */}

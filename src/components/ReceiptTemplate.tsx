@@ -240,7 +240,7 @@ const ReceiptTemplate = React.forwardRef<HTMLDivElement, ReceiptTemplateProps>((
 
       {/* Linha de Corte (Apenas visível na impressão) */}
       <div className="hidden print:block my-8 border-t border-dashed border-gray-500 text-center text-xs text-gray-500">
-        --- {props.t('receipt.type.service')} (Corte Aqui) ---
+        {/* Linha de corte sem texto descritivo */}
       </div>
 
       {/* Segunda Via */}
