@@ -27,7 +27,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   employee,
   value,
   serviceStartDate,
-  serviceEndDate, // <-- Added serviceEndDate here
+  serviceEndDate,
   paymentMethod,
   otherPaymentMethod,
   origin,
@@ -38,7 +38,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   const formattedValue = formatCurrency(value);
   const formattedPassageValue = formatCurrency(passageValue);
   
-  // Date Realized (using serviceStartDate)
+  // Use serviceStartDate as the date realized
   const dateRealized = new Date(serviceStartDate);
   const day = dateRealized.getDate().toString().padStart(2, '0');
   const month = (dateRealized.getMonth() + 1).toString().padStart(2, '0');
@@ -125,7 +125,7 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
         </div>
       </div>
 
-      {/* Origin, Destination, Passage Value */}
+      {/* Origin, Destination, Passage Value & Logo */}
       <div className="space-y-2 mb-6">
         <p className="leading-relaxed">
           {t('receipt.passage.origin')} 
@@ -135,12 +135,21 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
           {t('receipt.passage.destination')} 
           <UnderlinedText className="min-w-[150px]">{destination}</UnderlinedText>
         </p>
-        <p className="leading-relaxed">
-          {t('receipt.passage.passageValue')} 
-          <UnderlinedText className="min-w-[100px] text-base font-bold">
-            {formattedPassageValue.replace('R$', '').trim()}
-          </UnderlinedText>
-        </p>
+        
+        {/* Passage Value and Logo on the same line */}
+        <div className="flex justify-between items-center">
+          <p className="leading-relaxed">
+            {t('receipt.passage.passageValue')} 
+            <UnderlinedText className="min-w-[100px] text-base font-bold">
+              {formattedPassageValue.replace('R$', '').trim()}
+            </UnderlinedText>
+          </p>
+          
+          {/* Logo */}
+          <div className="flex items-center">
+            <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
+          </div>
+        </div>
       </div>
 
       {/* Full Discharge Declaration */}
