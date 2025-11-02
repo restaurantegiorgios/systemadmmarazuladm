@@ -23,6 +23,14 @@ const formatCurrency = (value: number): string => {
   });
 };
 
+// Função para corrigir o problema de fuso horário ao criar datas a partir de strings 'YYYY-MM-DD'
+const parseLocalDate = (dateString: string): Date => {
+  if (!dateString) return new Date(); // Fallback para segurança
+  const [year, month, day] = dateString.split('-').map(Number);
+  // O mês no construtor de Date do JavaScript é 0-indexado (0 para Janeiro)
+  return new Date(year, month - 1, day);
+};
+
 const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   employee,
   value,
@@ -38,15 +46,15 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   const formattedValue = formatCurrency(value);
   const formattedPassageValue = formatCurrency(passageValue);
   
-  // Use serviceStartDate as the date realized
-  const dateRealized = new Date(serviceStartDate);
+  // Usa a função parseLocalDate para evitar problemas de fuso horário
+  const dateRealized = parseLocalDate(serviceStartDate);
   const day = dateRealized.getDate().toString().padStart(2, '0');
   const month = (dateRealized.getMonth() + 1).toString().padStart(2, '0');
   const year = dateRealized.getFullYear();
   
   // Service Period
-  const formattedStartDate = new Date(serviceStartDate).toLocaleDateString('pt-BR');
-  const formattedEndDate = new Date(serviceEndDate).toLocaleDateString('pt-BR');
+  const formattedStartDate = parseLocalDate(serviceStartDate).toLocaleDateString('pt-BR');
+  const formattedEndDate = parseLocalDate(serviceEndDate).toLocaleDateString('pt-BR');
   const servicePeriod = `${formattedStartDate} a ${formattedEndDate}`;
 
 

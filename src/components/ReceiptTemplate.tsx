@@ -133,19 +133,27 @@ const numberToWords = (value: number): string => {
   return result.trim();
 };
 
+// Função para corrigir o problema de fuso horário ao criar datas a partir de strings 'YYYY-MM-DD'
+const parseLocalDate = (dateString: string): Date => {
+  if (!dateString) return new Date(); // Fallback para segurança
+  const [year, month, day] = dateString.split('-').map(Number);
+  // O mês no construtor de Date do JavaScript é 0-indexado (0 para Janeiro)
+  return new Date(year, month - 1, day);
+};
+
 const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, serviceStartDate, serviceEndDate, t }) => {
   const formattedValue = formatCurrency(value);
   const valueOnly = formattedValue.replace('R$', '').trim(); // Valor sem o R$
   const valueInWords = capitalizeWords(numberToWords(value));
   
-  // Use the end date for the location date, as is common in receipts
-  const date = new Date(serviceEndDate);
+  // Usa a função parseLocalDate para evitar problemas de fuso horário
+  const date = parseLocalDate(serviceEndDate);
   const day = date.getDate();
   const month = date.toLocaleDateString('pt-BR', { month: 'long' });
   const year = date.getFullYear();
   
-  const formattedStartDate = new Date(serviceStartDate).toLocaleDateString('pt-BR');
-  const formattedEndDate = new Date(serviceEndDate).toLocaleDateString('pt-BR');
+  const formattedStartDate = parseLocalDate(serviceStartDate).toLocaleDateString('pt-BR');
+  const formattedEndDate = parseLocalDate(serviceEndDate).toLocaleDateString('pt-BR');
   const servicePeriod = `${formattedStartDate} a ${formattedEndDate}`;
 
   // Helper component for underlined text (used only for body text now)
@@ -209,11 +217,11 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         
         {/* Right Side: Date/Location */}
         <div className="text-right text-sm w-1/2">
-          {/* Applying whitespace-nowrap here to prevent line breaks in the date */}
+          {/* Corrigindo o espaçamento para a formatação correta */}
           <p className="mb-2 whitespace-nowrap">
-            {t('receipt.service.location')} 
-            <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>, 
-            <UnderlinedText className="min-w-[80px]">{month.toUpperCase()}</UnderlinedText> DE 
+            {t('receipt.service.location')}{' '}
+            <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>,{' '}
+            <UnderlinedText className="min-w-[80px]">{month.toUpperCase()}</UnderlinedText> DE{' '}
             <UnderlinedText className="min-w-[40px]">{year}</UnderlinedText>
           </p>
         </div>
