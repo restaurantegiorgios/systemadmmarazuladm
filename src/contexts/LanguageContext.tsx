@@ -108,8 +108,8 @@ const translations = {
     'receipt.passage.declarationTitle': 'DECLARAÇÃO RECIBO DE PASSAGEM',
     'receipt.passage.receivedBy': 'Eu,',
     'receipt.passage.cpfHolder': 'portador(a) do CPF nº',
-    'receipt.passage.receivedFrom': 'recebi de GIORGIOS RESTAURANT LTDA',
-    'receipt.passage.amount': 'a importância de R$',
+    'receipt.passage.receivedFrom': 'recebi de GIORGIOS RESTAURANT LTDA a importância de R$', // MODIFIED
+    'receipt.passage.amount': 'a importância de R$', // REMOVED from usage, kept for safety
     'receipt.passage.dateRealized': '(realizada no dia',
     'receipt.passage.dateRealizedLabel': 'Data de Realização', // NEW
     'receipt.passage.reference': '), referente ao pagamento de passagem de transporte destinados aos dias:',
@@ -249,8 +249,8 @@ const translations = {
     'receipt.passage.declarationTitle': 'PASSAGE RECEIPT DECLARATION',
     'receipt.passage.receivedBy': 'I,',
     'receipt.passage.cpfHolder': 'CPF Holder No.',
-    'receipt.passage.receivedFrom': 'received from GIORGIOS RESTAURANT LTDA',
-    'receipt.passage.amount': 'the amount of R$',
+    'receipt.passage.receivedFrom': 'received from GIORGIOS RESTAURANT LTDA the amount of R$', // MODIFIED
+    'receipt.passage.amount': 'the amount of R$', // REMOVED from usage, kept for safety
     'receipt.passage.dateRealized': '(realized on',
     'receipt.passage.dateRealizedLabel': 'Date Realized', // NEW
     'receipt.passage.reference': '), referring to the payment of transport passage destined for the days:',
