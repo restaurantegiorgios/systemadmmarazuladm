@@ -97,6 +97,7 @@ const numberToWords = (value: number): string => {
 
 const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, serviceStartDate, serviceEndDate, t }) => {
   const formattedValue = formatCurrency(value);
+  const valueOnly = formattedValue.replace('R$', '').trim(); // Valor sem o R$
   const valueInWords = capitalizeWords(numberToWords(value));
   
   // Use the end date for the location date, as is common in receipts
@@ -109,7 +110,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
   const formattedEndDate = new Date(serviceEndDate).toLocaleDateString('pt-BR');
   const servicePeriod = `${formattedStartDate} a ${formattedEndDate}`;
 
-  // Helper component for underlined text
+  // Helper component for underlined text (used only for body text now)
   const UnderlinedText: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = '' }) => (
     <span className={cn("inline-block border-b border-black px-1", className)}>
       {children}
@@ -123,10 +124,7 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
       <div className="flex justify-between items-end mb-6">
         <h2 className="text-2xl font-bold">{t('receipt.service.receiptTitle')}</h2>
         <div className="text-xl font-bold flex items-center">
-          R$: 
-          <UnderlinedText className="min-w-[100px] text-right text-lg font-extrabold">
-            {formattedValue.replace('R$', '').trim()}
-          </UnderlinedText>
+          R$: <span className="text-lg font-extrabold ml-1">{valueOnly}</span>
         </div>
       </div>
 
