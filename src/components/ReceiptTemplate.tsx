@@ -5,8 +5,9 @@ import { cn } from '@/lib/utils';
 interface ReceiptTemplateProps {
   employee: Employee;
   value: number;
-  serviceStartDate: string; // Changed from serviceDate
-  serviceEndDate: string;   // New field
+  serviceStartDate: string;
+  serviceEndDate: string;
+  signatureDate: string; // NEW: To control the signature date
   t: (key: string) => string;
 }
 
@@ -23,7 +24,6 @@ const capitalizeWords = (str: string): string => {
   if (!str) return '';
   return str.toLowerCase().split(' ').map(word => {
     if (word.length === 0) return '';
-    // Handle conjunctions and prepositions that should remain lowercase
     if (['e', 'de', 'do', 'da', 'dos', 'das', 'a', 'o'].includes(word)) {
       return word;
     }
@@ -31,12 +31,11 @@ const capitalizeWords = (str: string): string => {
   }).join(' ');
 };
 
-// Utility function to convert number to written form (e.g., 100.50 -> cem reais e cinquenta centavos)
+// Utility function to convert number to written form
 const numberToWords = (value: number): string => {
   if (value < 0) return 'Valor negativo não suportado';
   if (value === 0) return 'zero reais';
 
-  // Limite de 999.999,99
   if (value >= 1000000) {
     return `VALOR EXCEDIDO (${formatCurrency(value)})`;
   }
@@ -87,7 +86,6 @@ const numberToWords = (value: number): string => {
   let result = '';
   let tempInteger = integerPart;
 
-  // Milhares (up to 999)
   const thousands = Math.floor(tempInteger / 1000);
   tempInteger %= 1000;
 
@@ -98,27 +96,23 @@ const numberToWords = (value: number): string => {
       result += convertGroup(thousands) + ' mil';
     }
     if (tempInteger > 0) {
-      // Adiciona 'e' se o restante for menor que 100, ou 'e' se for maior que 100
       if (tempInteger < 100) {
         result += ' e ';
       } else {
-        result += ' e '; // Mantendo a regra de 'e' entre grupos
+        result += ' e ';
       }
     }
   }
 
-  // Centenas (up to 999)
   if (tempInteger > 0) {
     result += convertGroup(tempInteger);
   }
   
-  // Adicionar a moeda (reais)
   if (integerPart > 0) {
     const reais = integerPart === 1 ? 'real' : 'reais';
     result += ' ' + reais;
   }
 
-  // Adicionar centavos
   if (decimalPart > 0) {
     const centavos = decimalPart === 1 ? 'centavo' : 'centavos';
     const centavosWords = convertGroup(decimalPart);
@@ -129,25 +123,22 @@ const numberToWords = (value: number): string => {
     result += centavosWords + ' ' + centavos;
   }
   
-  // Limpeza final e capitalização
   return result.trim();
 };
 
-// Função para corrigir o problema de fuso horário ao criar datas a partir de strings 'YYYY-MM-DD'
 const parseLocalDate = (dateString: string): Date => {
-  if (!dateString) return new Date(); // Fallback para segurança
+  if (!dateString) return new Date();
   const [year, month, day] = dateString.split('-').map(Number);
-  // O mês no construtor de Date do JavaScript é 0-indexado (0 para Janeiro)
   return new Date(year, month - 1, day);
 };
 
-const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, serviceStartDate, serviceEndDate, t }) => {
+const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, serviceStartDate, serviceEndDate, signatureDate, t }) => {
   const formattedValue = formatCurrency(value);
-  const valueOnly = formattedValue.replace('R$', '').trim(); // Valor sem o R$
+  const valueOnly = formattedValue.replace('R$', '').trim();
   const valueInWords = capitalizeWords(numberToWords(value));
   
-  // Usa a função parseLocalDate para evitar problemas de fuso horário
-  const date = parseLocalDate(serviceEndDate);
+  // Use the new signatureDate prop for the footer date
+  const date = parseLocalDate(signatureDate);
   const day = date.getDate();
   const month = date.toLocaleDateString('pt-BR', { month: 'long' });
   const year = date.getFullYear();
@@ -156,7 +147,6 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
   const formattedEndDate = parseLocalDate(serviceEndDate).toLocaleDateString('pt-BR');
   const servicePeriod = `${formattedStartDate} a ${formattedEndDate}`;
 
-  // Helper component for underlined text (used only for body text now)
   const UnderlinedText: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = '' }) => (
     <span className={cn("border-b border-black px-1", className)}>
       {children}
@@ -166,7 +156,6 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
   return (
     <div className="p-6 border border-black bg-white text-black mx-auto print:border print:p-6 text-sm w-full">
       
-      {/* Header: RECIBO R$: ________ */}
       <div className="relative flex justify-center items-end mb-6">
         <h2 className="text-2xl font-bold">{t('receipt.service.receiptTitle')}</h2>
         <div className="absolute right-0 bottom-0 text-2xl font-bold flex items-center">
@@ -174,7 +163,6 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         </div>
       </div>
 
-      {/* Body Text - Employee Name */}
       <p className="leading-relaxed mb-4">
         {t('receipt.service.receivedBy')} 
         <UnderlinedText className="w-full text-base font-bold">
@@ -182,7 +170,6 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         </UnderlinedText>
       </p>
       
-      {/* Body Text - CPF and Value in Words */}
       <p className="leading-relaxed mb-4">
         {t('receipt.service.cpfHolder')} 
         <UnderlinedText className="min-w-[120px] text-base font-bold">
@@ -202,22 +189,16 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         </UnderlinedText>.
       </p>
 
-      {/* Note */}
       <p className="font-semibold italic mt-4 mb-4">
         {t('receipt.service.note')}
       </p>
 
-      {/* Footer: Logo and Date/Location (Same Line) */}
       <div className="flex items-center justify-between mt-7 mb-7">
-        {/* Left Side: Logo */}
         <div className="flex items-center w-1/3">
-          {/* Using the static path for the logo */}
           <img src="/logo_rodape.png" alt="Logo Giorgio's Mar Azul" className="w-24 h-auto" />
         </div>
         
-        {/* Right Side: Date/Location */}
         <div className="text-right text-sm w-2/3">
-          {/* Corrigindo o espaçamento para a formatação correta */}
           <p className="mb-2 whitespace-nowrap">
             {t('receipt.service.location')}{' '}
             <UnderlinedText className="min-w-[20px]">{day}</UnderlinedText>,{' '}
@@ -227,7 +208,6 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
         </div>
       </div>
       
-      {/* Signature Line (Last Line, Centered) */}
       <div className="flex flex-col items-center mt-10">
         <div className="w-full max-w-xs text-center">
           <div className="border-t border-black w-full"></div>
@@ -244,18 +224,14 @@ const ReceiptTemplate = React.forwardRef<HTMLDivElement, ReceiptTemplateProps>((
       ref={ref} 
       className="w-full mx-auto shadow-lg print:shadow-none print:w-auto print:max-w-none"
     >
-      {/* Primeira Via */}
       <ReceiptContent {...props} />
 
-      {/* Linha de Corte (Apenas visível na impressão) */}
       <div className="hidden print:block my-8 relative left-[-2cm] w-[calc(100%+4cm)]">
         <div className="border-t border-dashed border-gray-500"></div>
       </div>
 
-      {/* Segunda Via */}
       <ReceiptContent {...props} />
 
-      {/* Linha de Corte Adicional (Apenas visível na impressão) */}
       <div className="hidden print:block my-8 relative left-[-2cm] w-[calc(100%+4cm)]">
         <div className="border-t border-dashed border-gray-500"></div>
       </div>

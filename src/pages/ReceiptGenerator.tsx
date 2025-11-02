@@ -26,16 +26,17 @@ interface ServiceReceiptData {
   type: 'service';
   employee: Employee;
   value: number;
-  serviceStartDate: string; // Updated
-  serviceEndDate: string;   // New
+  serviceStartDate: string;
+  serviceEndDate: string;
+  signatureDate: string; // NEW: For the signature date at the bottom
 }
 
 interface PassageReceiptData {
   type: 'passage';
   employee: Employee;
   value: number;
-  serviceStartDate: string; // Changed from serviceDate
-  serviceEndDate: string;   // New
+  serviceStartDate: string;
+  serviceEndDate: string;
   paymentMethod: string;
   otherPaymentMethod: string;
   origin: string;
@@ -56,12 +57,13 @@ const ReceiptGenerator = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
   const [paymentValue, setPaymentValue] = useState<string>('');
   
-  // Common Date States (used for both types)
+  // Common Date States
   const [serviceStartDate, setServiceStartDate] = useState<string>(today);
   const [serviceEndDate, setServiceEndDate] = useState<string>(today);
   
   // Service Receipt specific state
-  const [useCurrentDate, setUseCurrentDate] = useState<boolean>(true);
+  const [useCurrentSignatureDate, setUseCurrentSignatureDate] = useState<boolean>(true);
+  const [signatureDate, setSignatureDate] = useState<string>(today);
 
   // Passage Receipt specific states
   const [passagePaymentMethod, setPassagePaymentMethod] = useState('');
@@ -72,18 +74,18 @@ const ReceiptGenerator = () => {
 
   const [generatedReceipt, setGeneratedReceipt] = useState<GeneratedReceipt>(null);
 
-  // Effect to update the end date when the toggle is switched back to 'on'
+  // Effect to update the signature date when the toggle is switched back to 'on'
   useEffect(() => {
-    if (useCurrentDate) {
-      setServiceEndDate(new Date().toISOString().split('T')[0]);
+    if (useCurrentSignatureDate) {
+      setSignatureDate(new Date().toISOString().split('T')[0]);
     }
-  }, [useCurrentDate]);
+  }, [useCurrentSignatureDate]);
 
   const selectedEmployee = selectedEmployeeId ? getEmployeeById(selectedEmployeeId) : null;
 
   const handleReceiptTypeChange = (value: ReceiptType) => {
     setReceiptType(value);
-    setGeneratedReceipt(null); // Clear generated receipt when type changes
+    setGeneratedReceipt(null);
   };
 
   const formatCurrencyInput = (value: string): string => {
@@ -93,7 +95,6 @@ const ReceiptGenerator = () => {
     const cents = parseInt(cleanValue, 10);
     const reais = (cents / 100).toFixed(2).replace('.', ',');
     
-    // Add thousands separator
     const parts = reais.split(',');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     
@@ -154,6 +155,7 @@ const ReceiptGenerator = () => {
         value: numericValue,
         serviceStartDate: serviceStartDate,
         serviceEndDate: serviceEndDate,
+        signatureDate: signatureDate, // Pass the correct signature date
       });
     } else if (receiptType === 'passage') {
       const numericPassageValue = cleanCurrencyValue(passageValueInput);
@@ -201,27 +203,23 @@ const ReceiptGenerator = () => {
       
       if (printWindow) {
         printWindow.document.write('<html><head><title>Recibo</title>');
-        // Include the application\'s CSS for Tailwind print styles to work
         printWindow.document.write('<link rel="stylesheet" href="/src/index.css" />');
         printWindow.document.write('</head><body>');
         printWindow.document.write('<style>');
-        // CSS para tentar suprimir cabeçalhos/rodapés e garantir fundo branco
         printWindow.document.write(`
           @media print { 
-            /* Define margens mínimas para a página */
             @page { 
-              margin: 1cm 2cm !important; /* 1cm superior/inferior, 2cm laterais */
+              margin: 1cm 2cm !important;
             }
             body { 
               margin: 0; 
-              -webkit-print-color-adjust: exact; /* Força a impressão de cores/fundos */
+              -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
               background-color: white !important;
             } 
             .print-only { 
               display: block !important; 
             } 
-            /* Tenta forçar a impressão de fundos e cores */
             * {
               color: #000 !important;
               background: transparent !important;
@@ -231,7 +229,6 @@ const ReceiptGenerator = () => {
           }
         `);
         printWindow.document.write('</style>');
-        // Remove o padding do container principal na impressão para usar a margem definida no @page
         printWindow.document.write('<div class="print:p-0">'); 
         printWindow.document.write(printContent);
         printWindow.document.write('</div>');
@@ -263,6 +260,7 @@ const ReceiptGenerator = () => {
           value={generatedReceipt.value}
           serviceStartDate={generatedReceipt.serviceStartDate}
           serviceEndDate={generatedReceipt.serviceEndDate}
+          signatureDate={generatedReceipt.signatureDate}
           t={t}
         />
       );
@@ -274,8 +272,8 @@ const ReceiptGenerator = () => {
           ref={receiptRef}
           employee={generatedReceipt.employee}
           value={generatedReceipt.value}
-          serviceStartDate={generatedReceipt.serviceStartDate} // Pass start date
-          serviceEndDate={generatedReceipt.serviceEndDate}     // Pass end date
+          serviceStartDate={generatedReceipt.serviceStartDate}
+          serviceEndDate={generatedReceipt.serviceEndDate}
           paymentMethod={generatedReceipt.paymentMethod}
           otherPaymentMethod={generatedReceipt.otherPaymentMethod}
           origin={generatedReceipt.origin}
@@ -290,30 +288,18 @@ const ReceiptGenerator = () => {
   
   const renderServiceDateFields = () => (
     <>
-      <div className="space-y-2">
-        <Label htmlFor="service-start-date">{t('receipt.serviceDate')} (Início)</Label>
-        <Input
-          id="service-start-date"
-          type="date"
-          value={serviceStartDate}
-          onChange={(e) => setServiceStartDate(e.target.value)}
-          required
-        />
-      </div>
-
-      <div className="flex items-center justify-between rounded-lg border p-3">
-        <div className="space-y-0.5">
-          <Label htmlFor="use-current-date-switch">Recibo com data atual</Label>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="service-start-date">{t('receipt.serviceDate')} (Início)</Label>
+          <Input
+            id="service-start-date"
+            type="date"
+            value={serviceStartDate}
+            onChange={(e) => setServiceStartDate(e.target.value)}
+            required
+          />
         </div>
-        <Switch
-          id="use-current-date-switch"
-          checked={useCurrentDate}
-          onCheckedChange={setUseCurrentDate}
-        />
-      </div>
-
-      {!useCurrentDate && (
-        <div className="space-y-2 animate-fade-in">
+        <div className="space-y-2">
           <Label htmlFor="service-end-date">{t('receipt.serviceDate')} (Fim)</Label>
           <Input
             id="service-end-date"
@@ -323,13 +309,36 @@ const ReceiptGenerator = () => {
             required
           />
         </div>
+      </div>
+
+      <div className="flex items-center justify-between rounded-lg border p-3">
+        <div className="space-y-0.5">
+          <Label htmlFor="use-current-date-switch">Recibo com data atual</Label>
+        </div>
+        <Switch
+          id="use-current-date-switch"
+          checked={useCurrentSignatureDate}
+          onCheckedChange={setUseCurrentSignatureDate}
+        />
+      </div>
+
+      {!useCurrentSignatureDate && (
+        <div className="space-y-2 animate-fade-in">
+          <Label htmlFor="signature-date">Data de Emissão do Recibo</Label>
+          <Input
+            id="signature-date"
+            type="date"
+            value={signatureDate}
+            onChange={(e) => setSignatureDate(e.target.value)}
+            required
+          />
+        </div>
       )}
     </>
   );
 
   const renderPassageFields = () => (
     <>
-      {/* Date Realized Field (using serviceStartDate) */}
       <div className="space-y-2">
         <Label htmlFor="passage-date">{t('receipt.passage.dateRealizedLabel')}</Label>
         <Input
@@ -341,7 +350,6 @@ const ReceiptGenerator = () => {
         />
       </div>
       
-      {/* Service Period Fields */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="service-start-date">{t('receipt.serviceDate')} (Início)</Label>
@@ -450,7 +458,6 @@ const ReceiptGenerator = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Control Panel */}
           <Card className="lg:col-span-1 h-fit shadow-soft print:hidden">
             <CardHeader>
               <CardTitle>{t('receipt.generate')}</CardTitle>
@@ -458,7 +465,6 @@ const ReceiptGenerator = () => {
             <CardContent>
               <form onSubmit={handleGenerateReceipt} className="space-y-4">
                 
-                {/* Receipt Type Selection */}
                 <div className="space-y-2">
                   <Label>{t('receipt.type')}</Label>
                   <Select value={receiptType} onValueChange={handleReceiptTypeChange}>
@@ -472,7 +478,6 @@ const ReceiptGenerator = () => {
                   </Select>
                 </div>
 
-                {/* Employee Select */}
                 <div className="space-y-2">
                   <Label htmlFor="employee-select">{t('receipt.selectEmployee')}</Label>
                   <Select value={selectedEmployeeId} onValueChange={setSelectedEmployeeId}>
@@ -489,7 +494,6 @@ const ReceiptGenerator = () => {
                   </Select>
                 </div>
 
-                {/* Common Fields */}
                 <div className="space-y-2">
                   <Label htmlFor="payment-value">{t('receipt.value')}</Label>
                   <div className="relative">
@@ -506,7 +510,6 @@ const ReceiptGenerator = () => {
                   </div>
                 </div>
 
-                {/* Date Fields based on Receipt Type */}
                 {receiptType === 'service' ? (
                   renderServiceDateFields()
                 ) : (
@@ -521,7 +524,6 @@ const ReceiptGenerator = () => {
             </CardContent>
           </Card>
 
-          {/* Receipt Preview */}
           <div className="lg:col-span-2 space-y-4">
             <Card className="shadow-elegant print:hidden">
               <CardHeader>
