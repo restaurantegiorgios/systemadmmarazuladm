@@ -25,19 +25,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
+    // Check for an existing session on initial load.
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          await fetchProfile(session.user.id);
+        }
+      } catch (error) {
+        console.error("Error checking initial session:", error);
+        // Ensure session state is cleared on error
+        setSession(null);
+        setUser(null);
+        setProfile(null);
+      } finally {
+        // This is crucial: it guarantees the loading screen is removed,
+        // even if there's an error (like clock skew).
+        setLoading(false);
+      }
+    };
 
+    checkSession();
+
+    // Set up a listener for auth state changes (login, logout, etc.).
     const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
       if (session?.user) {
         await fetchProfile(session.user.id);
       } else {
         setProfile(null);
       }
-      
-      setLoading(false);
     });
 
     return () => {
