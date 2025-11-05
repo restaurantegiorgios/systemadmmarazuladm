@@ -34,28 +34,34 @@ const Login = () => {
   
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  // Efeito para redirecionar usuários já logados
   useEffect(() => {
-    const isConfirmationFlow = window.location.hash.includes('type=signup');
-    if (session && !isConfirmationFlow) {
+    if (session) {
       navigate('/dashboard');
     }
   }, [session, navigate]);
 
-  // Efeito para lidar com o clique no link de confirmação
   useEffect(() => {
+    // Detecta se a URL contém o fragmento de confirmação do Supabase
     const hash = window.location.hash;
     if (hash.includes('type=signup')) {
+      // O Supabase JS client lida com o token da URL automaticamente
+      // para criar uma sessão temporária.
       const handleConfirmation = async () => {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
+          // 1. Exibe a mensagem de sucesso
           toast.success(t('login.confirmed'));
+          
+          // 2. Preenche o e-mail e foca na senha
           setEmail(session.user.email || '');
           passwordRef.current?.focus();
+          
+          // 3. Desloga o usuário para forçar o login manual
           await supabase.auth.signOut();
         }
         
+        // 4. Limpa o fragmento da URL para não re-acionar a lógica
         window.history.replaceState(null, '', window.location.pathname);
       };
       

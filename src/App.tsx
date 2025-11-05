@@ -24,7 +24,7 @@ const AppRoutes = () => {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={!session ? <Login /> : <Navigate to="/dashboard" />} />
         <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/" />} />
         <Route path="/employee/:id" element={session ? <EmployeeProfile /> : <Navigate to="/" />} />
         <Route path="/receipts" element={session ? <ReceiptGenerator /> : <Navigate to="/" />} />
