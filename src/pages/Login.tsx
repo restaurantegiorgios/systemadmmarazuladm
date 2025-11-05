@@ -58,7 +58,7 @@ const Login = () => {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -70,15 +70,16 @@ const Login = () => {
     });
 
     if (error) {
-      // Verifica a mensagem de erro específica do Supabase para usuário já registrado
-      if (error.message === 'User already registered') {
+      toast.error(error.message);
+    } else {
+      // Supabase doesn't throw an error for existing users with email confirmation enabled.
+      // Instead, a successful response with an empty identities array indicates the user already exists and is confirmed.
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
         toast.error(t('register.error.emailExists'));
       } else {
-        toast.error(error.message);
+        toast.info(t('login.checkEmail'));
+        setView('login');
       }
-    } else {
-      toast.info(t('login.checkEmail'));
-      setView('login');
     }
     setLoading(false);
   };
