@@ -18,7 +18,11 @@ const AppRoutes = () => {
   const { session, loading } = useAuth();
 
   if (loading) {
-    return <div>Carregando...</div>; // Ou um componente de spinner/loading
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div>Carregando...</div>
+      </div>
+    );
   }
 
   return (

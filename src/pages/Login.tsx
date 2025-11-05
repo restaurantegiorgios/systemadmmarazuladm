@@ -34,34 +34,36 @@ const Login = () => {
   
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  // Efeito para redirecionar usuários já logados
+  // Efeito para redirecionar usuários já logados E para lidar com o clique no link de confirmação
   useEffect(() => {
     const isConfirmationFlow = window.location.hash.includes('type=signup');
+
+    // Se o usuário já tem uma sessão E NÃO está no fluxo de confirmação, redireciona.
     if (session && !isConfirmationFlow) {
       navigate('/dashboard');
     }
-  }, [session, navigate]);
 
-  // Efeito para lidar com o clique no link de confirmação
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash.includes('type=signup')) {
+    // Se o usuário está no fluxo de confirmação
+    if (isConfirmationFlow) {
       const handleConfirmation = async () => {
-        const { data: { session } } = await supabase.auth.getSession();
+        // O Supabase client já deve ter criado uma sessão temporária a partir da URL.
+        const { data: { session: tempSession } } = await supabase.auth.getSession();
         
-        if (session?.user) {
+        if (tempSession?.user) {
           toast.success(t('login.confirmed'));
-          setEmail(session.user.email || '');
+          setEmail(tempSession.user.email || '');
           passwordRef.current?.focus();
+          // Desloga o usuário da sessão temporária para forçar o login manual.
           await supabase.auth.signOut();
         }
         
+        // Limpa o hash da URL para evitar que a lógica seja re-executada.
         window.history.replaceState(null, '', window.location.pathname);
       };
       
       handleConfirmation();
     }
-  }, [t]);
+  }, [session, navigate, t]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
