@@ -68,8 +68,14 @@ const Login = () => {
         },
       },
     });
+
     if (error) {
-      toast.error(error.message);
+      // Verifica a mensagem de erro específica do Supabase para usuário já registrado
+      if (error.message === 'User already registered') {
+        toast.error(t('register.error.emailExists'));
+      } else {
+        toast.error(error.message);
+      }
     } else {
       toast.info(t('login.checkEmail'));
       setView('login');
