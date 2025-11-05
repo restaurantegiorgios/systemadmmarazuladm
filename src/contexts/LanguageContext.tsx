@@ -26,7 +26,6 @@ const translations = {
     'login.error': 'Email ou senha incorretos',
     'login.checkEmail': 'Cadastro realizado! Verifique seu e-mail para confirmar sua conta.',
     'login.backToLogin': 'Voltar para o Login',
-    'login.confirmed': 'Conta confirmada com sucesso! Por favor, faça o login.',
     'register.error.emailExists': 'Este e-mail já está cadastrado.',
     
     // Forgot Password (NEW)
@@ -214,7 +213,6 @@ const translations = {
     'login.error': 'Invalid email or password',
     'login.checkEmail': 'Registration successful! Check your email to confirm your account.',
     'login.backToLogin': 'Back to Login',
-    'login.confirmed': 'Account confirmed successfully! Please log in.',
     'register.error.emailExists': 'This email is already registered.',
 
     // Forgot Password (NEW)

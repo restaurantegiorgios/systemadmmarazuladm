@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -31,43 +31,12 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  
-  const passwordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (session) {
       navigate('/dashboard');
     }
   }, [session, navigate]);
-
-  useEffect(() => {
-    // Detecta se a URL contém o fragmento de confirmação do Supabase
-    const hash = window.location.hash;
-    if (hash.includes('type=signup')) {
-      // O Supabase JS client lida com o token da URL automaticamente
-      // para criar uma sessão temporária.
-      const handleConfirmation = async () => {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user) {
-          // 1. Exibe a mensagem de sucesso
-          toast.success(t('login.confirmed'));
-          
-          // 2. Preenche o e-mail e foca na senha
-          setEmail(session.user.email || '');
-          passwordRef.current?.focus();
-          
-          // 3. Desloga o usuário para forçar o login manual
-          await supabase.auth.signOut();
-        }
-        
-        // 4. Limpa o fragmento da URL para não re-acionar a lógica
-        window.history.replaceState(null, '', window.location.pathname);
-      };
-      
-      handleConfirmation();
-    }
-  }, [t]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,6 +72,8 @@ const Login = () => {
     if (error) {
       toast.error(error.message);
     } else {
+      // Supabase doesn't throw an error for existing users with email confirmation enabled.
+      // Instead, a successful response with an empty identities array indicates the user already exists and is confirmed.
       if (data.user && data.user.identities && data.user.identities.length === 0) {
         toast.error(t('register.error.emailExists'));
       } else {
@@ -117,7 +88,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/`,
+      redirectTo: `${window.location.origin}/`, // Or a dedicated password reset page
     });
     if (error) {
       toast.error(error.message);
@@ -165,7 +136,7 @@ const Login = () => {
             <CardDescription>{t('forgotPassword.description')}</CardDescription>
             <div className="space-y-2">
               <Label htmlFor="email">{t('login.email')}</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Input id="email" type="email" onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {t('forgotPassword.resetButton')}
@@ -180,11 +151,11 @@ const Login = () => {
           <form onSubmit={handleLogin} className="space-y-4 animate-fade-in">
             <div className="space-y-2">
               <Label htmlFor="email">{t('login.email')}</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Input id="email" type="email" onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">{t('login.password')}</Label>
-              <PasswordInput ref={passwordRef} id="password" onChange={(e) => setPassword(e.target.value)} required />
+              <PasswordInput id="password" onChange={(e) => setPassword(e.target.value)} required />
             </div>
             <div className="flex justify-between items-center text-sm">
               <Button variant="link" className="p-0 h-auto" onClick={() => setView('register')}>
