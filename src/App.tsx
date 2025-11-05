@@ -15,18 +15,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
-  const { session, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center bg-background">
-        <div className="text-center">
-          <p className="text-lg font-semibold text-foreground">Carregando...</p>
-          <p className="text-sm text-muted-foreground">Aguarde um momento, por favor.</p>
-        </div>
-      </div>
-    );
-  }
+  const { session } = useAuth();
 
   return (
     <Routes>
