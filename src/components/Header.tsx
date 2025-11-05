@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import ProfileModal from './ProfileModal';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { toast } from 'sonner';
 
 export const Header = () => {
   const { language, setLanguage, t } = useLanguage();
@@ -23,8 +24,11 @@ export const Header = () => {
   const [isProfileModalOpen, setProfileModalOpen] = useState(false);
 
   const handleLogout = async () => {
-    await signOut();
-    navigate('/');
+    const { error } = await signOut();
+    if (error) {
+      toast.error(`Erro ao sair: ${error.message}`);
+    }
+    // A navegação agora é tratada reativamente pela mudança de estado no AuthContext.
   };
 
   const getInitials = () => {
