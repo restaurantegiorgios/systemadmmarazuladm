@@ -24,15 +24,18 @@ const translations = {
     'login.register': 'Criar conta',
     'login.success': 'Login realizado com sucesso!',
     'login.error': 'Email ou senha incorretos',
+    'login.checkEmail': 'Cadastro realizado! Verifique seu e-mail para confirmar sua conta.',
+    'login.backToLogin': 'Voltar para o Login',
     
     // Forgot Password (NEW)
     'forgotPassword.link': 'Esqueceu sua senha?',
     'forgotPassword.title': 'Recuperar Senha',
-    'forgotPassword.description': 'Insira seu email e a nova senha desejada. Você será logado automaticamente após a redefinição.',
+    'forgotPassword.description': 'Insira seu email para receber um link de recuperação.',
     'forgotPassword.newPassword': 'Nova Senha',
     'forgotPassword.confirmNewPassword': 'Confirmar Nova Senha',
-    'forgotPassword.resetButton': 'Redefinir Senha',
+    'forgotPassword.resetButton': 'Enviar Link',
     'forgotPassword.success': 'Senha redefinida com sucesso!',
+    'forgotPassword.checkEmail': 'Se uma conta com este e-mail existir, um link de recuperação foi enviado.',
     'forgotPassword.error.emailNotFound': 'Email não encontrado no sistema.',
     'forgotPassword.error.generic': 'Erro ao redefinir a senha.',
     
@@ -186,7 +189,11 @@ const translations = {
     'userProfile.error.invalidEmail': 'Email inválido.',
     'userProfile.error.passwordLength': 'A senha deve ter pelo menos 6 caracteres.',
     'userProfile.error.passwordMismatch': 'As senhas não coincidem.',
-    'userProfile.error.required': 'Este campo é obrigatório.', // Added missing key
+    'userProfile.error.required': 'Este campo é obrigatório.',
+    
+    // Generic Errors
+    'error.generic': 'Ocorreu um erro. Tente novamente mais tarde.',
+    'error.invalidCredentials': 'Credenciais inválidas. Verifique seu e-mail e senha.',
   },
   'en-US': {
     // Header
@@ -203,15 +210,18 @@ const translations = {
     'login.register': 'Create account',
     'login.success': 'Login successful!',
     'login.error': 'Invalid email or password',
-    
+    'login.checkEmail': 'Registration successful! Check your email to confirm your account.',
+    'login.backToLogin': 'Back to Login',
+
     // Forgot Password (NEW)
     'forgotPassword.link': 'Forgot your password?',
     'forgotPassword.title': 'Password Recovery',
-    'forgotPassword.description': 'Enter your email and the desired new password. You will be automatically logged in after resetting.',
+    'forgotPassword.description': 'Enter your email to receive a recovery link.',
     'forgotPassword.newPassword': 'New Password',
     'forgotPassword.confirmNewPassword': 'Confirm New Password',
-    'forgotPassword.resetButton': 'Reset Password',
+    'forgotPassword.resetButton': 'Send Link',
     'forgotPassword.success': 'Password reset successfully!',
+    'forgotPassword.checkEmail': 'If an account with this email exists, a recovery link has been sent.',
     'forgotPassword.error.emailNotFound': 'Email not found in the system.',
     'forgotPassword.error.generic': 'Error resetting password.',
 
@@ -365,7 +375,11 @@ const translations = {
     'userProfile.error.invalidEmail': 'Invalid email.',
     'userProfile.error.passwordLength': 'Password must be at least 6 characters.',
     'userProfile.error.passwordMismatch': 'Passwords do not match.',
-    'userProfile.error.required': 'This field is required.', // Added missing key
+    'userProfile.error.required': 'This field is required.',
+    
+    // Generic Errors
+    'error.generic': 'An error occurred. Please try again later.',
+    'error.invalidCredentials': 'Invalid credentials. Please check your email and password.',
   },
 };
 

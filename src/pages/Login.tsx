@@ -1,30 +1,170 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { PasswordInput } from '@/components/PasswordInput';
+
+type View = 'login' | 'register' | 'forgot-password';
 
 const Login = () => {
   const { language, setLanguage, t } = useLanguage();
   const { session } = useAuth();
   const navigate = useNavigate();
+  const [view, setView] = useState<View>('login');
+  const [loading, setLoading] = useState(false);
+
+  // Form states
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
   useEffect(() => {
     if (session) {
       navigate('/dashboard');
     }
   }, [session, navigate]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      toast.error(t('error.invalidCredentials'));
+    } else {
+      toast.success(t('login.success'));
+      navigate('/dashboard');
+    }
+    setLoading(false);
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password.length < 6) {
+      toast.error(t('userProfile.error.passwordLength'));
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+        },
+      },
+    });
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.info(t('login.checkEmail'));
+      setView('login');
+    }
+    setLoading(false);
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/`, // Or a dedicated password reset page
+    });
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.info(t('forgotPassword.checkEmail'));
+      setView('login');
+    }
+    setLoading(false);
+  };
+
+  const renderForm = () => {
+    switch (view) {
+      case 'register':
+        return (
+          <form onSubmit={handleRegister} className="space-y-4 animate-fade-in">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">{t('userProfile.firstName')}</Label>
+                <Input id="firstName" onChange={(e) => setFirstName(e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">{t('userProfile.lastName')}</Label>
+                <Input id="lastName" onChange={(e) => setLastName(e.target.value)} required />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">{t('login.email')}</Label>
+              <Input id="email" type="email" onChange={(e) => setEmail(e.target.value)} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">{t('login.password')}</Label>
+              <PasswordInput id="password" onChange={(e) => setPassword(e.target.value)} required />
+            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {t('login.register')}
+            </Button>
+            <Button variant="link" className="w-full" onClick={() => setView('login')}>
+              {t('login.backToLogin')}
+            </Button>
+          </form>
+        );
+      case 'forgot-password':
+        return (
+          <form onSubmit={handleForgotPassword} className="space-y-4 animate-fade-in">
+            <CardDescription>{t('forgotPassword.description')}</CardDescription>
+            <div className="space-y-2">
+              <Label htmlFor="email">{t('login.email')}</Label>
+              <Input id="email" type="email" onChange={(e) => setEmail(e.target.value)} required />
+            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {t('forgotPassword.resetButton')}
+            </Button>
+            <Button variant="link" className="w-full" onClick={() => setView('login')}>
+              {t('login.backToLogin')}
+            </Button>
+          </form>
+        );
+      default: // login
+        return (
+          <form onSubmit={handleLogin} className="space-y-4 animate-fade-in">
+            <div className="space-y-2">
+              <Label htmlFor="email">{t('login.email')}</Label>
+              <Input id="email" type="email" onChange={(e) => setEmail(e.target.value)} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">{t('login.password')}</Label>
+              <PasswordInput id="password" onChange={(e) => setPassword(e.target.value)} required />
+            </div>
+            <div className="flex justify-between items-center text-sm">
+              <Button variant="link" className="p-0 h-auto" onClick={() => setView('register')}>
+                {t('login.register')}
+              </Button>
+              <Button variant="link" className="p-0 h-auto" onClick={() => setView('forgot-password')}>
+                {t('forgotPassword.link')}
+              </Button>
+            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {t('login.button')}
+            </Button>
+          </form>
+        );
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-accent to-primary p-4 relative overflow-hidden">
@@ -48,7 +188,7 @@ const Login = () => {
         </DropdownMenu>
       </div>
 
-      <Card className="w-full max-w-md shadow-2xl relative z-10 animate-fade-in">
+      <Card className="w-full max-w-md shadow-2xl relative z-10">
         <CardHeader className="space-y-1 text-center">
           <div className="mx-auto w-36 h-36 sm:w-48 sm:h-48 flex items-center justify-center mb-4 bg-white rounded-lg shadow-2xl overflow-hidden">
             <img 
@@ -57,42 +197,13 @@ const Login = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          <CardTitle className="text-3xl font-bold">{t('login.title')}</CardTitle>
+          <CardTitle className="text-3xl font-bold">
+            {view === 'forgot-password' ? t('forgotPassword.title') : t('login.title')}
+          </CardTitle>
           <CardDescription className="text-lg">{t('login.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Auth
-            supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
-            providers={[]}
-            theme="light"
-            localization={{
-              variables: {
-                sign_up: {
-                  email_label: t('login.email'),
-                  password_label: t('login.password'),
-                  button_label: t('login.register'),
-                  email_input_placeholder: 'seu.email@exemplo.com',
-                  password_input_placeholder: '••••••••',
-                  link_text: "Não tem uma conta? Cadastre-se",
-                },
-                sign_in: {
-                  email_label: t('login.email'),
-                  password_label: t('login.password'),
-                  button_label: t('login.button'),
-                  email_input_placeholder: 'seu.email@exemplo.com',
-                  password_input_placeholder: '••••••••',
-                  link_text: "Já tem uma conta? Faça login",
-                },
-                forgotten_password: {
-                  link_text: t('forgotPassword.link'),
-                  email_label: t('login.email'),
-                  button_label: "Enviar instruções",
-                  email_input_placeholder: 'seu.email@exemplo.com',
-                },
-              },
-            }}
-          />
+          {renderForm()}
         </CardContent>
       </Card>
     </div>
