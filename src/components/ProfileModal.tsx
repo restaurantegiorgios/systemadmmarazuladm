@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useUser, User } from '@/contexts/UserContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,7 @@ import {
 import { toast } from 'sonner';
 import { Upload } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -26,15 +27,13 @@ interface ProfileModalProps {
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const { t } = useLanguage();
-  const { currentUser, updateUser } = useUser();
-  const [photoPreview, setPhotoPreview] = useState(currentUser?.photo || '');
+  const { user, profile } = useAuth();
+  const [photoPreview, setPhotoPreview] = useState(profile?.avatar_url || '');
 
-  // Define o schema de validação dentro do componente para que t() seja acessível
   const profileSchema = z.object({
-    firstName: z.string().min(1, t('userProfile.error.required')),
-    lastName: z.string().min(1, t('userProfile.error.required')),
-    email: z.string().email(t('userProfile.error.invalidEmail')),
-    photo: z.string().optional(),
+    first_name: z.string().min(1, t('userProfile.error.required')),
+    last_name: z.string().min(1, t('userProfile.error.required')),
+    avatar_url: z.string().optional(),
     password: z.string().optional(),
     confirmPassword: z.string().optional(),
   }).refine(data => {
@@ -55,16 +54,15 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   });
 
   useEffect(() => {
-    if (currentUser) {
+    if (profile) {
       reset({
-        firstName: currentUser.firstName,
-        lastName: currentUser.lastName,
-        email: currentUser.email,
-        photo: currentUser.photo || '',
+        first_name: profile.first_name,
+        last_name: profile.last_name,
+        avatar_url: profile.avatar_url || '',
       });
-      setPhotoPreview(currentUser.photo || '');
+      setPhotoPreview(profile.avatar_url || '');
     }
-  }, [currentUser, reset, isOpen]);
+  }, [profile, reset, isOpen]);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -73,39 +71,48 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
       reader.onloadend = () => {
         const result = reader.result as string;
         setPhotoPreview(result);
-        setValue('photo', result);
+        setValue('avatar_url', result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const onSubmit = (data: ProfileFormValues) => {
-    if (!currentUser) return;
+  const onSubmit = async (data: ProfileFormValues) => {
+    if (!user) return;
 
-    const updateData: Partial<Omit<User, 'id'>> = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      photo: data.photo,
-    };
+    // Update profile table
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({
+        first_name: data.first_name,
+        last_name: data.last_name,
+        avatar_url: data.avatar_url,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', user.id);
 
+    if (profileError) {
+      toast.error(profileError.message);
+      return;
+    }
+
+    // Update password if provided
     if (data.password) {
-      updateData.password = data.password;
+      const { error: passwordError } = await supabase.auth.updateUser({
+        password: data.password,
+      });
+      if (passwordError) {
+        toast.error(passwordError.message);
+        return;
+      }
     }
 
-    const result = updateUser(currentUser.id, updateData);
-
-    if (result.success) {
-      toast.success(t('userProfile.success'));
-      onClose();
-    } else {
-      // Certifique-se de que 'userProfile.error' existe no LanguageContext
-      toast.error(result.error ? t(result.error) : t('form.error')); 
-    }
+    toast.success(t('userProfile.success'));
+    onClose();
   };
   
-  const currentFirstName = watch('firstName');
-  const currentLastName = watch('lastName');
+  const currentFirstName = watch('first_name');
+  const currentLastName = watch('last_name');
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -134,21 +141,15 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">{t('form.fullName').split(' ')[0]}</Label> {/* Usando apenas 'Nome' */}
-                <Input id="firstName" {...register('firstName')} />
-                {errors.firstName && <p className="text-sm text-destructive">{errors.firstName.message}</p>}
+                <Label htmlFor="first_name">{t('userProfile.firstName')}</Label>
+                <Input id="first_name" {...register('first_name')} />
+                {errors.first_name && <p className="text-sm text-destructive">{errors.first_name.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName">{t('form.fullName').split(' ').slice(1).join(' ')}</Label> {/* Usando 'Sobrenome' (ou o resto do nome) */}
-                <Input id="lastName" {...register('lastName')} />
-                {errors.lastName && <p className="text-sm text-destructive">{errors.lastName.message}</p>}
+                <Label htmlFor="last_name">{t('userProfile.lastName')}</Label>
+                <Input id="last_name" {...register('last_name')} />
+                {errors.last_name && <p className="text-sm text-destructive">{errors.last_name.message}</p>}
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('login.email')}</Label>
-              <Input id="email" type="email" {...register('email')} />
-              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="grid grid-cols-2 gap-4">

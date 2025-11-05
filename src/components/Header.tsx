@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Globe, LogOut, User, FileText, Menu } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useUser } from '@/contexts/UserContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   DropdownMenu,
@@ -18,13 +18,23 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/s
 
 export const Header = () => {
   const { language, setLanguage, t } = useLanguage();
-  const { currentUser, logout } = useUser();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [isProfileModalOpen, setProfileModalOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await signOut();
     navigate('/');
+  };
+
+  const getInitials = () => {
+    if (profile?.first_name && profile?.last_name) {
+      return `${profile.first_name[0]}${profile.last_name[0]}`;
+    }
+    if (user?.email) {
+      return user.email[0].toUpperCase();
+    }
+    return 'U';
   };
 
   return (
@@ -82,10 +92,10 @@ export const Header = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
-                  {currentUser?.photo ? (
+                  {profile?.avatar_url ? (
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={currentUser.photo} />
-                      <AvatarFallback>{currentUser.firstName[0]}{currentUser.lastName[0]}</AvatarFallback>
+                      <AvatarImage src={profile.avatar_url} />
+                      <AvatarFallback>{getInitials()}</AvatarFallback>
                     </Avatar>
                   ) : (
                     <User className="h-5 w-5" />
@@ -93,22 +103,22 @@ export const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-card z-50 w-64">
-                {currentUser && (
+                {user && profile && (
                   <>
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src={currentUser.photo} />
+                          <AvatarImage src={profile.avatar_url} />
                           <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white">
-                            {currentUser.firstName[0]}{currentUser.lastName[0]}
+                            {getInitials()}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col space-y-1">
                           <p className="text-sm font-medium leading-none">
-                            {currentUser.firstName} {currentUser.lastName}
+                            {profile.first_name} {profile.last_name}
                           </p>
                           <p className="text-xs leading-none text-muted-foreground">
-                            {currentUser.email}
+                            {user.email}
                           </p>
                         </div>
                       </div>
