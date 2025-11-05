@@ -46,7 +46,7 @@ const Login = () => {
       toast.error(t('error.invalidCredentials'));
     } else {
       toast.success(t('login.success'));
-      navigate('/dashboard');
+      // A navegação agora é tratada pelo useEffect acima, que reage à mudança de sessão.
     }
     setLoading(false);
   };

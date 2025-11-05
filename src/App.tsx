@@ -18,19 +18,24 @@ const AppRoutes = () => {
   const { session, loading } = useAuth();
 
   if (loading) {
-    return <div>Carregando...</div>; // Ou um componente de spinner/loading
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <div className="text-center">
+          <p className="text-lg font-semibold text-foreground">Carregando...</p>
+          <p className="text-sm text-muted-foreground">Aguarde um momento, por favor.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Routes>
-        <Route path="/" element={!session ? <Login /> : <Navigate to="/dashboard" />} />
-        <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/" />} />
-        <Route path="/employee/:id" element={session ? <EmployeeProfile /> : <Navigate to="/" />} />
-        <Route path="/receipts" element={session ? <ReceiptGenerator /> : <Navigate to="/" />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={!session ? <Login /> : <Navigate to="/dashboard" />} />
+      <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/" />} />
+      <Route path="/employee/:id" element={session ? <EmployeeProfile /> : <Navigate to="/" />} />
+      <Route path="/receipts" element={session ? <ReceiptGenerator /> : <Navigate to="/" />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 
@@ -40,9 +45,11 @@ const App = () => (
       <AuthProvider>
         <EmployeeProvider>
           <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <AppRoutes />
+            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+              <Toaster />
+              <Sonner />
+              <AppRoutes />
+            </BrowserRouter>
           </TooltipProvider>
         </EmployeeProvider>
       </AuthProvider>
