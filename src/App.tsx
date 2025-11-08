@@ -9,25 +9,16 @@ import Dashboard from "./pages/Dashboard";
 import EmployeeProfile from "./pages/EmployeeProfile";
 import ReceiptGenerator from "./pages/ReceiptGenerator";
 import NotFound from "./pages/NotFound";
-import { ShepherdJourney } from 'react-shepherd';
+import { ShepherdJourneyProvider } from 'react-shepherd';
 
 const queryClient = new QueryClient();
-
-const tourOptions = {
-  defaultStepOptions: {
-    cancelIcon: {
-      enabled: true,
-    },
-  },
-  useModalOverlay: true,
-};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
       <EmployeeProvider>
         <TooltipProvider>
-          <ShepherdJourney steps={[]} tourOptions={tourOptions}>
+          <ShepherdJourneyProvider>
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <Toaster />
               <Sonner />
@@ -39,7 +30,7 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
-          </ShepherdJourney>
+          </ShepherdJourneyProvider>
         </TooltipProvider>
       </EmployeeProvider>
     </LanguageProvider>
