@@ -42,7 +42,7 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, t, onView, onEdit
           <Avatar className="h-12 w-12">
             <AvatarImage src={employee.photo} />
             <AvatarFallback className="bg-secondary text-secondary-foreground">
-              <User className="h-6 w-6" />
+              {employee.photo ? '' : <User className="h-6 w-6" />}
             </AvatarFallback>
           </Avatar>
           <div>
@@ -56,27 +56,34 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, t, onView, onEdit
       </CardHeader>
       
       <CardContent className="space-y-3 text-sm">
-        <div className="flex items-center justify-between">
+        {/* Novo bloco de informações de contato */}
+        <div className="flex items-center justify-between p-2 bg-muted/50 rounded-md">
             <div 
-                className="flex items-center gap-2 cursor-pointer text-blue-600 hover:text-blue-800 hover:underline"
+                className="flex items-center gap-2 cursor-pointer text-primary hover:text-primary/80 transition-colors"
                 onClick={() => handleWhatsAppRedirect(employee.phone)}
                 title="Abrir no WhatsApp"
             >
                 <Phone className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{employee.phone}</span>
+                <span className="truncate font-medium">{employee.phone}</span>
             </div>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0 transition-transform hover:scale-125" onClick={() => handleCopy(employee.phone, 'dashboard.phone')}>
+                <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0 text-muted-foreground hover:text-primary" onClick={() => handleCopy(employee.phone, 'dashboard.phone')}>
                     {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-3 w-3" />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent><p>{t('dashboard.copy')}</p></TooltipContent>
             </Tooltip>
         </div>
+        
+        {/* Adicionando Email para mais informação */}
+        <div className="flex items-center gap-2 text-muted-foreground">
+            <span className="font-semibold">{t('form.email')}:</span>
+            <span className="truncate">{employee.email}</span>
+        </div>
       </CardContent>
 
-      <CardFooter className="flex justify-end gap-2 pt-4">
+      <CardFooter className="flex justify-end gap-2 pt-4 border-t border-border/50">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
