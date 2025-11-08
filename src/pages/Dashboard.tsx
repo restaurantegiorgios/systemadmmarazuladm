@@ -190,12 +190,6 @@ const Dashboard = () => {
     setFormModalOpen(true);
   };
 
-  // Removendo a função handleShare
-  // const handleShare = () => {
-  //   navigator.clipboard.writeText(window.location.href);
-  //   toast.success(t('dashboard.shareSuccess'));
-  // };
-
   const allColumns: { id: EmployeeColumn; labelKey: string }[] = [
     { id: 'fullName', labelKey: 'form.fullName' },
     { id: 'cpf', labelKey: 'form.cpf' },
@@ -248,6 +242,56 @@ const Dashboard = () => {
 
     if (format === 'excel' || format === 'csv') {
         const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        
+        // --- XLSX Formatting Enhancements ---
+        
+        const headerKeys = columns.map(col => t(allColumns.find(c => c.id === col)!.labelKey));
+        
+        // 1. Define Column Widths
+        const columnWidths = columns.map(col => {
+            switch (col) {
+                case 'fullName':
+                case 'address':
+                    return { wch: 30 };
+                case 'email':
+                    return { wch: 35 };
+                case 'phone':
+                    return { wch: 18 };
+                case 'position':
+                case 'workSchedule':
+                    return { wch: 20 };
+                case 'cpf':
+                    return { wch: 18 };
+                case 'status':
+                case 'gender':
+                    return { wch: 12 };
+                default: // Dates
+                    return { wch: 15 };
+            }
+        });
+        worksheet['!cols'] = columnWidths;
+
+        // 2. Apply Header Formatting (Bold, Border, Alignment)
+        const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:A1');
+        const headerRowIndex = range.s.r; // 0 for the first row
+
+        headerKeys.forEach((key, index) => {
+            const cellAddress = XLSX.utils.encode_cell({ r: headerRowIndex, c: index });
+            const cell = worksheet[cellAddress];
+            
+            if (cell) {
+                cell.s = {
+                    font: { bold: true },
+                    border: {
+                        bottom: { style: "thin", color: { auto: 1 } }
+                    },
+                    alignment: { horizontal: "left", vertical: "center" }
+                };
+            }
+        });
+        
+        // --- End Formatting Enhancements ---
+
         if (format === 'excel') {
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, 'Funcionários');
@@ -393,7 +437,6 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <h1 className="text-3xl font-bold text-foreground">{t('dashboard.title')}</h1>
           <div className="flex flex-wrap gap-2 justify-end items-center">
-            {/* Botão Compartilhar removido */}
             <Button onClick={() => setExportDialogOpen(true)} className="hidden md:flex">
               <Download className="mr-2 h-4 w-4" />
               {t('dashboard.export')}
