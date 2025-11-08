@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown, User, Download, Share2 } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown, User, Download, Share2, LayoutGrid, List } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -42,10 +42,12 @@ import * as XLSX from 'xlsx';
 import html2pdf from 'html2pdf.js';
 import ExportDialog, { EmployeeColumn } from '@/components/ExportDialog';
 import { formatBrazilianDate } from '@/lib/utils';
+import EmployeeCard from '@/components/EmployeeCard';
 
 type SortKey = 'fullName' | 'position' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
 type StatusFilter = 'all' | 'active' | 'inactive';
+type ViewMode = 'table' | 'cards';
 
 interface SortConfig {
   key: SortKey;
@@ -65,6 +67,7 @@ const Dashboard = () => {
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [isExportDialogOpen, setExportDialogOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('table');
   
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'fullName', direction: 'asc' });
 
@@ -73,6 +76,7 @@ const Dashboard = () => {
     setSearchTerm(searchParams.get('q') || '');
     setStatusFilter((searchParams.get('status') as StatusFilter) || 'all');
     setPositionFilter(searchParams.get('position') || 'all');
+    setViewMode((searchParams.get('view') as ViewMode) || 'table');
   }, []);
 
   // Sync filters with URL
@@ -81,8 +85,9 @@ const Dashboard = () => {
     if (searchTerm) params.set('q', searchTerm);
     if (statusFilter !== 'all') params.set('status', statusFilter);
     if (positionFilter !== 'all') params.set('position', positionFilter);
+    if (viewMode !== 'table') params.set('view', viewMode);
     setSearchParams(params, { replace: true });
-  }, [searchTerm, statusFilter, positionFilter, setSearchParams]);
+  }, [searchTerm, statusFilter, positionFilter, viewMode, setSearchParams]);
 
   const statusOptions: { value: StatusFilter; labelKey: string }[] = [
     { value: 'all', labelKey: 'dashboard.allStatus' },
@@ -389,8 +394,8 @@ const Dashboard = () => {
         <DashboardStats employees={employees} />
 
         <div className="bg-card rounded-lg shadow-soft p-6 mb-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
+          <div className="flex flex-col md:flex-row gap-4 items-center">
+            <div className="flex-1 relative w-full">
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
                 {searchTerm ? (
                   <button
@@ -412,103 +417,141 @@ const Dashboard = () => {
                 className="pl-10"
               />
             </div>
-            <Select value={positionFilter} onValueChange={setPositionFilter}>
-              <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue placeholder={t('form.position')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('dashboard.allPositions')}</SelectItem>
-                {positions.map(pos => (
-                  <SelectItem key={pos} value={pos}>{t(`position.${pos}`)}</SelectItem>
+            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+              <Select value={positionFilter} onValueChange={setPositionFilter}>
+                <SelectTrigger className="w-full md:w-[200px]">
+                  <SelectValue placeholder={t('form.position')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('dashboard.allPositions')}</SelectItem>
+                  {positions.map(pos => (
+                    <SelectItem key={pos} value={pos}>{t(`position.${pos}`)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <div className="flex gap-2 flex-wrap">
+                {statusOptions.map(option => (
+                  <Button
+                    key={option.value}
+                    variant={statusFilter === option.value ? 'default' : 'outline'}
+                    onClick={() => setStatusFilter(option.value)}
+                  >
+                    {t(option.labelKey)}
+                  </Button>
                 ))}
-              </SelectContent>
-            </Select>
-            <div className="flex gap-2 flex-wrap">
-              {statusOptions.map(option => (
-                <Button
-                  key={option.value}
-                  variant={statusFilter === option.value ? 'default' : 'outline'}
-                  onClick={() => setStatusFilter(option.value)}
-                >
-                  {t(option.labelKey)}
-                </Button>
-              ))}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant={viewMode === 'table' ? 'default' : 'outline'}
+                size="icon"
+                onClick={() => setViewMode('table')}
+                aria-label="Table view"
+              >
+                <List className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'cards' ? 'default' : 'outline'}
+                size="icon"
+                onClick={() => setViewMode('cards')}
+                aria-label="Card view"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
 
-        <div className="bg-card rounded-lg shadow-elegant overflow-hidden">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead>
-                  <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
-                  <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
-                  <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
-                  <SortableHeader sortKey="phone" className="hidden lg:table-cell">{t('dashboard.phone')}</SortableHeader>
-                  <SortableHeader sortKey="status">{t('dashboard.status')}</SortableHeader>
-                  <TableHead className="text-right">{t('dashboard.actions')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sortedEmployees.map((employee) => (
-                  <TableRow key={employee.id} className="hover:bg-muted/50 transition-colors">
-                    <TableCell>
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={employee.photo} />
-                        <AvatarFallback className="bg-secondary text-secondary-foreground">
-                          {employee.photo ? '' : <User className="h-4 w-4" />}
-                        </AvatarFallback>
-                      </Avatar>
-                    </TableCell>
-                    <TableCell className="font-medium">{employee.fullName}</TableCell>
-                    <TableCell className="hidden md:table-cell">{t(`position.${employee.position}`)}</TableCell>
-                    <TableCell className="hidden lg:table-cell">{employee.email}</TableCell>
-                    <TableCell 
-                      className="hidden lg:table-cell text-blue-600 hover:text-blue-800 cursor-pointer hover:underline"
-                      onClick={() => handleWhatsAppRedirect(employee.phone)}
-                    >
-                      {employee.phone}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={employee.status === 'active' ? 'default' : 'secondary'}>
-                        {t(`dashboard.${employee.status}`)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => navigate(`/employee/${employee.id}`)}
-                          title={t('dashboard.view')}
+        <div key={viewMode} className="animate-fade-in">
+          {viewMode === 'table' ? (
+            <div className="bg-card rounded-lg shadow-elegant overflow-hidden">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead>
+                      <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
+                      <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
+                      <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
+                      <SortableHeader sortKey="phone" className="hidden lg:table-cell">{t('dashboard.phone')}</SortableHeader>
+                      <SortableHeader sortKey="status">{t('dashboard.status')}</SortableHeader>
+                      <TableHead className="text-right">{t('dashboard.actions')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sortedEmployees.map((employee) => (
+                      <TableRow key={employee.id} className="hover:bg-muted/50 transition-colors">
+                        <TableCell>
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={employee.photo} />
+                            <AvatarFallback className="bg-secondary text-secondary-foreground">
+                              {employee.photo ? '' : <User className="h-4 w-4" />}
+                            </AvatarFallback>
+                          </Avatar>
+                        </TableCell>
+                        <TableCell className="font-medium">{employee.fullName}</TableCell>
+                        <TableCell className="hidden md:table-cell">{t(`position.${employee.position}`)}</TableCell>
+                        <TableCell className="hidden lg:table-cell">{employee.email}</TableCell>
+                        <TableCell 
+                          className="hidden lg:table-cell text-blue-600 hover:text-blue-800 cursor-pointer hover:underline"
+                          onClick={() => handleWhatsAppRedirect(employee.phone)}
                         >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(employee)}
-                          title={t('dashboard.edit')}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setDeleteId(employee.id)}
-                          title={t('dashboard.delete')}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                          {employee.phone}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={employee.status === 'active' ? 'default' : 'secondary'}>
+                            {t(`dashboard.${employee.status}`)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => navigate(`/employee/${employee.id}`)}
+                              title={t('dashboard.view')}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(employee)}
+                              title={t('dashboard.edit')}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setDeleteId(employee.id)}
+                              title={t('dashboard.delete')}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {sortedEmployees.map((employee, index) => (
+                <div key={employee.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
+                  <EmployeeCard
+                    employee={employee}
+                    t={t}
+                    onView={(id) => navigate(`/employee/${id}`)}
+                    onEdit={handleEdit}
+                    onDelete={setDeleteId}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
 
