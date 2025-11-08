@@ -78,6 +78,7 @@ const translations = {
     'profile.deleteDoc': 'Deletar documento',
     'profile.docDeleted': 'Documento deletado com sucesso!',
     'userProfile.changePhoto': 'Alterar Foto',
+    'profile.yearsOld': 'anos',
     
     // Receipt Generator
     'receipt.title': 'Gerador de Recibos',
@@ -225,6 +226,7 @@ const translations = {
     'profile.deleteDoc': 'Delete document',
     'profile.docDeleted': 'Document deleted successfully!',
     'userProfile.changePhoto': 'Change Photo',
+    'profile.yearsOld': 'years old',
 
     // Receipt Generator
     'receipt.title': 'Receipt Generator',
