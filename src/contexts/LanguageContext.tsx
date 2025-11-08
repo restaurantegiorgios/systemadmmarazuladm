@@ -134,14 +134,15 @@ const translations = {
     'receipt.passage.error.paymentMethodRequired': 'Selecione a forma de pagamento.',
     
     // Positions
-    'position.waiter': 'Garçom',
-    'position.chef': 'Chefe de Cozinha',
-    'position.souschef': 'Subchefe',
-    'position.cook': 'Cozinheiro',
-    'position.dishwasher': 'Auxiliar de Cozinha',
-    'position.manager': 'Gerente',
-    'position.host': 'Recepcionista',
-    'position.bartender': 'Barman',
+    'position.garcom': 'Garçom',
+    'position.estoquista': 'Estoquista',
+    'position.caixa': 'Caixa',
+    'position.atendente': 'Atendente',
+    'position.acougueiro': 'Açougueiro',
+    'position.cozinheiro': 'Cozinheiro',
+    'position.servicos_gerais': 'Serviços Gerais',
+    'position.auxiliar_cozinha': 'Auxiliar de Cozinha',
+    'position.auxiliar_administrativo': 'Auxiliar Administrativo',
 
     // Work Schedules
     'schedule.escala 6x1': 'Escala 6x1',
@@ -280,14 +281,15 @@ const translations = {
     'receipt.passage.error.paymentMethodRequired': 'Please select the payment method.',
 
     // Positions
-    'position.waiter': 'Waiter',
-    'position.chef': 'Head Chef',
-    'position.souschef': 'Sous Chef',
-    'position.cook': 'Cook',
-    'position.dishwasher': 'Kitchen Assistant',
-    'position.manager': 'Manager',
-    'position.host': 'Host',
-    'position.bartender': 'Bartender',
+    'position.garcom': 'Waiter',
+    'position.estoquista': 'Stocker',
+    'position.caixa': 'Cashier',
+    'position.atendente': 'Attendant',
+    'position.acougueiro': 'Butcher',
+    'position.cozinheiro': 'Cook',
+    'position.servicos_gerais': 'General Services',
+    'position.auxiliar_cozinha': 'Kitchen Assistant',
+    'position.auxiliar_administrativo': 'Administrative Assistant',
 
     // Work Schedules
     'schedule.escala 6x1': 'Schedule 6x1',

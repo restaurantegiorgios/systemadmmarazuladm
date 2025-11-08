@@ -12,7 +12,8 @@ import {
 } from '@/components/ui/select';
 import { Upload, MapPin, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner'; // Import toast for feedback
+import { toast } from 'sonner';
+import { positions } from '@/lib/positions';
 
 interface EmployeeDetailsTabProps {
   employee: Employee;
@@ -24,11 +25,6 @@ interface EmployeeDetailsTabProps {
   handlePhotoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   getInitials: (fullName: string) => string;
 }
-
-const positions = [
-  'waiter', 'chef', 'souschef', 'cook', 
-  'dishwasher', 'manager', 'host', 'bartender'
-];
 
 const schedules = ['escala 6x1', 'escala 5x2'];
 
@@ -135,8 +131,6 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
 
     // Editing mode
     if (id === 'position') {
-      const selectOptions = positions;
-      
       return (
         <div>
           <Label htmlFor={id}>{t(labelKey)}</Label>
@@ -146,7 +140,7 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
           >
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              {selectOptions.map(option => (
+              {positions.map(option => (
                 <SelectItem key={option} value={option}>
                   {t(`position.${option}`)}
                 </SelectItem>

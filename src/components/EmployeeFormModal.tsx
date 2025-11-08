@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from 'sonner';
+import { positions } from '@/lib/positions';
 
 interface EmployeeFormModalProps {
   isOpen: boolean;
@@ -43,7 +44,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
     defaultValues: {
       fullName: '',
       cpf: '',
-      position: 'waiter',
+      position: 'garcom',
       admissionDate: '',
       birthDate: '',
       interviewDate: '',
@@ -65,7 +66,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
         form.reset({
           fullName: '',
           cpf: '',
-          position: 'waiter',
+          position: 'garcom',
           admissionDate: '',
           birthDate: '',
           interviewDate: '',
@@ -193,14 +194,9 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                       <SelectContent>
-                        <SelectItem value="waiter">{t('position.waiter')}</SelectItem>
-                        <SelectItem value="chef">{t('position.chef')}</SelectItem>
-                        <SelectItem value="souschef">{t('position.souschef')}</SelectItem>
-                        <SelectItem value="cook">{t('position.cook')}</SelectItem>
-                        <SelectItem value="dishwasher">{t('position.dishwasher')}</SelectItem>
-                        <SelectItem value="manager">{t('position.manager')}</SelectItem>
-                        <SelectItem value="host">{t('position.host')}</SelectItem>
-                        <SelectItem value="bartender">{t('position.bartender')}</SelectItem>
+                        {positions.map(pos => (
+                          <SelectItem key={pos} value={pos}>{t(`position.${pos}`)}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
