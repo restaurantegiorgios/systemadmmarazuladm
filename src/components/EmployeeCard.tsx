@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Employee } from '@/contexts/EmployeeProvider';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit, Trash2, Eye, User, Phone, Copy } from 'lucide-react';
+import { Edit, Trash2, Eye, User, Phone, Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface EmployeeCardProps {
@@ -16,10 +16,13 @@ interface EmployeeCardProps {
 }
 
 const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, t, onView, onEdit, onDelete }) => {
-  
+  const [isCopied, setIsCopied] = useState(false);
+
   const handleCopy = (text: string, fieldName: string) => {
     navigator.clipboard.writeText(text).then(() => {
       toast.success(`${t(fieldName)} copiado!`);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
     }).catch(() => {
       toast.error("Falha ao copiar.");
     });
@@ -61,8 +64,8 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, t, onView, onEdit
                 <Phone className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate">{employee.phone}</span>
             </div>
-            <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0" onClick={() => handleCopy(employee.phone, 'dashboard.phone')}>
-                <Copy className="h-3 w-3" />
+            <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0 transition-transform hover:scale-125" onClick={() => handleCopy(employee.phone, 'dashboard.phone')}>
+                {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-3 w-3" />}
             </Button>
         </div>
       </CardContent>
@@ -73,6 +76,7 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, t, onView, onEdit
           size="icon"
           onClick={() => onView(employee.id)}
           title={t('dashboard.view')}
+          className="transition-transform hover:scale-125"
         >
           <Eye className="h-4 w-4" />
         </Button>
@@ -81,6 +85,7 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, t, onView, onEdit
           size="icon"
           onClick={() => onEdit(employee)}
           title={t('dashboard.edit')}
+          className="transition-transform hover:scale-125"
         >
           <Edit className="h-4 w-4" />
         </Button>
@@ -89,6 +94,7 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, t, onView, onEdit
           size="icon"
           onClick={() => onDelete(employee.id)}
           title={t('dashboard.delete')}
+          className="transition-transform hover:scale-125"
         >
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>

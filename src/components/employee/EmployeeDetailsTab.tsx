@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Employee } from '@/contexts/EmployeeProvider';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Upload, MapPin, Copy } from 'lucide-react';
+import { Upload, MapPin, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { positions } from '@/lib/positions';
@@ -41,38 +41,40 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
 }) => {
   const currentPhoto = editableData.photo || employee.photo;
   const currentFullName = editableData.fullName || employee.fullName;
+  const [copied, setCopied] = useState<Record<string, boolean>>({});
 
   const handleOpenMap = (address: string) => {
     const encodedAddress = encodeURIComponent(address);
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
   };
   
-  const handleCopy = (text: string, fieldName: string) => {
+  const handleCopy = (text: string, fieldName: string, fieldKey: string) => {
     navigator.clipboard.writeText(text).then(() => {
       toast.success(`${t(fieldName)} copiado!`, {
         description: text,
       });
+      setCopied(prev => ({ ...prev, [fieldKey]: true }));
+      setTimeout(() => {
+        setCopied(prev => ({ ...prev, [fieldKey]: false }));
+      }, 2000);
     }).catch(() => {
       toast.error("Falha ao copiar para a área de transferência.");
     });
   };
   
   const handleWhatsAppRedirect = (phone: string) => {
-    // Remove todos os caracteres não numéricos e adiciona o código do país (55 para Brasil)
     const cleanPhone = phone.replace(/\D/g, '');
     const whatsappLink = `https://wa.me/55${cleanPhone}`;
     window.open(whatsappLink, '_blank');
   };
 
   const renderField = (id: keyof Employee, labelKey: string, type: string = 'text', maxLength?: number) => {
-    // CORREÇÃO: Verifica se o valor existe em editableData (mesmo que seja '') antes de usar o valor original.
     const value = (editableData[id] !== undefined ? editableData[id] : employee[id]) as string;
     
     const isCopyable = ['fullName', 'email', 'address', 'cpf', 'phone'].includes(id);
     const isPhoneField = id === 'phone';
     
-    // Base classes for action buttons
-    const actionButtonClasses = "opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 text-muted-foreground hover:bg-muted hover:text-primary";
+    const actionButtonClasses = "opacity-0 group-hover:opacity-100 transition-all hover:scale-125 h-8 w-8 p-0 text-muted-foreground hover:bg-muted hover:text-primary";
 
     if (!isEditing) {
       let displayValue = value;
@@ -108,20 +110,18 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
             </p>
             
             <div className="flex items-center gap-1">
-              {/* Copy Icon */}
               {isCopyable && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleCopy(displayValue, labelKey)}
+                  onClick={() => handleCopy(displayValue, labelKey, id)}
                   title={t('dashboard.copy')}
                   className={actionButtonClasses}
                 >
-                  <Copy className="h-4 w-4" />
+                  {copied[id] ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                 </Button>
               )}
 
-              {/* Map Pin Icon (only for address) */}
               {id === 'address' && displayValue && (
                 <Button 
                   variant="ghost" 

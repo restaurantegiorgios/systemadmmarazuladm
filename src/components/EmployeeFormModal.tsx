@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Upload } from 'lucide-react';
+import { Upload, Loader2 } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -27,6 +27,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { positions } from '@/lib/positions';
+import { cn } from '@/lib/utils';
 
 interface EmployeeFormModalProps {
   isOpen: boolean;
@@ -38,6 +39,9 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
   const { t } = useLanguage();
   const { addEmployee, updateEmployee } = useEmployees();
   const isEdit = !!employee;
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [shake, setShake] = useState(false);
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
@@ -112,7 +116,10 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
     }
   };
 
-  const onSubmit = (data: EmployeeFormValues) => {
+  const onSubmit = async (data: EmployeeFormValues) => {
+    setIsSubmitting(true);
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simula o tempo de salvamento
+
     const employeeDataToSave = {
       ...data,
       photo: data.photo || undefined,
@@ -125,7 +132,17 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
     }
 
     toast.success(t('form.success'));
+    setIsSubmitting(false);
     onClose();
+  };
+
+  const triggerShake = () => {
+    setShake(true);
+    setTimeout(() => setShake(false), 820); // Duração da animação
+  };
+
+  const onError = () => {
+    triggerShake();
   };
 
   const getInitials = (fullName: string) => {
@@ -140,13 +157,13 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[625px]">
+      <DialogContent className={cn("sm:max-w-[625px]", shake && "animate-shake")}>
         <DialogHeader>
           <DialogTitle>{isEdit ? t('form.title.edit') : t('form.title.new')}</DialogTitle>
           <DialogDescription>{t('form.personalData')}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-4">
             <div className="max-h-[70vh] overflow-y-auto p-1 pr-4 -mr-4 space-y-4">
               <div className="flex flex-col items-center space-y-2 mb-6">
                 <Avatar className="w-24 h-24">
@@ -294,7 +311,10 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
             </div>
             <DialogFooter className="pt-4">
               <Button type="button" variant="outline" onClick={onClose}>{t('form.cancel')}</Button>
-              <Button type="submit" className="bg-gradient-to-r from-primary to-accent">{t('form.save')}</Button>
+              <Button type="submit" className="bg-gradient-to-r from-primary to-accent" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {t('form.save')}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

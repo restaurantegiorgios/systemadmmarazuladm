@@ -519,6 +519,7 @@ const Dashboard = () => {
                               size="icon"
                               onClick={() => navigate(`/employee/${employee.id}`)}
                               title={t('dashboard.view')}
+                              className="transition-transform hover:scale-125"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -527,6 +528,7 @@ const Dashboard = () => {
                               size="icon"
                               onClick={() => handleEdit(employee)}
                               title={t('dashboard.edit')}
+                              className="transition-transform hover:scale-125"
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -535,6 +537,7 @@ const Dashboard = () => {
                               size="icon"
                               onClick={() => setDeleteId(employee.id)}
                               title={t('dashboard.delete')}
+                              className="transition-transform hover:scale-125"
                             >
                               <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
