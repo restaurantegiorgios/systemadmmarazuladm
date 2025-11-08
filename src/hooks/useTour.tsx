@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { useShepherd } from 'react-shepherd';
+import { useContext, useEffect } from 'react';
+import { ShepherdTourContext } from 'react-shepherd';
 
 export const useTour = (steps: any[], tourId: string) => {
-  const tour = useShepherd();
+  const tour: any = useContext(ShepherdTourContext);
 
   useEffect(() => {
     const tourCompleted = localStorage.getItem(`tour_${tourId}_completed`);
@@ -34,6 +34,7 @@ export const useTour = (steps: any[], tourId: string) => {
   const startTour = () => {
     if (tour) {
       // The tour instance might not clear steps automatically, so we do it manually.
+      // This is a common pattern when dynamically adding steps.
       while (tour.steps.length > 0) {
         tour.removeStep(tour.steps[0].id);
       }
