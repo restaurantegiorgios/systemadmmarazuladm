@@ -314,18 +314,11 @@ const initialMockEmployees: Employee[] = [
 const EmployeeContext = createContext<EmployeeContextType | undefined>(undefined);
 
 export const EmployeeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [employees, setEmployees] = useState<Employee[]>(initialMockEmployees);
+  const [isLoading, setIsLoading] = useState(false); // Definido como false para carregamento instantâneo
 
-  // Simulate data fetching delay
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setEmployees(initialMockEmployees);
-      setIsLoading(false);
-    }, 1500); // 1.5 second delay
-
-    return () => clearTimeout(timer);
-  }, []);
+  // Removendo o useEffect que simulava o atraso de 1.5s.
+  // Os dados mockados são carregados diretamente no useState.
 
   const addEmployee = (employeeData: EmployeeFormValues) => {
     const newEmployee: Employee = {
