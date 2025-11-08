@@ -2,7 +2,6 @@ import { useContext, useEffect } from 'react';
 import { ShepherdJourneyContext } from 'react-shepherd';
 
 export const useTour = (steps: any[], tourId: string) => {
-  // Cast to `any` to bypass the inconsistent type definitions from the library
   const tour: any = useContext(ShepherdJourneyContext);
 
   useEffect(() => {
