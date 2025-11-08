@@ -1,8 +1,8 @@
 import { useContext, useEffect } from 'react';
-import { ShepherdJourneyContext } from 'react-shepherd';
+import * as Shepherd from 'react-shepherd';
 
 export const useTour = (steps: any[], tourId: string) => {
-  const tour: any = useContext(ShepherdJourneyContext);
+  const tour: any = useContext(Shepherd.ShepherdJourneyContext);
 
   useEffect(() => {
     const tourCompleted = localStorage.getItem(`tour_${tourId}_completed`);
