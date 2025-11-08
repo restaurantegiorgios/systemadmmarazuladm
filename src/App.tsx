@@ -9,7 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import EmployeeProfile from "./pages/EmployeeProfile";
 import ReceiptGenerator from "./pages/ReceiptGenerator";
 import NotFound from "./pages/NotFound";
-import ShepherdTour from 'react-shepherd';
+import { ShepherdTour } from 'react-shepherd';
 
 const queryClient = new QueryClient();
 
