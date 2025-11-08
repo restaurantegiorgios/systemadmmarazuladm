@@ -309,9 +309,20 @@ const Dashboard = () => {
                         font-family: 'Inter', sans-serif;
                         color: #333;
                         font-size: 10px;
+                        margin: 0;
+                        padding: 0;
                     }
+                    
+                    /* Define margens e rodapé para todas as páginas */
+                    @page {
+                        margin: 0.5in 0.5in 0.75in 0.5in; /* Top Right Bottom Left */
+                        @bottom-center {
+                            content: element(pdf-footer);
+                        }
+                    }
+
                     .pdf-container {
-                        padding: 20px;
+                        padding: 0;
                     }
                     .pdf-header {
                         display: flex;
@@ -360,13 +371,16 @@ const Dashboard = () => {
                     tr:nth-child(even) {
                         background-color: #f9f9f9;
                     }
+                    
+                    /* Rodapé fixo para o PDF */
                     .pdf-footer {
+                        position: running(pdf-footer);
                         text-align: center;
-                        margin-top: 20px;
                         font-size: 8px;
                         color: #777;
                         border-top: 1px solid #eee;
-                        padding-top: 10px;
+                        padding-top: 5px;
+                        width: 100%;
                     }
                 </style>
             </head>
@@ -393,9 +407,10 @@ const Dashboard = () => {
                             `).join('')}
                         </tbody>
                     </table>
-                    <div class="pdf-footer">
-                        Relatório gerado em ${generationDate}
-                    </div>
+                </div>
+                
+                <div class="pdf-footer">
+                    Relatório gerado em ${generationDate}
                 </div>
             </body>
             </html>
