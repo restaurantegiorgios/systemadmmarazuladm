@@ -217,7 +217,7 @@ const Dashboard = () => {
     });
   };
 
-  const handleExport = async (format: 'excel' | 'csv' | 'pdf', columns: EmployeeColumn[]) => {
+  const handleExport = async (format: 'excel' | 'pdf', columns: EmployeeColumn[]) => {
     setExportDialogOpen(false);
 
     const formatValue = (emp: Employee, col: EmployeeColumn) => {
@@ -240,7 +240,7 @@ const Dashboard = () => {
       return row;
     });
 
-    if (format === 'excel' || format === 'csv') {
+    if (format === 'excel') {
         const worksheet = XLSX.utils.json_to_sheet(dataToExport);
         
         // --- XLSX Formatting Enhancements ---
@@ -292,22 +292,9 @@ const Dashboard = () => {
         
         // --- End Formatting Enhancements ---
 
-        if (format === 'excel') {
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Funcionários');
-            XLSX.writeFile(workbook, 'funcionarios.xlsx');
-        } else {
-            const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
-            const blob = new Blob([`\uFEFF${csvOutput}`], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'funcionarios.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Funcionários');
+        XLSX.writeFile(workbook, 'funcionarios.xlsx');
     } else if (format === 'pdf') {
         const logoBase64 = await getLogoBase64();
         const generationDate = new Date().toLocaleDateString('pt-BR');

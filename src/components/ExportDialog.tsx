@@ -12,7 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Employee } from '@/contexts/EmployeeProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { File, FileText, FileSpreadsheet } from 'lucide-react';
+import { File, FileSpreadsheet } from 'lucide-react';
 
 // Define the type for available columns
 export type EmployeeColumn = keyof Omit<Employee, 'id' | 'documents' | 'photo'>;
@@ -20,7 +20,7 @@ export type EmployeeColumn = keyof Omit<Employee, 'id' | 'documents' | 'photo'>;
 interface ExportDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onExport: (format: 'excel' | 'csv' | 'pdf', columns: EmployeeColumn[]) => void;
+  onExport: (format: 'excel' | 'pdf', columns: EmployeeColumn[]) => void;
   allColumns: { id: EmployeeColumn; labelKey: string }[];
 }
 
@@ -78,10 +78,6 @@ const ExportDialog: React.FC<ExportDialogProps> = ({ isOpen, onClose, onExport, 
           <Button onClick={() => onExport('excel', selectedColumns)} disabled={selectedColumns.length === 0}>
             <FileSpreadsheet className="mr-2 h-4 w-4" />
             Excel
-          </Button>
-          <Button onClick={() => onExport('csv', selectedColumns)} disabled={selectedColumns.length === 0}>
-            <FileText className="mr-2 h-4 w-4" />
-            CSV
           </Button>
           <Button onClick={() => onExport('pdf', selectedColumns)} disabled={selectedColumns.length === 0}>
             <File className="mr-2 h-4 w-4" />
