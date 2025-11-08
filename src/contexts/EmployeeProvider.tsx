@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { EmployeeFormValues } from '@/lib/validators';
 
 export interface Document {
@@ -16,6 +16,7 @@ export interface Employee extends EmployeeFormValues {
 
 interface EmployeeContextType {
   employees: Employee[];
+  isLoading: boolean; // Novo estado de carregamento
   addEmployee: (employee: EmployeeFormValues) => void;
   updateEmployee: (id: string, employee: Partial<Employee>) => void;
   deleteEmployee: (id: string) => void;
@@ -27,7 +28,7 @@ interface EmployeeContextType {
 // Mock data updated to include fileData (using placeholders for simplicity, as real Base64 is too long)
 const mockFilePlaceholder = 'data:application/pdf;base64,...'; 
 
-const mockEmployees: Employee[] = [
+const initialMockEmployees: Employee[] = [
   {
     id: '1',
     fullName: 'Carlos Silva Santos',
@@ -313,7 +314,18 @@ const mockEmployees: Employee[] = [
 const EmployeeContext = createContext<EmployeeContextType | undefined>(undefined);
 
 export const EmployeeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [employees, setEmployees] = useState<Employee[]>(mockEmployees);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate data fetching delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setEmployees(initialMockEmployees);
+      setIsLoading(false);
+    }, 1500); // 1.5 second delay
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const addEmployee = (employeeData: EmployeeFormValues) => {
     const newEmployee: Employee = {
@@ -364,6 +376,7 @@ export const EmployeeProvider: React.FC<{ children: ReactNode }> = ({ children }
     <EmployeeContext.Provider
       value={{
         employees,
+        isLoading,
         addEmployee,
         updateEmployee,
         deleteEmployee,

@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown, User, Download, Share2, LayoutGrid, List } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown, User, Download, Share2, LayoutGrid, List, FileSearch, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -44,6 +44,8 @@ import ExportDialog, { EmployeeColumn } from '@/components/ExportDialog';
 import { formatBrazilianDate } from '@/lib/utils';
 import EmployeeCard from '@/components/EmployeeCard';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import DashboardSkeleton from '@/components/DashboardSkeleton';
+import EmptyState from '@/components/EmptyState';
 
 type SortKey = 'fullName' | 'position' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -57,7 +59,7 @@ interface SortConfig {
 
 const Dashboard = () => {
   const { t } = useLanguage();
-  const { employees, deleteEmployee } = useEmployees();
+  const { employees, deleteEmployee, isLoading } = useEmployees();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -375,6 +377,11 @@ const Dashboard = () => {
     }
   };
 
+  const isFiltered = searchTerm || statusFilter !== 'all' || positionFilter !== 'all';
+  const showEmptyState = !isLoading && filteredEmployees.length === 0;
+  const showNoResults = showEmptyState && isFiltered;
+  const showNoEmployees = showEmptyState && !isFiltered;
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -401,193 +408,224 @@ const Dashboard = () => {
           </div>
         </div>
         
-        <DashboardStats employees={employees} />
+        {/* Stats and Filters Section */}
+        {isLoading ? (
+          <DashboardSkeleton viewMode={viewMode} />
+        ) : (
+          <>
+            <DashboardStats employees={employees} />
 
-        <div className="bg-card rounded-lg shadow-soft p-6 mb-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center">
-            <div className="flex-1 relative w-full">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                {searchTerm ? (
-                  <button
-                    type="button"
-                    onClick={() => setSearchTerm('')}
-                    className="p-0 bg-transparent border-none text-muted-foreground hover:text-foreground"
-                    aria-label="Clear search"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                ) : (
-                  <Search className="h-4 w-4 text-muted-foreground" />
-                )}
-              </div>
-              <Input
-                placeholder={t('dashboard.search')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-              <Select value={positionFilter} onValueChange={setPositionFilter}>
-                <SelectTrigger className="w-full md:w-[200px]">
-                  <SelectValue placeholder={t('form.position')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('dashboard.allPositions')}</SelectItem>
-                  {positions.map(pos => (
-                    <SelectItem key={pos} value={pos}>{t(`position.${pos}`)}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="flex gap-2 flex-wrap">
-                {statusOptions.map(option => (
-                  <Button
-                    key={option.value}
-                    variant={statusFilter === option.value ? 'default' : 'outline'}
-                    onClick={() => setStatusFilter(option.value)}
-                  >
-                    {t(option.labelKey)}
-                  </Button>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={viewMode === 'table' ? 'default' : 'outline'}
-                    size="icon"
-                    onClick={() => setViewMode('table')}
-                    aria-label="Table view"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent><p>Visualização em Tabela</p></TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={viewMode === 'cards' ? 'default' : 'outline'}
-                    size="icon"
-                    onClick={() => setViewMode('cards')}
-                    aria-label="Card view"
-                  >
-                    <LayoutGrid className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent><p>Visualização em Cards</p></TooltipContent>
-              </Tooltip>
-            </div>
-          </div>
-        </div>
-
-        <div key={viewMode} className="animate-fade-in">
-          {viewMode === 'table' ? (
-            <div className="bg-card rounded-lg shadow-elegant overflow-hidden">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead>
-                      <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
-                      <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
-                      <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
-                      <SortableHeader sortKey="phone" className="hidden lg:table-cell">{t('dashboard.phone')}</SortableHeader>
-                      <SortableHeader sortKey="status">{t('dashboard.status')}</SortableHeader>
-                      <TableHead className="text-right">{t('dashboard.actions')}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedEmployees.map((employee) => (
-                      <TableRow key={employee.id} className="hover:bg-muted/50 transition-colors">
-                        <TableCell>
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={employee.photo} />
-                            <AvatarFallback className="bg-secondary text-secondary-foreground">
-                              {employee.photo ? '' : <User className="h-4 w-4" />}
-                            </AvatarFallback>
-                          </Avatar>
-                        </TableCell>
-                        <TableCell className="font-medium">{employee.fullName}</TableCell>
-                        <TableCell className="hidden md:table-cell">{t(`position.${employee.position}`)}</TableCell>
-                        <TableCell className="hidden lg:table-cell">{employee.email}</TableCell>
-                        <TableCell 
-                          className="hidden lg:table-cell text-blue-600 hover:text-blue-800 cursor-pointer hover:underline"
-                          onClick={() => handleWhatsAppRedirect(employee.phone)}
-                        >
-                          {employee.phone}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={employee.status === 'active' ? 'default' : 'secondary'}>
-                            {t(`dashboard.${employee.status}`)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-1">
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => navigate(`/employee/${employee.id}`)}
-                                  className="transition-transform hover:scale-125"
-                                >
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent><p>{t('dashboard.view')}</p></TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleEdit(employee)}
-                                  className="transition-transform hover:scale-125"
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent><p>{t('dashboard.edit')}</p></TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => setDeleteId(employee.id)}
-                                  className="transition-transform hover:scale-125"
-                                >
-                                  <Trash2 className="h-4 w-4 text-destructive" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent><p>{t('dashboard.delete')}</p></TooltipContent>
-                            </Tooltip>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {sortedEmployees.map((employee, index) => (
-                <div key={employee.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
-                  <EmployeeCard
-                    employee={employee}
-                    t={t}
-                    onView={(id) => navigate(`/employee/${id}`)}
-                    onEdit={handleEdit}
-                    onDelete={setDeleteId}
+            <div className="bg-card rounded-lg shadow-soft p-6 mb-6">
+              <div className="flex flex-col md:flex-row gap-4 items-center">
+                <div className="flex-1 relative w-full">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                    {searchTerm ? (
+                      <button
+                        type="button"
+                        onClick={() => setSearchTerm('')}
+                        className="p-0 bg-transparent border-none text-muted-foreground hover:text-foreground"
+                        aria-label="Clear search"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    ) : (
+                      <Search className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </div>
+                  <Input
+                    placeholder={t('dashboard.search')}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
                   />
                 </div>
-              ))}
+                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                  <Select value={positionFilter} onValueChange={setPositionFilter}>
+                    <SelectTrigger className="w-full md:w-[200px]">
+                      <SelectValue placeholder={t('form.position')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('dashboard.allPositions')}</SelectItem>
+                      {positions.map(pos => (
+                        <SelectItem key={pos} value={pos}>{t(`position.${pos}`)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="flex gap-2 flex-wrap">
+                    {statusOptions.map(option => (
+                      <Button
+                        key={option.value}
+                        variant={statusFilter === option.value ? 'default' : 'outline'}
+                        onClick={() => setStatusFilter(option.value)}
+                      >
+                        {t(option.labelKey)}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant={viewMode === 'table' ? 'default' : 'outline'}
+                        size="icon"
+                        onClick={() => setViewMode('table')}
+                        aria-label="Table view"
+                      >
+                        <List className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>Visualização em Tabela</p></TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant={viewMode === 'cards' ? 'default' : 'outline'}
+                        size="icon"
+                        onClick={() => setViewMode('cards')}
+                        aria-label="Card view"
+                      >
+                        <LayoutGrid className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>Visualização em Cards</p></TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
             </div>
-          )}
-        </div>
+          </>
+        )}
+
+        {/* Employee List/Empty State */}
+        {isLoading ? (
+          // Already handled above, but keeping this structure clear
+          null
+        ) : showNoEmployees ? (
+          <EmptyState
+            title="Nenhum Funcionário Cadastrado"
+            description="Comece adicionando o primeiro funcionário para gerenciar seus dados e documentos."
+            icon={UserPlus}
+            actionButton={{
+              label: t('dashboard.addNew'),
+              onClick: handleAddNew,
+            }}
+            className="mt-12"
+          />
+        ) : showNoResults ? (
+          <EmptyState
+            title="Nenhum Resultado Encontrado"
+            description={`Não encontramos funcionários que correspondam aos filtros e termos de busca: "${searchTerm}". Tente ajustar os filtros.`}
+            icon={FileSearch}
+            className="mt-12"
+          />
+        ) : (
+          <div key={viewMode} className="animate-fade-in">
+            {viewMode === 'table' ? (
+              <div className="bg-card rounded-lg shadow-elegant overflow-hidden">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead>
+                        <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
+                        <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
+                        <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
+                        <SortableHeader sortKey="phone" className="hidden lg:table-cell">{t('dashboard.phone')}</SortableHeader>
+                        <SortableHeader sortKey="status">{t('dashboard.status')}</SortableHeader>
+                        <TableHead className="text-right">{t('dashboard.actions')}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {sortedEmployees.map((employee) => (
+                        <TableRow key={employee.id} className="hover:bg-muted/50 transition-colors">
+                          <TableCell>
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={employee.photo} />
+                              <AvatarFallback className="bg-secondary text-secondary-foreground">
+                                {employee.photo ? '' : <User className="h-4 w-4" />}
+                              </AvatarFallback>
+                            </Avatar>
+                          </TableCell>
+                          <TableCell className="font-medium">{employee.fullName}</TableCell>
+                          <TableCell className="hidden md:table-cell">{t(`position.${employee.position}`)}</TableCell>
+                          <TableCell className="hidden lg:table-cell">{employee.email}</TableCell>
+                          <TableCell 
+                            className="hidden lg:table-cell text-blue-600 hover:text-blue-800 cursor-pointer hover:underline"
+                            onClick={() => handleWhatsAppRedirect(employee.phone)}
+                          >
+                            {employee.phone}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={employee.status === 'active' ? 'default' : 'secondary'}>
+                              {t(`dashboard.${employee.status}`)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-1">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => navigate(`/employee/${employee.id}`)}
+                                    className="transition-transform hover:scale-125"
+                                  >
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent><p>{t('dashboard.view')}</p></TooltipContent>
+                              </Tooltip>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleEdit(employee)}
+                                    className="transition-transform hover:scale-125"
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent><p>{t('dashboard.edit')}</p></TooltipContent>
+                              </Tooltip>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setDeleteId(employee.id)}
+                                    className="transition-transform hover:scale-125"
+                                  >
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent><p>{t('dashboard.delete')}</p></TooltipContent>
+                              </Tooltip>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {sortedEmployees.map((employee, index) => (
+                  <div key={employee.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
+                    <EmployeeCard
+                      employee={employee}
+                      t={t}
+                      onView={(id) => navigate(`/employee/${id}`)}
+                      onEdit={handleEdit}
+                      onDelete={setDeleteId}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
