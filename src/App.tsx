@@ -9,7 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import EmployeeProfile from "./pages/EmployeeProfile";
 import ReceiptGenerator from "./pages/ReceiptGenerator";
 import NotFound from "./pages/NotFound";
-import ShepherdTour from 'react-shepherd';
+import * as Shepherd from 'react-shepherd';
 
 const queryClient = new QueryClient();
 
@@ -27,7 +27,7 @@ const App = () => (
     <LanguageProvider>
       <EmployeeProvider>
         <TooltipProvider>
-          <ShepherdTour steps={[]} tourOptions={tourOptions}>
+          <Shepherd.ShepherdTour steps={[]} tourOptions={tourOptions}>
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <Toaster />
               <Sonner />
@@ -39,7 +39,7 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
-          </ShepherdTour>
+          </Shepherd.ShepherdTour>
         </TooltipProvider>
       </EmployeeProvider>
     </LanguageProvider>
