@@ -42,6 +42,12 @@ const translations = {
     'dashboard.uniquePositions': 'Cargos Únicos',
     'dashboard.totalMen': 'Total de Homens',
     'dashboard.totalWomen': 'Total de Mulheres',
+    'dashboard.export': 'Exportar',
+    'dashboard.exportTitle': 'Exportar Dados de Funcionários',
+    'dashboard.exportDescription': 'Selecione as colunas que deseja incluir no arquivo exportado.',
+    'dashboard.selectAllColumns': 'Selecionar Todas',
+    'dashboard.shareView': 'Compartilhar',
+    'dashboard.shareSuccess': 'Link com filtros copiado para a área de transferência!',
     
     // Employee Form
     'form.title.new': 'Novo Funcionário',
@@ -198,6 +204,12 @@ const translations = {
     'dashboard.uniquePositions': 'Unique Positions',
     'dashboard.totalMen': 'Total Men',
     'dashboard.totalWomen': 'Total Women',
+    'dashboard.export': 'Export',
+    'dashboard.exportTitle': 'Export Employee Data',
+    'dashboard.exportDescription': 'Select the columns you want to include in the exported file.',
+    'dashboard.selectAllColumns': 'Select All',
+    'dashboard.shareView': 'Share Filters',
+    'dashboard.shareSuccess': 'Link with filters copied to clipboard!',
 
     // Employee Form
     'form.title.new': 'New Employee',

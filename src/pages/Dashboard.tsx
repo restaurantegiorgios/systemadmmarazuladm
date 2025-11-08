@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmployees, Employee } from '@/contexts/EmployeeProvider';
 import { Header } from '@/components/Header';
@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown, User } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown, User, Download, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -38,6 +38,9 @@ import EmployeeFormModal from '@/components/EmployeeFormModal';
 import DashboardStats from '@/components/DashboardStats';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
 import { positions } from '@/lib/positions';
+import * as XLSX from 'xlsx';
+import html2pdf from 'html2pdf.js';
+import ExportDialog, { EmployeeColumn } from '@/components/ExportDialog';
 
 type SortKey = 'fullName' | 'position' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -52,14 +55,33 @@ const Dashboard = () => {
   const { t } = useLanguage();
   const { employees, deleteEmployee } = useEmployees();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [positionFilter, setPositionFilter] = useState<'all' | string>('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [isExportDialogOpen, setExportDialogOpen] = useState(false);
   
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'fullName', direction: 'asc' });
+
+  // Read filters from URL on initial load
+  useEffect(() => {
+    setSearchTerm(searchParams.get('q') || '');
+    setStatusFilter((searchParams.get('status') as StatusFilter) || 'all');
+    setPositionFilter(searchParams.get('position') || 'all');
+  }, []);
+
+  // Sync filters with URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.set('q', searchTerm);
+    if (statusFilter !== 'all') params.set('status', statusFilter);
+    if (positionFilter !== 'all') params.set('position', positionFilter);
+    setSearchParams(params, { replace: true });
+  }, [searchTerm, statusFilter, positionFilter, setSearchParams]);
 
   const statusOptions: { value: StatusFilter; labelKey: string }[] = [
     { value: 'all', labelKey: 'dashboard.allStatus' },
@@ -83,7 +105,6 @@ const Dashboard = () => {
     
     if (sortConfig.key) {
       sortableItems.sort((a, b) => {
-        // Use string comparison for all fields
         const aValue = a[sortConfig.key];
         const bValue = b[sortConfig.key];
 
@@ -126,7 +147,6 @@ const Dashboard = () => {
   );
   
   const handleWhatsAppRedirect = (phone: string) => {
-    // Remove todos os caracteres não numéricos e adiciona o código do país (55 para Brasil)
     const cleanPhone = phone.replace(/\D/g, '');
     const whatsappLink = `https://wa.me/55${cleanPhone}`;
     window.open(whatsappLink, '_blank');
@@ -150,6 +170,105 @@ const Dashboard = () => {
     setFormModalOpen(true);
   };
 
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success(t('dashboard.shareSuccess'));
+  };
+
+  const allColumns: { id: EmployeeColumn; labelKey: string }[] = [
+    { id: 'fullName', labelKey: 'form.fullName' },
+    { id: 'cpf', labelKey: 'form.cpf' },
+    { id: 'birthDate', labelKey: 'form.birthDate' },
+    { id: 'gender', labelKey: 'form.gender' },
+    { id: 'position', labelKey: 'form.position' },
+    { id: 'workSchedule', labelKey: 'form.workSchedule' },
+    { id: 'interviewDate', labelKey: 'form.interviewDate' },
+    { id: 'testDate', labelKey: 'form.testDate' },
+    { id: 'admissionDate', labelKey: 'form.admissionDate' },
+    { id: 'email', labelKey: 'form.email' },
+    { id: 'phone', labelKey: 'form.phone' },
+    { id: 'address', labelKey: 'form.address' },
+    { id: 'status', labelKey: 'form.status' },
+  ];
+
+  const handleExport = (format: 'excel' | 'csv' | 'pdf', columns: EmployeeColumn[]) => {
+    setExportDialogOpen(false);
+
+    const dataToExport = sortedEmployees.map(emp => {
+        const row: { [key: string]: any } = {};
+        columns.forEach(col => {
+            let value = emp[col];
+            if (col === 'position') value = t(`position.${value}`);
+            else if (col === 'status') value = t(`dashboard.${value}`);
+            else if (col === 'gender') value = t(`gender.${value}`);
+            else if (col === 'workSchedule') value = t(`schedule.${value}`);
+            row[t(allColumns.find(c => c.id === col)!.labelKey)] = value;
+        });
+        return row;
+    });
+
+    if (format === 'excel' || format === 'csv') {
+        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        if (format === 'excel') {
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Funcionários');
+            XLSX.writeFile(workbook, 'funcionarios.xlsx');
+        } else {
+            const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
+            const blob = new Blob([`\uFEFF${csvOutput}`], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'funcionarios.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    } else if (format === 'pdf') {
+        const element = document.createElement('div');
+        element.innerHTML = `
+            <style>
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 10px; }
+                th { background-color: #f2f2f2; }
+            </style>
+            <h1>${t('dashboard.title')}</h1>
+            <table>
+                <thead>
+                    <tr>
+                        ${columns.map(col => `<th>${t(allColumns.find(c => c.id === col)!.labelKey)}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${sortedEmployees.map(emp => `
+                        <tr>
+                            ${columns.map(col => {
+                                let value = emp[col];
+                                if (col === 'position') value = t(`position.${value}`);
+                                else if (col === 'status') value = t(`dashboard.${value}`);
+                                else if (col === 'gender') value = t(`gender.${value}`);
+                                else if (col === 'workSchedule') value = t(`schedule.${value}`);
+                                return `<td>${value || ''}</td>`;
+                            }).join('')}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+        document.body.appendChild(element);
+        html2pdf(element, {
+            margin: 1,
+            filename: 'funcionarios.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+        }).then(() => {
+            document.body.removeChild(element);
+        });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -157,16 +276,25 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 py-8 animate-fade-in">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <h1 className="text-3xl font-bold text-foreground">{t('dashboard.title')}</h1>
-          <Button 
-            onClick={handleAddNew}
-            className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            {t('dashboard.addNew')}
-          </Button>
+          <div className="flex flex-wrap gap-2 justify-end">
+            <Button onClick={handleShare} variant="outline">
+              <Share2 className="mr-2 h-4 w-4" />
+              {t('dashboard.shareView')}
+            </Button>
+            <Button onClick={() => setExportDialogOpen(true)}>
+              <Download className="mr-2 h-4 w-4" />
+              {t('dashboard.export')}
+            </Button>
+            <Button 
+              onClick={handleAddNew}
+              className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              {t('dashboard.addNew')}
+            </Button>
+          </div>
         </div>
         
-        {/* Dashboard Stats Cards */}
         <DashboardStats employees={employees} />
 
         <div className="bg-card rounded-lg shadow-soft p-6 mb-6">
@@ -314,6 +442,13 @@ const Dashboard = () => {
         isOpen={isFormModalOpen}
         onClose={() => setFormModalOpen(false)}
         employee={editingEmployee}
+      />
+      
+      <ExportDialog
+        isOpen={isExportDialogOpen}
+        onClose={() => setExportDialogOpen(false)}
+        onExport={handleExport}
+        allColumns={allColumns}
       />
       
       <ScrollToTopButton />
