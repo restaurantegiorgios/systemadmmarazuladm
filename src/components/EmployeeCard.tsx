@@ -52,9 +52,9 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, t, onView, onEdit
       </CardHeader>
       
       <CardContent className="space-y-3 text-sm">
-        <div className="flex items-center justify-between text-muted-foreground">
+        <div className="flex items-center justify-between">
             <div 
-                className="flex items-center gap-2 cursor-pointer hover:text-primary transition-colors"
+                className="flex items-center gap-2 cursor-pointer text-blue-600 hover:text-blue-800 hover:underline"
                 onClick={() => handleWhatsAppRedirect(employee.phone)}
                 title="Abrir no WhatsApp"
             >
