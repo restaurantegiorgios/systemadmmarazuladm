@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown, User, Download, Share2, LayoutGrid, List, FileSearch, UserPlus } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown, User, Download, Share2, LayoutGrid, List, FileSearch, UserPlus, Filter } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -46,6 +46,8 @@ import EmployeeCard from '@/components/EmployeeCard';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import DashboardSkeleton from '@/components/DashboardSkeleton';
 import EmptyState from '@/components/EmptyState';
+import MobileFilterDrawer from '@/components/MobileFilterDrawer';
+import { cn } from '@/lib/utils';
 
 type SortKey = 'fullName' | 'position' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -390,17 +392,17 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <h1 className="text-3xl font-bold text-foreground">{t('dashboard.title')}</h1>
           <div className="flex flex-wrap gap-2 justify-end items-center">
-            <Button onClick={handleShare} variant="outline">
+            <Button onClick={handleShare} variant="outline" className="hidden md:flex">
               <Share2 className="mr-2 h-4 w-4" />
               {t('dashboard.shareView')}
             </Button>
-            <Button onClick={() => setExportDialogOpen(true)}>
+            <Button onClick={() => setExportDialogOpen(true)} className="hidden md:flex">
               <Download className="mr-2 h-4 w-4" />
               {t('dashboard.export')}
             </Button>
             <Button 
               onClick={handleAddNew}
-              className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
+              className="bg-gradient-to-r from-primary to-accent hover:opacity-90 hidden md:flex"
             >
               <Plus className="mr-2 h-4 w-4" />
               {t('dashboard.addNew')}
@@ -417,7 +419,9 @@ const Dashboard = () => {
 
             <div className="bg-card rounded-lg shadow-soft p-6 mb-6">
               <div className="flex flex-col md:flex-row gap-4 items-center">
-                <div className="flex-1 relative w-full">
+                
+                {/* Desktop Search and Filters */}
+                <div className="hidden md:flex flex-1 relative w-full">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2">
                     {searchTerm ? (
                       <button
@@ -439,7 +443,7 @@ const Dashboard = () => {
                     className="pl-10"
                   />
                 </div>
-                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                <div className="hidden md:flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                   <Select value={positionFilter} onValueChange={setPositionFilter}>
                     <SelectTrigger className="w-full md:w-[200px]">
                       <SelectValue placeholder={t('form.position')} />
@@ -463,7 +467,49 @@ const Dashboard = () => {
                     ))}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                
+                {/* Mobile Filter Button (replaces the entire filter block) */}
+                <div className="flex md:hidden w-full justify-between items-center gap-2">
+                  <MobileFilterDrawer
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                    statusFilter={statusFilter}
+                    setStatusFilter={setStatusFilter}
+                    positionFilter={positionFilter}
+                    setPositionFilter={setPositionFilter}
+                  />
+                  <div className="flex items-center gap-2">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant={viewMode === 'table' ? 'default' : 'outline'}
+                          size="icon"
+                          onClick={() => setViewMode('table')}
+                          aria-label="Table view"
+                        >
+                          <List className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent><p>Visualização em Tabela</p></TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant={viewMode === 'cards' ? 'default' : 'outline'}
+                          size="icon"
+                          onClick={() => setViewMode('cards')}
+                          aria-label="Card view"
+                        >
+                          <LayoutGrid className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent><p>Visualização em Cards</p></TooltipContent>
+                    </Tooltip>
+                  </div>
+                </div>
+
+                {/* Desktop View Mode Toggle */}
+                <div className="hidden md:flex items-center gap-2">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
@@ -498,7 +544,6 @@ const Dashboard = () => {
 
         {/* Employee List/Empty State */}
         {isLoading ? (
-          // Already handled above, but keeping this structure clear
           null
         ) : showNoEmployees ? (
           <EmptyState
@@ -522,6 +567,7 @@ const Dashboard = () => {
           <div key={viewMode} className="animate-fade-in">
             {viewMode === 'table' ? (
               <div className="bg-card rounded-lg shadow-elegant overflow-hidden">
+                {/* Adicionando scroll horizontal para garantir que a tabela não quebre o layout mobile */}
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
@@ -627,6 +673,21 @@ const Dashboard = () => {
           </div>
         )}
       </main>
+      
+      {/* Floating Action Button (FAB) for Mobile */}
+      <div className={cn(
+        "fixed bottom-6 right-6 z-50 md:hidden transition-transform duration-300",
+        isLoading ? "scale-0" : "scale-100"
+      )}>
+        <Button 
+          onClick={handleAddNew}
+          size="lg"
+          className="rounded-full h-14 w-14 shadow-xl bg-gradient-to-r from-primary to-accent hover:opacity-90"
+          aria-label={t('dashboard.addNew')}
+        >
+          <Plus className="h-6 w-6" />
+        </Button>
+      </div>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
