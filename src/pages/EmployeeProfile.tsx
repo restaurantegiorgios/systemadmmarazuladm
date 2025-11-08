@@ -18,6 +18,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Form } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { employeeSchema, EmployeeFormValues } from '@/lib/validators';
 
 // Import modular components
 import EmployeeProfileHeader from '@/components/employee/EmployeeProfileHeader';
@@ -37,10 +41,9 @@ const EmployeeProfile = () => {
   const navigate = useNavigate();
   
   const initialEmployee = id ? getEmployeeById(id) : null;
-  const printRef = useRef<HTMLDivElement>(null); // Ref for the print template
+  const printRef = useRef<HTMLDivElement>(null);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editableData, setEditableData] = useState<Partial<Employee>>({});
   
   // State for document upload form
   const [uploadDocType, setUploadDocType] = useState('rg');
@@ -49,29 +52,21 @@ const EmployeeProfile = () => {
   // State for document filtering
   const [documentFilter, setDocumentFilter] = useState<DocumentTypeKey>('all');
   
-  const [docToDelete, setDocToDelete] = useState<string | null>(null); // State for confirmation dialog
+  const [docToDelete, setDocToDelete] = useState<string | null>(null);
 
+  // 1. Initialize react-hook-form
+  const form = useForm<EmployeeFormValues>({
+    resolver: zodResolver(employeeSchema),
+    defaultValues: initialEmployee || undefined,
+    mode: 'onChange', // Enable real-time validation
+  });
+
+  // 2. Sync form data when employee changes or component mounts
   useEffect(() => {
     if (initialEmployee) {
-      setEditableData({
-        fullName: initialEmployee.fullName,
-        cpf: initialEmployee.cpf,
-        position: initialEmployee.position,
-        admissionDate: initialEmployee.admissionDate,
-        email: initialEmployee.email,
-        phone: initialEmployee.phone,
-        address: initialEmployee.address,
-        status: initialEmployee.status,
-        photo: initialEmployee.photo,
-        // NEW FIELDS
-        birthDate: initialEmployee.birthDate,
-        gender: initialEmployee.gender,
-        interviewDate: initialEmployee.interviewDate,
-        testDate: initialEmployee.testDate,
-        workSchedule: initialEmployee.workSchedule,
-      });
+      form.reset(initialEmployee);
     }
-  }, [initialEmployee]);
+  }, [initialEmployee, form]);
 
   const filteredDocuments = useMemo(() => {
     if (!initialEmployee) return [];
@@ -82,23 +77,6 @@ const EmployeeProfile = () => {
   }, [initialEmployee, documentFilter]);
 
   // --- Utility Functions ---
-  const formatCPF = (value: string) => {
-    return value
-      .replace(/\D/g, '')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-      .replace(/(-\d{2})\d+?$/, '$1');
-  };
-
-  const formatPhone = (value: string) => {
-    return value
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d{5})(\d)/, '$1-$2')
-      .replace(/(-\d{4})\d+?$/, '$1');
-  };
-
   const getInitials = (fullName: string) => {
     const parts = fullName.split(' ').filter(p => p.length > 0);
     if (parts.length === 0) return '';
@@ -108,51 +86,25 @@ const EmployeeProfile = () => {
   // -------------------------
 
   // --- Handlers for Details Tab ---
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    let formattedValue = value;
-
-    if (id === 'cpf') {
-      formattedValue = formatCPF(value);
-    } else if (id === 'phone') {
-      formattedValue = formatPhone(value);
-    } else if (id === 'fullName') {
-      // Aplica a capitalização ao digitar, mas o salvamento final garante a formatação correta
-      formattedValue = capitalizeName(value);
-    }
-
-    setEditableData(prev => ({ ...prev, [id]: formattedValue }));
-  };
-
-  const handleSelectChange = (id: keyof Employee, value: string) => {
-    setEditableData(prev => ({ ...prev, [id]: value }));
-  };
-
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setEditableData(prev => ({ ...prev, photo: reader.result as string }));
+        form.setValue('photo', reader.result as string, { shouldDirty: true, shouldValidate: true });
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async (data: EmployeeFormValues) => {
     if (!id || !initialEmployee) return;
 
-    // Aplica a capitalização final ao nome antes de salvar
+    // Apply final capitalization to the name
     const finalData = {
-        ...editableData,
-        fullName: editableData.fullName ? capitalizeName(editableData.fullName) : initialEmployee.fullName,
+        ...data,
+        fullName: capitalizeName(data.fullName),
     };
-
-    // Basic validation check for required fields
-    if (!finalData.fullName || !finalData.cpf || !finalData.admissionDate || !finalData.email || !finalData.phone || !finalData.address || !finalData.interviewDate || !finalData.testDate || !finalData.workSchedule || !finalData.birthDate || !finalData.gender) {
-        toast.error(t('form.error'));
-        return;
-    }
 
     updateEmployee(id, finalData);
     toast.success(t('form.success'));
@@ -161,24 +113,8 @@ const EmployeeProfile = () => {
 
   const handleCancelEdit = () => {
     if (!initialEmployee) return;
-    // Reset data to initial state
-    setEditableData({
-      fullName: initialEmployee.fullName,
-      cpf: initialEmployee.cpf,
-      position: initialEmployee.position,
-      admissionDate: initialEmployee.admissionDate,
-      email: initialEmployee.email,
-      phone: initialEmployee.phone,
-      address: initialEmployee.address,
-      status: initialEmployee.status,
-      photo: initialEmployee.photo,
-      // NEW FIELDS RESET
-      birthDate: initialEmployee.birthDate,
-      gender: initialEmployee.gender,
-      interviewDate: initialEmployee.interviewDate,
-      testDate: initialEmployee.testDate,
-      workSchedule: initialEmployee.workSchedule,
-    });
+    // Reset form data to initial state
+    form.reset(initialEmployee);
     setIsEditing(false);
   };
   // --------------------------------
@@ -341,60 +277,62 @@ const EmployeeProfile = () => {
         </div>
 
         <Card className="max-w-5xl mx-auto shadow-elegant">
-          <CardContent className="p-6">
-            
-            <div>
-              <EmployeeProfileHeader
-                employee={initialEmployee}
-                editableData={editableData}
-                isEditing={isEditing}
-                t={t}
-                onEditToggle={() => setIsEditing(true)}
-                onSave={handleSave}
-                onCancel={handleCancelEdit}
-                getInitials={getInitials}
-              />
-            </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSave)} className="w-full">
+              <CardContent className="p-6">
+                
+                <div>
+                  <EmployeeProfileHeader
+                    employee={initialEmployee}
+                    isEditing={isEditing}
+                    t={t}
+                    onEditToggle={() => setIsEditing(true)}
+                    onSave={form.handleSubmit(handleSave)} // Use form.handleSubmit here
+                    onCancel={handleCancelEdit}
+                    getInitials={getInitials}
+                    form={form}
+                  />
+                </div>
 
-            <Tabs defaultValue="details" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="details">{t('profile.details')}</TabsTrigger>
-                <TabsTrigger value="documents">{t('profile.documents')}</TabsTrigger>
-              </TabsList>
+                <Tabs defaultValue="details" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsTrigger value="details">{t('profile.details')}</TabsTrigger>
+                    <TabsTrigger value="documents">{t('profile.documents')}</TabsTrigger>
+                  </TabsList>
 
-              <TabsContent value="details">
-                <EmployeeDetailsTab
-                  employee={initialEmployee}
-                  editableData={editableData}
-                  isEditing={isEditing}
-                  t={t}
-                  handleInputChange={handleInputChange}
-                  handleSelectChange={handleSelectChange}
-                  handlePhotoUpload={handlePhotoUpload}
-                  getInitials={getInitials}
-                />
-              </TabsContent>
+                  <TabsContent value="details">
+                    <EmployeeDetailsTab
+                      employee={initialEmployee}
+                      isEditing={isEditing}
+                      t={t}
+                      handlePhotoUpload={handlePhotoUpload}
+                      getInitials={getInitials}
+                      form={form}
+                    />
+                  </TabsContent>
 
-              <TabsContent value="documents">
-                <EmployeeDocumentsTab
-                  t={t}
-                  employee={initialEmployee}
-                  filteredDocuments={filteredDocuments}
-                  documentTypes={documentTypes}
-                  documentFilter={documentFilter}
-                  setDocumentFilter={setDocumentFilter}
-                  uploadDocType={uploadDocType}
-                  setUploadDocType={setUploadDocType}
-                  selectedFile={selectedFile}
-                  handleFileChange={handleFileChange}
-                  handleUpload={handleUpload}
-                  handleViewDoc={handleViewDoc}
-                  handleDownloadDoc={handleDownloadDoc}
-                  setDocToDelete={setDocToDelete}
-                />
-              </TabsContent>
-            </Tabs>
-          </CardContent>
+                  <TabsContent value="documents">
+                    <EmployeeDocumentsTab
+                      t={t}
+                      employee={initialEmployee}
+                      filteredDocuments={filteredDocuments}
+                      documentTypes={documentTypes}
+                      documentFilter={documentFilter}
+                      setDocumentFilter={setDocumentFilter}
+                      uploadDocType={uploadDocType}
+                      setUploadDocType={setUploadDocType}
+                      selectedFile={selectedFile}
+                      handleFileChange={handleFileChange}
+                      handleUpload={handleUpload}
+                      handleViewDoc={handleViewDoc}
+                      handleDownloadDoc={handleDownloadDoc}
+                      setDocToDelete={setDocToDelete}
+                    />
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </form>
+          </Form>
         </Card>
       </main>
       

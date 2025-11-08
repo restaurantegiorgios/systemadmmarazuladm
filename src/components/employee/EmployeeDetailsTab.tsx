@@ -14,33 +14,32 @@ import { Upload, MapPin, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { positions } from '@/lib/positions';
-import { calculateAge, formatBrazilianDate } from '@/lib/utils';
+import { calculateAge, formatBrazilianDate, capitalizeName } from '@/lib/utils';
+import { UseFormReturn } from 'react-hook-form';
+import { EmployeeFormValues } from '@/lib/validators';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 
 interface EmployeeDetailsTabProps {
   employee: Employee;
-  editableData: Partial<Employee>;
   isEditing: boolean;
   t: (key: string) => string;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleSelectChange: (id: keyof Employee, value: string) => void;
   handlePhotoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   getInitials: (fullName: string) => string;
+  form: UseFormReturn<EmployeeFormValues>;
 }
 
 const schedules = ['escala 6x1', 'escala 5x2'];
 
 const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
   employee,
-  editableData,
   isEditing,
   t,
-  handleInputChange,
-  handleSelectChange,
   handlePhotoUpload,
   getInitials,
+  form,
 }) => {
-  const currentPhoto = editableData.photo || employee.photo;
-  const currentFullName = editableData.fullName || employee.fullName;
+  const photoValue = form.watch('photo');
+  const fullNameValue = form.watch('fullName');
   const [copied, setCopied] = useState<Record<string, boolean>>({});
 
   const handleOpenMap = (address: string) => {
@@ -68,8 +67,25 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
     window.open(whatsappLink, '_blank');
   };
 
-  const renderField = (id: keyof Employee, labelKey: string, type: string = 'text', maxLength?: number) => {
-    const value = (editableData[id] !== undefined ? editableData[id] : employee[id]) as string;
+  const formatCPF = (value: string) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+      .replace(/(-\d{2})\d+?$/, '$1');
+  };
+
+  const formatPhone = (value: string) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d)/, '$1-$2')
+      .replace(/(-\d{4})\d+?$/, '$1');
+  };
+
+  const renderField = (id: keyof EmployeeFormValues, labelKey: string, type: string = 'text', maxLength?: number) => {
+    const value = form.watch(id) as string;
     
     const isCopyable = ['fullName', 'email', 'address', 'cpf', 'phone'].includes(id);
     const isPhoneField = id === 'phone';
@@ -87,14 +103,16 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
         displayValue = t(`schedule.${value}`);
       } else if (id === 'gender') {
         displayValue = t(`gender.${value}`);
-      } else if (['admissionDate', 'interviewDate', 'testDate'].includes(id) && typeof value === 'string') {
-        displayValue = formatBrazilianDate(value);
-      } else if (id === 'birthDate' && typeof value === 'string') {
+      } else if (['admissionDate', 'interviewDate', 'testDate', 'birthDate'].includes(id) && typeof value === 'string') {
         const formattedDate = formatBrazilianDate(value);
-        const age = calculateAge(value);
-        displayValue = formattedDate;
-        if (age !== null) {
-          displayValue += ` (${age} ${t('profile.yearsOld')})`;
+        if (id === 'birthDate') {
+          const age = calculateAge(value);
+          displayValue = formattedDate;
+          if (age !== null) {
+            displayValue += ` (${age} ${t('profile.yearsOld')})`;
+          }
+        } else {
+          displayValue = formattedDate;
         }
       }
       
@@ -106,11 +124,11 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
               className={`text-lg font-medium ${isPhoneField ? 'cursor-pointer group-hover:underline' : ''}`}
               onClick={isPhoneField ? () => handleWhatsAppRedirect(displayValue) : undefined}
             >
-              {displayValue}
+              {displayValue || t('form.notAvailable')}
             </p>
             
             <div className="flex items-center gap-1">
-              {isCopyable && (
+              {isCopyable && displayValue && (
                 <Button
                   variant="ghost"
                   size="icon"
@@ -142,22 +160,24 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
     // Editing mode
     if (id === 'position') {
       return (
-        <div>
-          <Label htmlFor={id}>{t(labelKey)}</Label>
-          <Select 
-            value={String(value)} 
-            onValueChange={(val) => handleSelectChange(id, val)}
-          >
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {positions.map(option => (
-                <SelectItem key={option} value={option}>
-                  {t(`position.${option}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <FormField control={form.control} name={id} render={({ field }) => (
+          <FormItem>
+            <FormLabel>{t(labelKey)}</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {positions.map(option => (
+                  <SelectItem key={option} value={option}>
+                    {t(`position.${option}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )} />
       );
     }
     
@@ -165,22 +185,24 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       const selectOptions = schedules;
       
       return (
-        <div>
-          <Label htmlFor={id}>{t(labelKey)}</Label>
-          <Select 
-            value={String(value)} 
-            onValueChange={(val) => handleSelectChange(id, val)}
-          >
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {selectOptions.map(option => (
-                <SelectItem key={option} value={option}>
-                  {t(`schedule.${option}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <FormField control={form.control} name={id} render={({ field }) => (
+          <FormItem>
+            <FormLabel>{t(labelKey)}</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {selectOptions.map(option => (
+                  <SelectItem key={option} value={option}>
+                    {t(`schedule.${option}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )} />
       );
     }
 
@@ -188,22 +210,24 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       const selectOptions = ['active', 'inactive'];
       
       return (
-        <div>
-          <Label htmlFor={id}>{t(labelKey)}</Label>
-          <Select 
-            value={String(value)} 
-            onValueChange={(val) => handleSelectChange(id, val)}
-          >
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {selectOptions.map(option => (
-                <SelectItem key={option} value={option}>
-                  {t(`dashboard.${option}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <FormField control={form.control} name={id} render={({ field }) => (
+          <FormItem>
+            <FormLabel>{t(labelKey)}</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {selectOptions.map(option => (
+                  <SelectItem key={option} value={option}>
+                    {t(`dashboard.${option}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )} />
       );
     }
 
@@ -211,37 +235,62 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       const selectOptions = ['male', 'female', 'other'];
       
       return (
-        <div>
-          <Label htmlFor={id}>{t(labelKey)}</Label>
-          <Select 
-            value={String(value)} 
-            onValueChange={(val) => handleSelectChange(id, val)}
-          >
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {selectOptions.map(option => (
-                <SelectItem key={option} value={option}>
-                  {t(`gender.${option}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <FormField control={form.control} name={id} render={({ field }) => (
+          <FormItem>
+            <FormLabel>{t(labelKey)}</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {selectOptions.map(option => (
+                  <SelectItem key={option} value={option}>
+                    {t(`gender.${option}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )} />
       );
     }
-
+    
+    // Default Input Field
     return (
-      <div>
-        <Label htmlFor={id}>{t(labelKey)}</Label>
-        <Input 
-          id={id} 
-          type={type} 
-          value={String(value)} 
-          onChange={handleInputChange} 
-          maxLength={maxLength}
-          required
-        />
-      </div>
+      <FormField control={form.control} name={id} render={({ field }) => (
+        <FormItem className={id === 'address' ? 'md:col-span-2' : ''}>
+          <FormLabel>{t(labelKey)}</FormLabel>
+          <FormControl>
+            <Input 
+              type={type} 
+              {...field} 
+              value={field.value || ''}
+              maxLength={maxLength}
+              onChange={e => {
+                let newValue = e.target.value;
+                if (id === 'cpf') {
+                  newValue = formatCPF(newValue);
+                } else if (id === 'phone') {
+                  newValue = formatPhone(newValue);
+                } else if (id === 'fullName') {
+                  // Apply capitalization on blur, but allow typing freely
+                  field.onChange(newValue);
+                  return;
+                }
+                field.onChange(newValue);
+              }}
+              onBlur={(e) => {
+                if (id === 'fullName') {
+                  field.onChange(capitalizeName(e.target.value));
+                }
+                field.onBlur();
+              }}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )} />
     );
   };
 
@@ -250,9 +299,9 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       {isEditing && (
         <div className="flex flex-col items-center space-y-2 mb-6">
           <Avatar className="w-20 h-20 shadow-md">
-            <AvatarImage src={currentPhoto} />
+            <AvatarImage src={photoValue} />
             <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
-              {getInitials(currentFullName)}
+              {getInitials(fullNameValue)}
             </AvatarFallback>
           </Avatar>
           <Label htmlFor="employee-photo-upload" className="cursor-pointer">
@@ -282,9 +331,8 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
         {renderField('admissionDate', 'form.admissionDate', 'date')}
         {renderField('email', 'form.email', 'email')}
         {renderField('phone', 'form.phone', 'text', 15)}
-        <div className="md:col-span-2">
-          {renderField('address', 'form.address')}
-        </div>
+        {/* Address is handled inside renderField to span 2 columns */}
+        {renderField('address', 'form.address')}
         {renderField('status', 'form.status')}
       </div>
     </div>
