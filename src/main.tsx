@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import 'shepherd.js/css/shepherd.css';
+import 'shepherd.js/dist/css/shepherd.css';
 
 createRoot(document.getElementById("root")!).render(<App />);
