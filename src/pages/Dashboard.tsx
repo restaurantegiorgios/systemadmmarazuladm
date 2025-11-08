@@ -410,7 +410,7 @@ const Dashboard = () => {
           </div>
         </div>
         
-        {/* Conteúdo Principal: Esqueleto ou Dados */}
+        {/* Stats and Filters Section */}
         {isLoading ? (
           <DashboardSkeleton viewMode={viewMode} />
         ) : (
@@ -539,136 +539,138 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
+          </>
+        )}
 
-            {/* Employee List/Empty State */}
-            {showNoEmployees ? (
-              <EmptyState
-                title="Nenhum Funcionário Cadastrado"
-                description="Comece adicionando o primeiro funcionário para gerenciar seus dados e documentos."
-                icon={UserPlus}
-                actionButton={{
-                  label: t('dashboard.addNew'),
-                  onClick: handleAddNew,
-                }}
-                className="mt-12"
-              />
-            ) : showNoResults ? (
-              <EmptyState
-                title="Nenhum Resultado Encontrado"
-                description={`Não encontramos funcionários que correspondam aos filtros e termos de busca: "${searchTerm}". Tente ajustar os filtros.`}
-                icon={FileSearch}
-                className="mt-12"
-              />
+        {/* Employee List/Empty State */}
+        {isLoading ? (
+          null
+        ) : showNoEmployees ? (
+          <EmptyState
+            title="Nenhum Funcionário Cadastrado"
+            description="Comece adicionando o primeiro funcionário para gerenciar seus dados e documentos."
+            icon={UserPlus}
+            actionButton={{
+              label: t('dashboard.addNew'),
+              onClick: handleAddNew,
+            }}
+            className="mt-12"
+          />
+        ) : showNoResults ? (
+          <EmptyState
+            title="Nenhum Resultado Encontrado"
+            description={`Não encontramos funcionários que correspondam aos filtros e termos de busca: "${searchTerm}". Tente ajustar os filtros.`}
+            icon={FileSearch}
+            className="mt-12"
+          />
+        ) : (
+          <div key={viewMode} className="animate-fade-in">
+            {viewMode === 'table' ? (
+              <div className="bg-card rounded-lg shadow-elegant overflow-hidden">
+                {/* Adicionando scroll horizontal para garantir que a tabela não quebre o layout mobile */}
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead>
+                        <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
+                        <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
+                        <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
+                        <SortableHeader sortKey="phone" className="hidden lg:table-cell">{t('dashboard.phone')}</SortableHeader>
+                        <SortableHeader sortKey="status">{t('dashboard.status')}</SortableHeader>
+                        <TableHead className="text-right">{t('dashboard.actions')}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {sortedEmployees.map((employee) => (
+                        <TableRow key={employee.id} className="hover:bg-muted/50 transition-colors">
+                          <TableCell>
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={employee.photo} />
+                              <AvatarFallback className="bg-secondary text-secondary-foreground">
+                                {employee.photo ? '' : <User className="h-4 w-4" />}
+                              </AvatarFallback>
+                            </Avatar>
+                          </TableCell>
+                          <TableCell className="font-medium">{employee.fullName}</TableCell>
+                          <TableCell className="hidden md:table-cell">{t(`position.${employee.position}`)}</TableCell>
+                          <TableCell className="hidden lg:table-cell">{employee.email}</TableCell>
+                          <TableCell 
+                            className="hidden lg:table-cell text-blue-600 hover:text-blue-800 cursor-pointer hover:underline"
+                            onClick={() => handleWhatsAppRedirect(employee.phone)}
+                          >
+                            {employee.phone}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={employee.status === 'active' ? 'default' : 'secondary'}>
+                              {t(`dashboard.${employee.status}`)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-1">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => navigate(`/employee/${employee.id}`)}
+                                    className="transition-transform hover:scale-125"
+                                  >
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent><p>{t('dashboard.view')}</p></TooltipContent>
+                              </Tooltip>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleEdit(employee)}
+                                    className="transition-transform hover:scale-125"
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent><p>{t('dashboard.edit')}</p></TooltipContent>
+                              </Tooltip>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setDeleteId(employee.id)}
+                                    className="transition-transform hover:scale-125"
+                                  >
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent><p>{t('dashboard.delete')}</p></TooltipContent>
+                              </Tooltip>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
             ) : (
-              <div key={viewMode} className="animate-fade-in">
-                {viewMode === 'table' ? (
-                  <div className="bg-card rounded-lg shadow-elegant overflow-hidden">
-                    {/* Adicionando scroll horizontal para garantir que a tabela não quebre o layout mobile */}
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead>
-                            <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
-                            <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
-                            <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
-                            <SortableHeader sortKey="phone" className="hidden lg:table-cell">{t('dashboard.phone')}</SortableHeader>
-                            <SortableHeader sortKey="status">{t('dashboard.status')}</SortableHeader>
-                            <TableHead className="text-right">{t('dashboard.actions')}</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {sortedEmployees.map((employee) => (
-                            <TableRow key={employee.id} className="hover:bg-muted/50 transition-colors">
-                              <TableCell>
-                                <Avatar className="h-8 w-8">
-                                  <AvatarImage src={employee.photo} />
-                                  <AvatarFallback className="bg-secondary text-secondary-foreground">
-                                    {employee.photo ? '' : <User className="h-4 w-4" />}
-                                  </AvatarFallback>
-                                </Avatar>
-                              </TableCell>
-                              <TableCell className="font-medium">{employee.fullName}</TableCell>
-                              <TableCell className="hidden md:table-cell">{t(`position.${employee.position}`)}</TableCell>
-                              <TableCell className="hidden lg:table-cell">{employee.email}</TableCell>
-                              <TableCell 
-                                className="hidden lg:table-cell text-blue-600 hover:text-blue-800 cursor-pointer hover:underline"
-                                onClick={() => handleWhatsAppRedirect(employee.phone)}
-                              >
-                                {employee.phone}
-                              </TableCell>
-                              <TableCell>
-                                <Badge variant={employee.status === 'active' ? 'default' : 'secondary'}>
-                                  {t(`dashboard.${employee.status}`)}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <div className="flex justify-end gap-1">
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => navigate(`/employee/${employee.id}`)}
-                                        className="transition-transform hover:scale-125"
-                                      >
-                                        <Eye className="h-4 w-4" />
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent><p>{t('dashboard.view')}</p></TooltipContent>
-                                  </Tooltip>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleEdit(employee)}
-                                        className="transition-transform hover:scale-125"
-                                      >
-                                        <Edit className="h-4 w-4" />
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent><p>{t('dashboard.edit')}</p></TooltipContent>
-                                  </Tooltip>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => setDeleteId(employee.id)}
-                                        className="transition-transform hover:scale-125"
-                                      >
-                                        <Trash2 className="h-4 w-4 text-destructive" />
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent><p>{t('dashboard.delete')}</p></TooltipContent>
-                                  </Tooltip>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {sortedEmployees.map((employee, index) => (
+                  <div key={employee.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
+                    <EmployeeCard
+                      employee={employee}
+                      t={t}
+                      onView={(id) => navigate(`/employee/${id}`)}
+                      onEdit={handleEdit}
+                      onDelete={setDeleteId}
+                    />
                   </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {sortedEmployees.map((employee, index) => (
-                      <div key={employee.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
-                        <EmployeeCard
-                          employee={employee}
-                          t={t}
-                          onView={(id) => navigate(`/employee/${id}`)}
-                          onEdit={handleEdit}
-                          onDelete={setDeleteId}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
+                ))}
               </div>
             )}
-          </>
+          </div>
         )}
       </main>
       
