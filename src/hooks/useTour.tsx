@@ -1,8 +1,9 @@
 import { useContext, useEffect } from 'react';
-import { ShepherdTourContext } from 'react-shepherd';
+import { ShepherdJourneyContext } from 'react-shepherd';
 
 export const useTour = (steps: any[], tourId: string) => {
-  const tour = useContext(ShepherdTourContext);
+  // Cast to `any` to bypass the inconsistent type definitions from the library
+  const tour: any = useContext(ShepherdJourneyContext);
 
   useEffect(() => {
     const tourCompleted = localStorage.getItem(`tour_${tourId}_completed`);
@@ -15,14 +16,14 @@ export const useTour = (steps: any[], tourId: string) => {
 
         const onComplete = () => {
           localStorage.setItem(`tour_${tourId}_completed`, 'true');
-          tour.removeListener('complete', onComplete);
-          tour.removeListener('cancel', onCancel);
+          tour.off('complete', onComplete);
+          tour.off('cancel', onCancel);
         };
         
         const onCancel = () => {
           localStorage.setItem(`tour_${tourId}_completed`, 'true');
-          tour.removeListener('complete', onComplete);
-          tour.removeListener('cancel', onCancel);
+          tour.off('complete', onComplete);
+          tour.off('cancel', onCancel);
         };
 
         tour.on('complete', onComplete);
@@ -33,7 +34,11 @@ export const useTour = (steps: any[], tourId: string) => {
 
   const startTour = () => {
     if (tour) {
-      tour.steps = []; // Clear existing steps
+      // The tour instance might not clear steps automatically, so we do it manually.
+      // This is a common pattern when dynamically adding steps.
+      while (tour.steps.length > 0) {
+        tour.removeStep(tour.steps[0].id);
+      }
       tour.addSteps(steps);
       tour.start();
     }
