@@ -19,9 +19,6 @@ import { Printer, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import ReceiptTemplate from '@/components/ReceiptTemplate';
 import ReceiptPassageTemplate from '@/components/ReceiptPassageTemplate';
-import { useTour } from '@/hooks/useTour';
-import { getReceiptsTourSteps } from '@/lib/tours';
-import TourRestartButton from '@/components/TourRestartButton';
 
 type ReceiptType = 'service' | 'passage';
 
@@ -54,9 +51,6 @@ const ReceiptGenerator = () => {
   const { t } = useLanguage();
   const { employees, getEmployeeById } = useEmployees();
   const receiptRef = useRef<HTMLDivElement>(null);
-
-  const receiptsTourSteps = useMemo(() => getReceiptsTourSteps(t), [t]);
-  const { startTour } = useTour(receiptsTourSteps, 'receipts');
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -485,12 +479,11 @@ const ReceiptGenerator = () => {
       <main className="container mx-auto px-4 py-8 animate-fade-in">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-foreground">{t('receipt.title')}</h1>
-          <TourRestartButton onClick={startTour} tooltipText={t('tour.restart')} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          <Card className="lg:col-span-1 h-fit shadow-soft print:hidden" data-tour-id="receipt-form">
+          <Card className="lg:col-span-1 h-fit shadow-soft print:hidden">
             <CardHeader>
               <CardTitle>{t('receipt.generate')}</CardTitle>
             </CardHeader>
@@ -548,7 +541,7 @@ const ReceiptGenerator = () => {
                   renderPassageFields()
                 )}
                 
-                <Button type="submit" className="w-full bg-gradient-to-r from-primary to-accent" data-tour-id="generate-btn">
+                <Button type="submit" className="w-full bg-gradient-to-r from-primary to-accent">
                   <FileText className="mr-2 h-4 w-4" />
                   {t('receipt.generate')}
                 </Button>
@@ -557,7 +550,7 @@ const ReceiptGenerator = () => {
           </Card>
 
           <div className="lg:col-span-2 space-y-4">
-            <Card className="shadow-elegant print:hidden" data-tour-id="receipt-preview">
+            <Card className="shadow-elegant print:hidden">
               <CardHeader>
                 <CardTitle>{t('receipt.receiptTemplate')}</CardTitle>
               </CardHeader>
@@ -569,7 +562,7 @@ const ReceiptGenerator = () => {
             </Card>
             
             {generatedReceipt && (
-              <div className="flex justify-end print:hidden" data-tour-id="print-btn">
+              <div className="flex justify-end print:hidden">
                 <Button onClick={handlePrint} variant="secondary">
                   <Printer className="mr-2 h-4 w-4" />
                   {t('receipt.print')}

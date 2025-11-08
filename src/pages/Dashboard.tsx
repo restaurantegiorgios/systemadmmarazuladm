@@ -43,9 +43,6 @@ import html2pdf from 'html2pdf.js';
 import ExportDialog, { EmployeeColumn } from '@/components/ExportDialog';
 import { formatBrazilianDate } from '@/lib/utils';
 import EmployeeCard from '@/components/EmployeeCard';
-import { useTour } from '@/hooks/useTour';
-import { getDashboardTourSteps } from '@/lib/tours';
-import TourRestartButton from '@/components/TourRestartButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 type SortKey = 'fullName' | 'position' | 'email' | 'phone' | 'status';
@@ -63,9 +60,6 @@ const Dashboard = () => {
   const { employees, deleteEmployee } = useEmployees();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const dashboardTourSteps = useMemo(() => getDashboardTourSteps(t), [t]);
-  const { startTour } = useTour(dashboardTourSteps, 'dashboard');
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
@@ -389,7 +383,6 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <h1 className="text-3xl font-bold text-foreground">{t('dashboard.title')}</h1>
           <div className="flex flex-wrap gap-2 justify-end items-center">
-            <TourRestartButton onClick={startTour} tooltipText={t('tour.restart')} />
             <Button onClick={handleShare} variant="outline">
               <Share2 className="mr-2 h-4 w-4" />
               {t('dashboard.shareView')}
@@ -401,7 +394,6 @@ const Dashboard = () => {
             <Button 
               onClick={handleAddNew}
               className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
-              data-tour-id="add-employee-btn"
             >
               <Plus className="mr-2 h-4 w-4" />
               {t('dashboard.addNew')}
@@ -411,7 +403,7 @@ const Dashboard = () => {
         
         <DashboardStats employees={employees} />
 
-        <div className="bg-card rounded-lg shadow-soft p-6 mb-6" data-tour-id="filters-panel">
+        <div className="bg-card rounded-lg shadow-soft p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-center">
             <div className="flex-1 relative w-full">
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
@@ -459,7 +451,7 @@ const Dashboard = () => {
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-2" data-tour-id="view-mode-toggle">
+            <div className="flex items-center gap-2">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -507,7 +499,7 @@ const Dashboard = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {sortedEmployees.map((employee, index) => (
+                    {sortedEmployees.map((employee) => (
                       <TableRow key={employee.id} className="hover:bg-muted/50 transition-colors">
                         <TableCell>
                           <Avatar className="h-8 w-8">
@@ -532,7 +524,7 @@ const Dashboard = () => {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                          <div className="flex justify-end gap-1" data-tour-id={index === 0 ? 'actions-cell' : undefined}>
+                          <div className="flex justify-end gap-1">
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button

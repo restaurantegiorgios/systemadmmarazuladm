@@ -24,9 +24,6 @@ import EmployeeProfileHeader from '@/components/employee/EmployeeProfileHeader';
 import EmployeeDocumentsTab from '@/components/employee/EmployeeDocumentsTab';
 import EmployeePrintTemplate from '@/components/employee/EmployeePrintTemplate';
 import EmployeeDetailsTab from '@/components/employee/EmployeeDetailsTab';
-import { useTour } from '@/hooks/useTour';
-import { getProfileTourSteps } from '@/lib/tours';
-import TourRestartButton from '@/components/TourRestartButton';
 
 type DocumentTypeKey = 'all' | 'rg' | 'cpf' | 'medical' | 'contract' | 'other';
 
@@ -37,9 +34,6 @@ const EmployeeProfile = () => {
   const { t } = useLanguage();
   const { getEmployeeById, updateEmployee, addDocument, deleteDocument } = useEmployees();
   const navigate = useNavigate();
-
-  const profileTourSteps = useMemo(() => getProfileTourSteps(t), [t]);
-  const { startTour } = useTour(profileTourSteps, 'profile');
   
   const initialEmployee = id ? getEmployeeById(id) : null;
   const printRef = useRef<HTMLDivElement>(null); // Ref for the print template
@@ -325,12 +319,10 @@ const EmployeeProfile = () => {
           </Button>
           
           <div className="flex items-center gap-2">
-            <TourRestartButton onClick={startTour} tooltipText={t('tour.restart')} />
             <Button 
               onClick={handlePrint} 
               variant="secondary" 
               className="bg-accent hover:bg-accent/90 text-white"
-              data-tour-id="print-btn"
             >
               <Printer className="mr-2 h-4 w-4" />
               Imprimir Perfil
@@ -341,7 +333,7 @@ const EmployeeProfile = () => {
         <Card className="max-w-5xl mx-auto shadow-elegant">
           <CardContent className="p-6">
             
-            <div data-tour-id="edit-btn">
+            <div>
               <EmployeeProfileHeader
                 employee={initialEmployee}
                 editableData={editableData}
@@ -354,7 +346,7 @@ const EmployeeProfile = () => {
               />
             </div>
 
-            <Tabs defaultValue="details" className="w-full" data-tour-id="profile-tabs">
+            <Tabs defaultValue="details" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="details">{t('profile.details')}</TabsTrigger>
                 <TabsTrigger value="documents">{t('profile.documents')}</TabsTrigger>
