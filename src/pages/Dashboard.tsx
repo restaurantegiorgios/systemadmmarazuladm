@@ -191,7 +191,18 @@ const Dashboard = () => {
     { id: 'status', labelKey: 'form.status' },
   ];
 
-  const handleExport = (format: 'excel' | 'csv' | 'pdf', columns: EmployeeColumn[]) => {
+  const getLogoBase64 = async (): Promise<string> => {
+    const response = await fetch('/logo_giorgios_centralizada.png');
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const handleExport = async (format: 'excel' | 'csv' | 'pdf', columns: EmployeeColumn[]) => {
     setExportDialogOpen(false);
 
     const dataToExport = sortedEmployees.map(emp => {
@@ -226,46 +237,125 @@ const Dashboard = () => {
             document.body.removeChild(link);
         }
     } else if (format === 'pdf') {
+        const logoBase64 = await getLogoBase64();
+        const generationDate = new Date().toLocaleDateString('pt-BR');
+
         const element = document.createElement('div');
         element.innerHTML = `
-            <style>
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 10px; }
-                th { background-color: #f2f2f2; }
-            </style>
-            <h1>${t('dashboard.title')}</h1>
-            <table>
-                <thead>
-                    <tr>
-                        ${columns.map(col => `<th>${t(allColumns.find(c => c.id === col)!.labelKey)}</th>`).join('')}
-                    </tr>
-                </thead>
-                <tbody>
-                    ${sortedEmployees.map(emp => `
-                        <tr>
-                            ${columns.map(col => {
-                                let value = emp[col];
-                                if (col === 'position') value = t(`position.${value}`);
-                                else if (col === 'status') value = t(`dashboard.${value}`);
-                                else if (col === 'gender') value = t(`gender.${value}`);
-                                else if (col === 'workSchedule') value = t(`schedule.${value}`);
-                                return `<td>${value || ''}</td>`;
-                            }).join('')}
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+            <html>
+            <head>
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+                    body { 
+                        font-family: 'Inter', sans-serif;
+                        color: #333;
+                        font-size: 10px;
+                    }
+                    .pdf-container {
+                        padding: 20px;
+                    }
+                    .pdf-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        border-bottom: 2px solid #0a0a0a;
+                        padding-bottom: 10px;
+                        margin-bottom: 20px;
+                    }
+                    .pdf-header img {
+                        width: 80px;
+                        height: auto;
+                    }
+                    .pdf-header .title-section {
+                        text-align: right;
+                    }
+                    .pdf-header h1 {
+                        margin: 0;
+                        font-size: 24px;
+                        color: #0a0a0a;
+                        font-weight: 700;
+                    }
+                    .pdf-header p {
+                        margin: 0;
+                        font-size: 12px;
+                        color: #555;
+                    }
+                    table { 
+                        width: 100%; 
+                        border-collapse: collapse; 
+                        margin-top: 20px;
+                    }
+                    th, td { 
+                        border: 1px solid #ddd; 
+                        padding: 10px; 
+                        text-align: left; 
+                        font-size: 9px;
+                        word-break: break-word;
+                    }
+                    th { 
+                        background-color: #f2f2f2;
+                        color: #333;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                    }
+                    tr:nth-child(even) {
+                        background-color: #f9f9f9;
+                    }
+                    .pdf-footer {
+                        text-align: center;
+                        margin-top: 20px;
+                        font-size: 8px;
+                        color: #777;
+                        border-top: 1px solid #eee;
+                        padding-top: 10px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="pdf-container">
+                    <div class="pdf-header">
+                        <img src="${logoBase64}" alt="Logo">
+                        <div class="title-section">
+                            <h1>${t('dashboard.title')}</h1>
+                            <p>${t('login.subtitle')}</p>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                ${columns.map(col => `<th>${t(allColumns.find(c => c.id === col)!.labelKey)}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${sortedEmployees.map(emp => `
+                                <tr>
+                                    ${columns.map(col => {
+                                        let value = emp[col];
+                                        if (col === 'position') value = t(`position.${value}`);
+                                        else if (col === 'status') value = t(`dashboard.${value}`);
+                                        else if (col === 'gender') value = t(`gender.${value}`);
+                                        else if (col === 'workSchedule') value = t(`schedule.${value}`);
+                                        return `<td>${value || ''}</td>`;
+                                    }).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div class="pdf-footer">
+                        Relatório gerado em ${generationDate}
+                    </div>
+                </div>
+            </body>
+            </html>
         `;
-        document.body.appendChild(element);
-        html2pdf(element, {
-            margin: 1,
+        
+        html2pdf().from(element).set({
+            margin: [0.5, 0.5, 0.5, 0.5],
             filename: 'funcionarios.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
+            html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
-        }).then(() => {
-            document.body.removeChild(element);
-        });
+        }).save();
     }
   };
 
