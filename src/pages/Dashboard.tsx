@@ -309,8 +309,6 @@ const Dashboard = () => {
                         font-family: 'Inter', sans-serif;
                         color: #333;
                         font-size: 10px;
-                        /* Adiciona margem inferior para o rodapé fixo */
-                        padding-bottom: 40px; 
                     }
                     .pdf-container {
                         padding: 20px;
@@ -362,18 +360,13 @@ const Dashboard = () => {
                     tr:nth-child(even) {
                         background-color: #f9f9f9;
                     }
-                    /* Rodapé Fixo */
                     .pdf-footer {
-                        position: fixed;
-                        bottom: 0;
-                        left: 0;
-                        right: 0;
                         text-align: center;
+                        margin-top: 20px;
                         font-size: 8px;
                         color: #777;
                         border-top: 1px solid #eee;
-                        padding: 5px 20px;
-                        background-color: white; /* Garante que o rodapé não seja transparente */
+                        padding-top: 10px;
                     }
                 </style>
             </head>
@@ -400,9 +393,9 @@ const Dashboard = () => {
                             `).join('')}
                         </tbody>
                     </table>
-                </div>
-                <div class="pdf-footer">
-                    Relatório gerado em ${generationDate} | ${t('login.subtitle')} - ${t('login.title')}
+                    <div class="pdf-footer">
+                        Relatório gerado em ${generationDate}
+                    </div>
                 </div>
             </body>
             </html>
