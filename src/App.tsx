@@ -5,8 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { EmployeeProvider } from "./contexts/EmployeeProvider";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import EmployeeProfile from "./pages/EmployeeProfile";
 import ReceiptGenerator from "./pages/ReceiptGenerator";
@@ -14,34 +12,24 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const AppRoutes = () => {
-  const { session } = useAuth();
-
-  return (
-    <Routes>
-      <Route path="/" element={!session ? <Login /> : <Navigate to="/dashboard" />} />
-      <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/" />} />
-      <Route path="/employee/:id" element={session ? <EmployeeProfile /> : <Navigate to="/" />} />
-      <Route path="/receipts" element={session ? <ReceiptGenerator /> : <Navigate to="/" />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
-};
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
-      <AuthProvider>
-        <EmployeeProvider>
-          <TooltipProvider>
-            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-              <Toaster />
-              <Sonner />
-              <AppRoutes />
-            </BrowserRouter>
-          </TooltipProvider>
-        </EmployeeProvider>
-      </AuthProvider>
+      <EmployeeProvider>
+        <TooltipProvider>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/employee/:id" element={<EmployeeProfile />} />
+              <Route path="/receipts" element={<ReceiptGenerator />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </EmployeeProvider>
     </LanguageProvider>
   </QueryClientProvider>
 );

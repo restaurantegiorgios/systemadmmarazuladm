@@ -12,33 +12,10 @@ const translations = {
   'pt-BR': {
     // Header
     'language': 'Idioma',
-    'logout': 'Sair',
-    'profile': 'Perfil',
     
-    // Login
+    // App Info
     'login.title': 'Gestão de Funcionários',
     'login.subtitle': "Giorgio's Mar Azul Restaurante",
-    'login.email': 'Email',
-    'login.password': 'Senha',
-    'login.button': 'Entrar',
-    'login.register': 'Criar conta',
-    'login.success': 'Login realizado com sucesso!',
-    'login.error': 'Email ou senha incorretos',
-    'login.checkEmail': 'Cadastro realizado! Verifique seu e-mail para confirmar sua conta.',
-    'login.backToLogin': 'Voltar para o Login',
-    'register.error.emailExists': 'Este e-mail já está cadastrado.',
-    
-    // Forgot Password (NEW)
-    'forgotPassword.link': 'Esqueceu sua senha?',
-    'forgotPassword.title': 'Recuperar Senha',
-    'forgotPassword.description': 'Insira seu email para receber um link de recuperação.',
-    'forgotPassword.newPassword': 'Nova Senha',
-    'forgotPassword.confirmNewPassword': 'Confirmar Nova Senha',
-    'forgotPassword.resetButton': 'Enviar Link',
-    'forgotPassword.success': 'Senha redefinida com sucesso!',
-    'forgotPassword.checkEmail': 'Se uma conta com este e-mail existir, um link de recuperação foi enviado.',
-    'forgotPassword.error.emailNotFound': 'Email não encontrado no sistema.',
-    'forgotPassword.error.generic': 'Erro ao redefinir a senha.',
     
     // Dashboard
     'dashboard.title': 'Funcionários',
@@ -60,9 +37,9 @@ const translations = {
     'dashboard.view': 'Ver Perfil',
     'dashboard.deleteConfirm': 'Tem certeza que deseja deletar este funcionário?',
     'dashboard.deleteSuccess': 'Funcionário deletado com sucesso!',
-    'dashboard.copy': 'Copiar', // Added copy key
-    'dashboard.totalEmployees': 'Total de Funcionários', // NEW
-    'dashboard.uniquePositions': 'Cargos Únicos', // NEW
+    'dashboard.copy': 'Copiar',
+    'dashboard.totalEmployees': 'Total de Funcionários',
+    'dashboard.uniquePositions': 'Cargos Únicos',
     
     // Employee Form
     'form.title.new': 'Novo Funcionário',
@@ -71,12 +48,12 @@ const translations = {
     'form.documents': 'Documentos',
     'form.fullName': 'Nome Completo',
     'form.cpf': 'CPF',
-    'form.birthDate': 'Data de Nascimento', // NEW
+    'form.birthDate': 'Data de Nascimento',
     'form.position': 'Cargo',
     'form.admissionDate': 'Data de Admissão',
-    'form.interviewDate': 'Data de Entrevista', // NEW
-    'form.testDate': 'Data de Teste',           // NEW
-    'form.workSchedule': 'Escala de Trabalho',  // NEW
+    'form.interviewDate': 'Data de Entrevista',
+    'form.testDate': 'Data de Teste',
+    'form.workSchedule': 'Escala de Trabalho',
     'form.email': 'Email',
     'form.phone': 'Telefone',
     'form.address': 'Endereço',
@@ -90,7 +67,7 @@ const translations = {
     'form.success': 'Funcionário salvo com sucesso!',
     'form.error': 'Erro ao salvar funcionário',
     'form.optional': 'Opcional',
-    'form.notAvailable': 'Não Informado', // NEW
+    'form.notAvailable': 'Não Informado',
     
     // Employee Profile
     'profile.title': 'Perfil do Funcionário',
@@ -100,15 +77,7 @@ const translations = {
     'profile.noDocuments': 'Nenhum documento enviado',
     'profile.deleteDoc': 'Deletar documento',
     'profile.docDeleted': 'Documento deletado com sucesso!',
-    
-    // User Profile (Used by ProfileModal) - NEW/MAPPED KEYS
-    'userProfile.title': 'Editar Perfil',
-    'userProfile.description': 'Atualize suas informações de conta.',
-    'userProfile.firstName': 'Nome',
-    'userProfile.lastName': 'Sobrenome',
     'userProfile.changePhoto': 'Alterar Foto',
-    'userProfile.save': 'Salvar Alterações',
-    'userProfile.success': 'Perfil atualizado com sucesso!',
     
     // Receipt Generator
     'receipt.title': 'Gerador de Recibos',
@@ -117,7 +86,7 @@ const translations = {
     'receipt.type.passage': 'Recibo de Passagem',
     'receipt.selectEmployee': 'Selecione o Funcionário',
     'receipt.value': 'Valor do Pagamento (R$)',
-    'receipt.serviceDate': 'Período da Prestação do Serviço', // UPDATED
+    'receipt.serviceDate': 'Período da Prestação do Serviço',
     'receipt.generate': 'Gerar Recibo',
     'receipt.print': 'Imprimir Recibo',
     'receipt.error.selectEmployee': 'Selecione um funcionário para gerar o recibo.',
@@ -131,11 +100,11 @@ const translations = {
     'receipt.service.cpfHolder': 'Portador do CPF:',
     'receipt.service.receivedFrom': 'Recebi de GIORGIOS RESTAURANT LTDA a importância de',
     'receipt.service.serviceReference': 'referente a OS SERVICOS PRESTADOS NO ESTABELECIMENTO.',
-    'receipt.service.serviceDateLabel': 'Período da Prestação do Serviço:', // UPDATED
+    'receipt.service.serviceDateLabel': 'Período da Prestação do Serviço:',
     'receipt.service.note': 'Obs.: DOU PLENA QUITAR DO VALOR ACIMA CITADOS.',
     'receipt.service.location': 'PORTO DE GALINHAS – IPOJUCA – PE,',
     
-    // Passage Receipt (Recibo de Passagem) - NEW
+    // Passage Receipt (Recibo de Passagem)
     'receipt.passage.declarationTitle': 'DECLARAÇÃO RECIBO DE PASSAGEM',
     'receipt.passage.receivedBy': 'Eu,',
     'receipt.passage.cpfHolder': 'portador(a) do CPF nº',
@@ -185,47 +154,14 @@ const translations = {
     'docType.medical': 'Exame Médico',
     'docType.contract': 'Contrato',
     'docType.other': 'Outro',
-    
-    // User Profile Errors (used by Forgot Password too)
-    'userProfile.error.invalidEmail': 'Email inválido.',
-    'userProfile.error.passwordLength': 'A senha deve ter pelo menos 6 caracteres.',
-    'userProfile.error.passwordMismatch': 'As senhas não coincidem.',
-    'userProfile.error.required': 'Este campo é obrigatório.',
-    
-    // Generic Errors
-    'error.generic': 'Ocorreu um erro. Tente novamente mais tarde.',
-    'error.invalidCredentials': 'Credenciais inválidas. Verifique seu e-mail e senha.',
   },
   'en-US': {
     // Header
     'language': 'Language',
-    'logout': 'Logout',
-    'profile': 'Profile',
     
-    // Login
+    // App Info
     'login.title': 'Employee Management',
     'login.subtitle': "Giorgio's Mar Azul Restaurant",
-    'login.email': 'Email',
-    'login.password': 'Password',
-    'login.button': 'Sign In',
-    'login.register': 'Create account',
-    'login.success': 'Login successful!',
-    'login.error': 'Invalid email or password',
-    'login.checkEmail': 'Registration successful! Check your email to confirm your account.',
-    'login.backToLogin': 'Back to Login',
-    'register.error.emailExists': 'This email is already registered.',
-
-    // Forgot Password (NEW)
-    'forgotPassword.link': 'Forgot your password?',
-    'forgotPassword.title': 'Password Recovery',
-    'forgotPassword.description': 'Enter your email to receive a recovery link.',
-    'forgotPassword.newPassword': 'New Password',
-    'forgotPassword.confirmNewPassword': 'Confirm New Password',
-    'forgotPassword.resetButton': 'Send Link',
-    'forgotPassword.success': 'Password reset successfully!',
-    'forgotPassword.checkEmail': 'If an account with this email exists, a recovery link has been sent.',
-    'forgotPassword.error.emailNotFound': 'Email not found in the system.',
-    'forgotPassword.error.generic': 'Error resetting password.',
 
     // Dashboard
     'dashboard.title': 'Employees',
@@ -247,9 +183,9 @@ const translations = {
     'dashboard.view': 'View Profile',
     'dashboard.deleteConfirm': 'Are you sure you want to delete this employee?',
     'dashboard.deleteSuccess': 'Employee deleted successfully!',
-    'dashboard.copy': 'Copy', // Added copy key
-    'dashboard.totalEmployees': 'Total Employees', // NEW
-    'dashboard.uniquePositions': 'Unique Positions', // NEW
+    'dashboard.copy': 'Copy',
+    'dashboard.totalEmployees': 'Total Employees',
+    'dashboard.uniquePositions': 'Unique Positions',
 
     // Employee Form
     'form.title.new': 'New Employee',
@@ -258,12 +194,12 @@ const translations = {
     'form.documents': 'Documents',
     'form.fullName': 'Full Name',
     'form.cpf': 'Tax ID',
-    'form.birthDate': 'Birth Date', // NEW
+    'form.birthDate': 'Birth Date',
     'form.position': 'Position',
     'form.admissionDate': 'Admission Date',
-    'form.interviewDate': 'Interview Date', // NEW
-    'form.testDate': 'Test Date',           // NEW
-    'form.workSchedule': 'Work Schedule',  // NEW
+    'form.interviewDate': 'Interview Date',
+    'form.testDate': 'Test Date',
+    'form.workSchedule': 'Work Schedule',
     'form.email': 'Email',
     'form.phone': 'Phone',
     'form.address': 'Address',
@@ -277,7 +213,7 @@ const translations = {
     'form.success': 'Employee saved successfully!',
     'form.error': 'Error saving employee',
     'form.optional': 'Optional',
-    'form.notAvailable': 'Not Available', // NEW
+    'form.notAvailable': 'Not Available',
     
     // Employee Profile
     'profile.title': 'Employee Profile',
@@ -287,15 +223,7 @@ const translations = {
     'profile.noDocuments': 'No documents uploaded',
     'profile.deleteDoc': 'Delete document',
     'profile.docDeleted': 'Document deleted successfully!',
-    
-    // User Profile (Used by ProfileModal) - NEW/MAPPED KEYS
-    'userProfile.title': 'Edit Profile',
-    'userProfile.description': 'Update your account information.',
-    'userProfile.firstName': 'First Name',
-    'userProfile.lastName': 'Last Name',
     'userProfile.changePhoto': 'Change Photo',
-    'userProfile.save': 'Save Changes',
-    'userProfile.success': 'Profile updated successfully!',
 
     // Receipt Generator
     'receipt.title': 'Receipt Generator',
@@ -304,7 +232,7 @@ const translations = {
     'receipt.type.passage': 'Passage Receipt',
     'receipt.selectEmployee': 'Select Employee',
     'receipt.value': 'Payment Value (R$)',
-    'receipt.serviceDate': 'Service Provision Period', // UPDATED
+    'receipt.serviceDate': 'Service Provision Period',
     'receipt.generate': 'Generate Receipt',
     'receipt.print': 'Print Receipt',
     'receipt.error.selectEmployee': 'Select an employee to generate the receipt.',
@@ -318,11 +246,11 @@ const translations = {
     'receipt.service.cpfHolder': 'CPF Holder:',
     'receipt.service.receivedFrom': 'Received from GIORGIOS RESTAURANT LTDA the amount of',
     'receipt.service.serviceReference': 'referring to SERVICES PROVIDED AT THE ESTABLISHMENT.',
-    'receipt.service.serviceDateLabel': 'Service Provision Period:', // UPDATED
+    'receipt.service.serviceDateLabel': 'Service Provision Period:',
     'receipt.service.note': 'Note: I GIVE FULL DISCHARGE OF THE ABOVE CITED VALUE.',
     'receipt.service.location': 'PORTO DE GALINHAS – IPOJUCA – PE,',
     
-    // Passage Receipt (Recibo de Passagem) - NEW
+    // Passage Receipt (Recibo de Passagem)
     'receipt.passage.declarationTitle': 'PASSAGE RECEIPT DECLARATION',
     'receipt.passage.receivedBy': 'I,',
     'receipt.passage.cpfHolder': 'CPF Holder No.',
@@ -372,16 +300,6 @@ const translations = {
     'docType.medical': 'Medical Exam',
     'docType.contract': 'Contract',
     'docType.other': 'Other',
-    
-    // User Profile Errors (used by Forgot Password too)
-    'userProfile.error.invalidEmail': 'Invalid email.',
-    'userProfile.error.passwordLength': 'Password must be at least 6 characters.',
-    'userProfile.error.passwordMismatch': 'Passwords do not match.',
-    'userProfile.error.required': 'This field is required.',
-    
-    // Generic Errors
-    'error.generic': 'An error occurred. Please try again later.',
-    'error.invalidCredentials': 'Invalid credentials. Please check your email and password.',
   },
 };
 
