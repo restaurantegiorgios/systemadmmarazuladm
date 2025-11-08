@@ -193,7 +193,7 @@ const Dashboard = () => {
   ];
 
   const getLogoBase64 = async (): Promise<string> => {
-    const response = await fetch('/logo_giorgios_centralizada.png');
+    const response = await fetch('/logo_rodape.png');
     const blob = await response.blob();
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
