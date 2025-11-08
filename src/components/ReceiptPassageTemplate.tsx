@@ -1,6 +1,7 @@
 import React from 'react';
 import { Employee } from '@/contexts/EmployeeProvider';
 import { cn } from '@/lib/utils';
+import { formatBrazilianDate } from '@/lib/utils';
 
 interface ReceiptPassageTemplateProps {
   employee: Employee;
@@ -24,14 +25,6 @@ const formatCurrency = (value: number): string => {
   });
 };
 
-// Função para corrigir o problema de fuso horário ao criar datas a partir de strings 'YYYY-MM-DD'
-const parseLocalDate = (dateString: string): Date => {
-  if (!dateString) return new Date(); // Fallback para segurança
-  const [year, month, day] = dateString.split('-').map(Number);
-  // O mês no construtor de Date do JavaScript é 0-indexado (0 para Janeiro)
-  return new Date(year, month - 1, day);
-};
-
 const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   employee,
   value,
@@ -48,15 +41,12 @@ const ReceiptPassageContent: React.FC<ReceiptPassageTemplateProps> = ({
   const formattedValue = formatCurrency(value);
   const formattedPassageValue = formatCurrency(passageValue);
   
-  // Use the new realizationDate prop
-  const dateRealized = parseLocalDate(realizationDate);
-  const day = dateRealized.getDate().toString().padStart(2, '0');
-  const month = (dateRealized.getMonth() + 1).toString().padStart(2, '0');
-  const year = dateRealized.getFullYear();
+  // Use the new realizationDate prop and split for individual underlining
+  const [day, month, year] = formatBrazilianDate(realizationDate).split('/');
   
   // Service Period
-  const formattedStartDate = parseLocalDate(serviceStartDate).toLocaleDateString('pt-BR');
-  const formattedEndDate = parseLocalDate(serviceEndDate).toLocaleDateString('pt-BR');
+  const formattedStartDate = formatBrazilianDate(serviceStartDate);
+  const formattedEndDate = formatBrazilianDate(serviceEndDate);
   const servicePeriod = `${formattedStartDate} a ${formattedEndDate}`;
 
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Employee } from '@/contexts/EmployeeProvider';
 import { cn } from '@/lib/utils';
+import { formatBrazilianDate } from '@/lib/utils';
 
 interface ReceiptTemplateProps {
   employee: Employee;
@@ -143,8 +144,8 @@ const ReceiptContent: React.FC<ReceiptTemplateProps> = ({ employee, value, servi
   const month = date.toLocaleDateString('pt-BR', { month: 'long' });
   const year = date.getFullYear();
   
-  const formattedStartDate = parseLocalDate(serviceStartDate).toLocaleDateString('pt-BR');
-  const formattedEndDate = parseLocalDate(serviceEndDate).toLocaleDateString('pt-BR');
+  const formattedStartDate = formatBrazilianDate(serviceStartDate);
+  const formattedEndDate = formatBrazilianDate(serviceEndDate);
   const servicePeriod = `${formattedStartDate} a ${formattedEndDate}`;
 
   const UnderlinedText: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = '' }) => (

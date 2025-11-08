@@ -14,7 +14,7 @@ import { Upload, MapPin, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { positions } from '@/lib/positions';
-import { calculateAge } from '@/lib/utils';
+import { calculateAge, formatBrazilianDate } from '@/lib/utils';
 
 interface EmployeeDetailsTabProps {
   employee: Employee;
@@ -86,9 +86,9 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       } else if (id === 'gender') {
         displayValue = t(`gender.${value}`);
       } else if (['admissionDate', 'interviewDate', 'testDate'].includes(id) && typeof value === 'string') {
-        displayValue = new Date(`${value}T00:00:00`).toLocaleDateString();
+        displayValue = formatBrazilianDate(value);
       } else if (id === 'birthDate' && typeof value === 'string') {
-        const formattedDate = new Date(`${value}T00:00:00`).toLocaleDateString();
+        const formattedDate = formatBrazilianDate(value);
         const age = calculateAge(value);
         displayValue = formattedDate;
         if (age !== null) {

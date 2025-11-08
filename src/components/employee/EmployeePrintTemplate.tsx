@@ -1,22 +1,13 @@
 import React from 'react';
 import { Employee } from '@/contexts/EmployeeProvider';
 import { cn } from '@/lib/utils';
+import { formatBrazilianDate } from '@/lib/utils';
 
 interface EmployeePrintTemplateProps {
   employee: Employee;
   t: (key: string) => string;
   getInitials: (fullName: string) => string;
 }
-
-// Utility function to format date
-const formatDate = (dateString: string, t: (key: string) => string) => {
-  if (!dateString) return t('form.notAvailable');
-  try {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  } catch {
-    return dateString;
-  }
-};
 
 // Utility function to format CPF
 const formatCPF = (value: string) => {
@@ -96,16 +87,16 @@ const EmployeePrintTemplate = React.forwardRef<HTMLDivElement, EmployeePrintTemp
         
         {/* CPF and Birth Date */}
         {renderDetailBlock('form.cpf', employee.cpf, formatCPF)}
-        {renderDetailBlock('form.birthDate', employee.birthDate, (v) => formatDate(v, t))}
+        {renderDetailBlock('form.birthDate', employee.birthDate, formatBrazilianDate)}
         
         {/* Position and Schedule */}
         {renderDetailBlock('form.position', t(`position.${employee.position}`))}
         {renderDetailBlock('form.workSchedule', t(`schedule.${employee.workSchedule}`))}
         
         {/* Dates */}
-        {renderDetailBlock('form.interviewDate', employee.interviewDate, (v) => formatDate(v, t))}
-        {renderDetailBlock('form.testDate', employee.testDate, (v) => formatDate(v, t))}
-        {renderDetailBlock('form.admissionDate', employee.admissionDate, (v) => formatDate(v, t))}
+        {renderDetailBlock('form.interviewDate', employee.interviewDate, formatBrazilianDate)}
+        {renderDetailBlock('form.testDate', employee.testDate, formatBrazilianDate)}
+        {renderDetailBlock('form.admissionDate', employee.admissionDate, formatBrazilianDate)}
         
         {/* Email */}
         {renderDetailBlock('form.email', employee.email)}

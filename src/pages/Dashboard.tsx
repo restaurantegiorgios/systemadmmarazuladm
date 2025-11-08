@@ -41,6 +41,7 @@ import { positions } from '@/lib/positions';
 import * as XLSX from 'xlsx';
 import html2pdf from 'html2pdf.js';
 import ExportDialog, { EmployeeColumn } from '@/components/ExportDialog';
+import { formatBrazilianDate } from '@/lib/utils';
 
 type SortKey = 'fullName' | 'position' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -205,17 +206,24 @@ const Dashboard = () => {
   const handleExport = async (format: 'excel' | 'csv' | 'pdf', columns: EmployeeColumn[]) => {
     setExportDialogOpen(false);
 
+    const formatValue = (emp: Employee, col: EmployeeColumn) => {
+      const value = emp[col];
+      if (['birthDate', 'interviewDate', 'testDate', 'admissionDate'].includes(col)) {
+        return formatBrazilianDate(value as string);
+      }
+      if (col === 'position') return t(`position.${value}`);
+      if (col === 'status') return t(`dashboard.${value}`);
+      if (col === 'gender') return t(`gender.${value}`);
+      if (col === 'workSchedule') return t(`schedule.${value}`);
+      return value;
+    };
+
     const dataToExport = sortedEmployees.map(emp => {
-        const row: { [key: string]: any } = {};
-        columns.forEach(col => {
-            let value = emp[col];
-            if (col === 'position') value = t(`position.${value}`);
-            else if (col === 'status') value = t(`dashboard.${value}`);
-            else if (col === 'gender') value = t(`gender.${value}`);
-            else if (col === 'workSchedule') value = t(`schedule.${value}`);
-            row[t(allColumns.find(c => c.id === col)!.labelKey)] = value;
-        });
-        return row;
+      const row: { [key: string]: any } = {};
+      columns.forEach(col => {
+        row[t(allColumns.find(c => c.id === col)!.labelKey)] = formatValue(emp, col);
+      });
+      return row;
     });
 
     if (format === 'excel' || format === 'csv') {
@@ -329,14 +337,7 @@ const Dashboard = () => {
                         <tbody>
                             ${sortedEmployees.map(emp => `
                                 <tr>
-                                    ${columns.map(col => {
-                                        let value = emp[col];
-                                        if (col === 'position') value = t(`position.${value}`);
-                                        else if (col === 'status') value = t(`dashboard.${value}`);
-                                        else if (col === 'gender') value = t(`gender.${value}`);
-                                        else if (col === 'workSchedule') value = t(`schedule.${value}`);
-                                        return `<td>${value || ''}</td>`;
-                                    }).join('')}
+                                    ${columns.map(col => `<td>${formatValue(emp, col) || ''}</td>`).join('')}
                                 </tr>
                             `).join('')}
                         </tbody>
