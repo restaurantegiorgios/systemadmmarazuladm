@@ -676,7 +676,7 @@ const Dashboard = () => {
       
       {/* Floating Action Button (FAB) for Mobile */}
       <div className={cn(
-        "fixed bottom-6 right-6 z-50 md:hidden transition-transform duration-300",
+        "fixed bottom-6 left-6 z-50 md:hidden transition-transform duration-300",
         isLoading ? "scale-0" : "scale-100"
       )}>
         <Button 
