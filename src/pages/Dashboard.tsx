@@ -67,7 +67,9 @@ const Dashboard = () => {
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [isExportDialogOpen, setExportDialogOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>('table');
+  const [viewMode, setViewMode] = useState<ViewMode>(
+    () => (localStorage.getItem('viewMode') as ViewMode) || 'table'
+  );
   
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'fullName', direction: 'asc' });
 
@@ -76,16 +78,23 @@ const Dashboard = () => {
     setSearchTerm(searchParams.get('q') || '');
     setStatusFilter((searchParams.get('status') as StatusFilter) || 'all');
     setPositionFilter(searchParams.get('position') || 'all');
-    setViewMode((searchParams.get('view') as ViewMode) || 'table');
+    
+    const viewFromUrl = searchParams.get('view') as ViewMode;
+    if (viewFromUrl && ['table', 'cards'].includes(viewFromUrl)) {
+      setViewMode(viewFromUrl);
+    }
   }, []);
 
-  // Sync filters with URL
+  // Sync filters with URL and save viewMode to localStorage
   useEffect(() => {
     const params = new URLSearchParams();
     if (searchTerm) params.set('q', searchTerm);
     if (statusFilter !== 'all') params.set('status', statusFilter);
     if (positionFilter !== 'all') params.set('position', positionFilter);
     if (viewMode !== 'table') params.set('view', viewMode);
+    
+    localStorage.setItem('viewMode', viewMode);
+    
     setSearchParams(params, { replace: true });
   }, [searchTerm, statusFilter, positionFilter, viewMode, setSearchParams]);
 
