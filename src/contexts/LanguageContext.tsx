@@ -40,6 +40,8 @@ const translations = {
     'dashboard.copy': 'Copiar',
     'dashboard.totalEmployees': 'Total de Funcionários',
     'dashboard.uniquePositions': 'Cargos Únicos',
+    'dashboard.totalMen': 'Total de Homens',
+    'dashboard.totalWomen': 'Total de Mulheres',
     
     // Employee Form
     'form.title.new': 'Novo Funcionário',
@@ -49,6 +51,7 @@ const translations = {
     'form.fullName': 'Nome Completo',
     'form.cpf': 'CPF',
     'form.birthDate': 'Data de Nascimento',
+    'form.gender': 'Gênero',
     'form.position': 'Cargo',
     'form.admissionDate': 'Data de Admissão',
     'form.interviewDate': 'Data de Entrevista',
@@ -156,6 +159,11 @@ const translations = {
     'docType.medical': 'Exame Médico',
     'docType.contract': 'Contrato',
     'docType.other': 'Outro',
+
+    // Gender
+    'gender.male': 'Masculino',
+    'gender.female': 'Feminino',
+    'gender.other': 'Outro',
   },
   'en-US': {
     // Header
@@ -188,6 +196,8 @@ const translations = {
     'dashboard.copy': 'Copy',
     'dashboard.totalEmployees': 'Total Employees',
     'dashboard.uniquePositions': 'Unique Positions',
+    'dashboard.totalMen': 'Total Men',
+    'dashboard.totalWomen': 'Total Women',
 
     // Employee Form
     'form.title.new': 'New Employee',
@@ -197,6 +207,7 @@ const translations = {
     'form.fullName': 'Full Name',
     'form.cpf': 'Tax ID',
     'form.birthDate': 'Birth Date',
+    'form.gender': 'Gender',
     'form.position': 'Position',
     'form.admissionDate': 'Admission Date',
     'form.interviewDate': 'Interview Date',
@@ -304,6 +315,11 @@ const translations = {
     'docType.medical': 'Medical Exam',
     'docType.contract': 'Contract',
     'docType.other': 'Other',
+
+    // Gender
+    'gender.male': 'Male',
+    'gender.female': 'Female',
+    'gender.other': 'Other',
   },
 };
 

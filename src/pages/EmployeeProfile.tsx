@@ -63,7 +63,8 @@ const EmployeeProfile = () => {
         status: initialEmployee.status,
         photo: initialEmployee.photo,
         // NEW FIELDS
-        birthDate: initialEmployee.birthDate, // Ensure birthDate is loaded
+        birthDate: initialEmployee.birthDate,
+        gender: initialEmployee.gender,
         interviewDate: initialEmployee.interviewDate,
         testDate: initialEmployee.testDate,
         workSchedule: initialEmployee.workSchedule,
@@ -138,7 +139,7 @@ const EmployeeProfile = () => {
     if (!id || !initialEmployee) return;
 
     // Basic validation check for required fields
-    if (!editableData.fullName || !editableData.cpf || !editableData.admissionDate || !editableData.email || !editableData.phone || !editableData.address || !editableData.interviewDate || !editableData.testDate || !editableData.workSchedule || !editableData.birthDate) {
+    if (!editableData.fullName || !editableData.cpf || !editableData.admissionDate || !editableData.email || !editableData.phone || !editableData.address || !editableData.interviewDate || !editableData.testDate || !editableData.workSchedule || !editableData.birthDate || !editableData.gender) {
         toast.error(t('form.error'));
         return;
     }
@@ -163,6 +164,7 @@ const EmployeeProfile = () => {
       photo: initialEmployee.photo,
       // NEW FIELDS RESET
       birthDate: initialEmployee.birthDate,
+      gender: initialEmployee.gender,
       interviewDate: initialEmployee.interviewDate,
       testDate: initialEmployee.testDate,
       workSchedule: initialEmployee.workSchedule,

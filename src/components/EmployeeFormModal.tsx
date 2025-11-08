@@ -47,6 +47,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
       position: 'garcom',
       admissionDate: '',
       birthDate: '',
+      gender: 'male',
       interviewDate: '',
       testDate: '',
       workSchedule: 'escala 6x1',
@@ -69,6 +70,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
           position: 'garcom',
           admissionDate: '',
           birthDate: '',
+          gender: 'male',
           interviewDate: '',
           testDate: '',
           workSchedule: 'escala 6x1',
@@ -185,6 +187,20 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
                   <FormItem>
                     <FormLabel>{t('form.birthDate')}</FormLabel>
                     <FormControl><Input type="date" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="gender" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.gender')}</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                      <SelectContent>
+                        <SelectItem value="male">{t('gender.male')}</SelectItem>
+                        <SelectItem value="female">{t('gender.female')}</SelectItem>
+                        <SelectItem value="other">{t('gender.other')}</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )} />

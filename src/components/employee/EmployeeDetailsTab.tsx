@@ -83,6 +83,8 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
         displayValue = t(`dashboard.${value}`);
       } else if (id === 'workSchedule') {
         displayValue = t(`schedule.${value}`);
+      } else if (id === 'gender') {
+        displayValue = t(`gender.${value}`);
       } else if (['admissionDate', 'interviewDate', 'testDate'].includes(id) && typeof value === 'string') {
         displayValue = new Date(`${value}T00:00:00`).toLocaleDateString();
       } else if (id === 'birthDate' && typeof value === 'string') {
@@ -205,6 +207,29 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       );
     }
 
+    if (id === 'gender') {
+      const selectOptions = ['male', 'female', 'other'];
+      
+      return (
+        <div>
+          <Label htmlFor={id}>{t(labelKey)}</Label>
+          <Select 
+            value={String(value)} 
+            onValueChange={(val) => handleSelectChange(id, val)}
+          >
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {selectOptions.map(option => (
+                <SelectItem key={option} value={option}>
+                  {t(`gender.${option}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      );
+    }
+
     return (
       <div>
         <Label htmlFor={id}>{t(labelKey)}</Label>
@@ -248,7 +273,8 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {renderField('fullName', 'form.fullName')}
         {renderField('cpf', 'form.cpf', 'text', 14)}
-        {renderField('birthDate', 'form.birthDate', 'date')} {/* NEW FIELD */}
+        {renderField('birthDate', 'form.birthDate', 'date')}
+        {renderField('gender', 'form.gender')}
         {renderField('position', 'form.position')}
         {renderField('workSchedule', 'form.workSchedule')}
         {renderField('interviewDate', 'form.interviewDate', 'date')}
