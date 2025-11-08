@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Edit, Trash2, Eye, User, Phone, Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface EmployeeCardProps {
   employee: Employee;
@@ -64,40 +65,57 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, t, onView, onEdit
                 <Phone className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate">{employee.phone}</span>
             </div>
-            <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0 transition-transform hover:scale-125" onClick={() => handleCopy(employee.phone, 'dashboard.phone')}>
-                {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-3 w-3" />}
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0 transition-transform hover:scale-125" onClick={() => handleCopy(employee.phone, 'dashboard.phone')}>
+                    {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-3 w-3" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent><p>{t('dashboard.copy')}</p></TooltipContent>
+            </Tooltip>
         </div>
       </CardContent>
 
       <CardFooter className="flex justify-end gap-2 pt-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onView(employee.id)}
-          title={t('dashboard.view')}
-          className="transition-transform hover:scale-125"
-        >
-          <Eye className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onEdit(employee)}
-          title={t('dashboard.edit')}
-          className="transition-transform hover:scale-125"
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onDelete(employee.id)}
-          title={t('dashboard.delete')}
-          className="transition-transform hover:scale-125"
-        >
-          <Trash2 className="h-4 w-4 text-destructive" />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onView(employee.id)}
+              className="transition-transform hover:scale-125"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent><p>{t('dashboard.view')}</p></TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onEdit(employee)}
+              className="transition-transform hover:scale-125"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent><p>{t('dashboard.edit')}</p></TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onDelete(employee.id)}
+              className="transition-transform hover:scale-125"
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent><p>{t('dashboard.delete')}</p></TooltipContent>
+        </Tooltip>
       </CardFooter>
     </Card>
   );

@@ -9,25 +9,37 @@ import Dashboard from "./pages/Dashboard";
 import EmployeeProfile from "./pages/EmployeeProfile";
 import ReceiptGenerator from "./pages/ReceiptGenerator";
 import NotFound from "./pages/NotFound";
+import { ShepherdTour } from 'react-shepherd';
 
 const queryClient = new QueryClient();
+
+const tourOptions = {
+  defaultStepOptions: {
+    cancelIcon: {
+      enabled: true,
+    },
+  },
+  useModalOverlay: true,
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
       <EmployeeProvider>
         <TooltipProvider>
-          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <Toaster />
-            <Sonner />
-            <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/employee/:id" element={<EmployeeProfile />} />
-              <Route path="/receipts" element={<ReceiptGenerator />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+          <ShepherdTour steps={[]} tourOptions={tourOptions}>
+            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+              <Toaster />
+              <Sonner />
+              <Routes>
+                <Route path="/" element={<Navigate to="/dashboard" />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/employee/:id" element={<EmployeeProfile />} />
+                <Route path="/receipts" element={<ReceiptGenerator />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </ShepherdTour>
         </TooltipProvider>
       </EmployeeProvider>
     </LanguageProvider>
