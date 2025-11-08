@@ -24,6 +24,7 @@ import EmployeeProfileHeader from '@/components/employee/EmployeeProfileHeader';
 import EmployeeDocumentsTab from '@/components/employee/EmployeeDocumentsTab';
 import EmployeePrintTemplate from '@/components/employee/EmployeePrintTemplate';
 import EmployeeDetailsTab from '@/components/employee/EmployeeDetailsTab';
+import { capitalizeName } from '@/lib/utils';
 
 type DocumentTypeKey = 'all' | 'rg' | 'cpf' | 'medical' | 'contract' | 'other';
 
@@ -115,6 +116,9 @@ const EmployeeProfile = () => {
       formattedValue = formatCPF(value);
     } else if (id === 'phone') {
       formattedValue = formatPhone(value);
+    } else if (id === 'fullName') {
+      // Aplica a capitalização ao digitar, mas o salvamento final garante a formatação correta
+      formattedValue = capitalizeName(value);
     }
 
     setEditableData(prev => ({ ...prev, [id]: formattedValue }));
@@ -138,13 +142,19 @@ const EmployeeProfile = () => {
   const handleSave = () => {
     if (!id || !initialEmployee) return;
 
+    // Aplica a capitalização final ao nome antes de salvar
+    const finalData = {
+        ...editableData,
+        fullName: editableData.fullName ? capitalizeName(editableData.fullName) : initialEmployee.fullName,
+    };
+
     // Basic validation check for required fields
-    if (!editableData.fullName || !editableData.cpf || !editableData.admissionDate || !editableData.email || !editableData.phone || !editableData.address || !editableData.interviewDate || !editableData.testDate || !editableData.workSchedule || !editableData.birthDate || !editableData.gender) {
+    if (!finalData.fullName || !finalData.cpf || !finalData.admissionDate || !finalData.email || !finalData.phone || !finalData.address || !finalData.interviewDate || !finalData.testDate || !finalData.workSchedule || !finalData.birthDate || !finalData.gender) {
         toast.error(t('form.error'));
         return;
     }
 
-    updateEmployee(id, editableData);
+    updateEmployee(id, finalData);
     toast.success(t('form.success'));
     setIsEditing(false);
   };

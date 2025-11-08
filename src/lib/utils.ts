@@ -41,3 +41,23 @@ export function formatBrazilianDate(dateString: string | Date): string {
     return String(dateString); // Retorna o valor original em caso de erro
   }
 }
+
+const PREPOSITIONS = ['de', 'da', 'do', 'das', 'dos', 'e', 'a', 'o'];
+
+export function capitalizeName(fullName: string): string {
+  if (!fullName) return '';
+
+  return fullName
+    .toLowerCase()
+    .split(' ')
+    .map(word => {
+      if (PREPOSITIONS.includes(word)) {
+        return word;
+      }
+      if (word.length === 0) {
+        return '';
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
+}

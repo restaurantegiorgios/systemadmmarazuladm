@@ -27,7 +27,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { positions } from '@/lib/positions';
-import { cn } from '@/lib/utils';
+import { cn, capitalizeName } from '@/lib/utils';
 
 interface EmployeeFormModalProps {
   isOpen: boolean;
@@ -122,6 +122,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
 
     const employeeDataToSave = {
       ...data,
+      fullName: capitalizeName(data.fullName), // Aplicando a capitalização antes de salvar
       photo: data.photo || undefined,
     };
 
@@ -186,7 +187,15 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
                   <FormField control={form.control} name="fullName" render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('form.fullName')}</FormLabel>
-                      <FormControl><Input {...field} /></FormControl>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          onBlur={(e) => {
+                            field.onChange(capitalizeName(e.target.value));
+                            field.onBlur();
+                          }}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
