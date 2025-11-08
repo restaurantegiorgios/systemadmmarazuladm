@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit, Trash2, Eye, User, Mail, Phone, Copy } from 'lucide-react';
+import { Edit, Trash2, Eye, User, Phone, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface EmployeeCardProps {
@@ -23,6 +23,12 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, t, onView, onEdit
     }).catch(() => {
       toast.error("Falha ao copiar.");
     });
+  };
+
+  const handleWhatsAppRedirect = (phone: string) => {
+    const cleanPhone = phone.replace(/\D/g, '');
+    const whatsappLink = `https://wa.me/55${cleanPhone}`;
+    window.open(whatsappLink, '_blank');
   };
 
   return (
@@ -46,19 +52,18 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, t, onView, onEdit
       </CardHeader>
       
       <CardContent className="space-y-3 text-sm">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Mail className="h-4 w-4 flex-shrink-0" />
-          <span className="truncate" title={employee.email}>{employee.email}</span>
-          <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto flex-shrink-0" onClick={() => handleCopy(employee.email, 'dashboard.email')}>
-            <Copy className="h-3 w-3" />
-          </Button>
-        </div>
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Phone className="h-4 w-4 flex-shrink-0" />
-          <span className="truncate">{employee.phone}</span>
-           <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto flex-shrink-0" onClick={() => handleCopy(employee.phone, 'dashboard.phone')}>
-            <Copy className="h-3 w-3" />
-          </Button>
+        <div className="flex items-center justify-between text-muted-foreground">
+            <div 
+                className="flex items-center gap-2 cursor-pointer hover:text-primary transition-colors"
+                onClick={() => handleWhatsAppRedirect(employee.phone)}
+                title="Abrir no WhatsApp"
+            >
+                <Phone className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{employee.phone}</span>
+            </div>
+            <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0" onClick={() => handleCopy(employee.phone, 'dashboard.phone')}>
+                <Copy className="h-3 w-3" />
+            </Button>
         </div>
       </CardContent>
 
