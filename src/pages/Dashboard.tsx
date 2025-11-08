@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown, User, Download, Share2, LayoutGrid, List, FileSearch, UserPlus, Filter } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, X, ArrowUp, ArrowDown, User, Download, LayoutGrid, List, FileSearch, UserPlus, Filter } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -190,10 +190,11 @@ const Dashboard = () => {
     setFormModalOpen(true);
   };
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast.success(t('dashboard.shareSuccess'));
-  };
+  // Removendo a função handleShare
+  // const handleShare = () => {
+  //   navigator.clipboard.writeText(window.location.href);
+  //   toast.success(t('dashboard.shareSuccess'));
+  // };
 
   const allColumns: { id: EmployeeColumn; labelKey: string }[] = [
     { id: 'fullName', labelKey: 'form.fullName' },
@@ -392,10 +393,7 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <h1 className="text-3xl font-bold text-foreground">{t('dashboard.title')}</h1>
           <div className="flex flex-wrap gap-2 justify-end items-center">
-            <Button onClick={handleShare} variant="outline" className="hidden md:flex">
-              <Share2 className="mr-2 h-4 w-4" />
-              {t('dashboard.shareView')}
-            </Button>
+            {/* Botão Compartilhar removido */}
             <Button onClick={() => setExportDialogOpen(true)} className="hidden md:flex">
               <Download className="mr-2 h-4 w-4" />
               {t('dashboard.export')}
