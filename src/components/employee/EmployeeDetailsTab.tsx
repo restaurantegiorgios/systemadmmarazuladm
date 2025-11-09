@@ -299,7 +299,7 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
       {isEditing && (
         <div className="flex flex-col items-center space-y-2 mb-6">
           <Avatar className="w-20 h-20 shadow-md">
-            <AvatarImage src={photoValue} />
+            <AvatarImage src={photoValue || undefined} />
             <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
               {getInitials(fullNameValue)}
             </AvatarFallback>
@@ -324,7 +324,7 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
                 variant="ghost"
                 size="sm"
                 className="text-destructive hover:text-destructive"
-                onClick={() => form.setValue('photo', '', { shouldDirty: true })}
+                onClick={() => form.setValue('photo', null, { shouldDirty: true })}
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 {t('userProfile.removePhoto')}

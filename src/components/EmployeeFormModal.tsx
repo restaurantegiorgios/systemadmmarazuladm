@@ -59,14 +59,14 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
       phone: '',
       address: '',
       status: 'active',
-      photo: '',
+      photo: null,
     },
   });
 
   useEffect(() => {
     if (isOpen) {
       if (isEdit && employee) {
-        form.reset(employee);
+        form.reset({ ...employee, photo: employee.photo || null });
       } else {
         form.reset({
           fullName: '',
@@ -82,7 +82,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
           phone: '',
           address: '',
           status: 'active',
-          photo: '',
+          photo: null,
         });
       }
     }
@@ -122,7 +122,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
     const employeeDataToSave = {
       ...data,
       fullName: capitalizeName(data.fullName),
-      photo: data.photo || undefined,
+      photo: data.photo,
     };
 
     const onSettled = () => {
@@ -169,7 +169,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
             <div className="max-h-[70vh] overflow-y-auto p-1 pr-4 -mr-4 space-y-4">
               <div className="flex flex-col items-center space-y-2 mb-6">
                 <Avatar className="w-24 h-24">
-                  <AvatarImage src={photoValue} />
+                  <AvatarImage src={photoValue || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
                     {getInitials(fullNameValue)}
                   </AvatarFallback>
@@ -188,7 +188,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
                       variant="ghost"
                       size="sm"
                       className="text-destructive hover:text-destructive"
-                      onClick={() => form.setValue('photo', '')}
+                      onClick={() => form.setValue('photo', null)}
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
                       {t('userProfile.removePhoto')}

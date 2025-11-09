@@ -14,7 +14,7 @@ export const employeeSchema = z.object({
   phone: z.string().refine(phone => phone.replace(/\D/g, '').length >= 10, 'O telefone deve ter pelo menos 10 dígitos.'),
   address: z.string().min(5, 'O endereço é obrigatório.'),
   status: z.enum(['active', 'inactive']),
-  photo: z.string().optional(),
+  photo: z.string().nullable().optional(),
 });
 
 export type EmployeeFormValues = z.infer<typeof employeeSchema>;

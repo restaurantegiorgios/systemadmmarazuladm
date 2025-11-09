@@ -42,7 +42,7 @@ const EmployeeProfileHeader: React.FC<EmployeeProfileHeaderProps> = ({
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b pb-4">
       <div className="flex items-center gap-4 mb-4 sm:mb-0">
         <Avatar className="w-20 h-20 shadow-md">
-          <AvatarImage src={displayPhoto} />
+          <AvatarImage src={displayPhoto || undefined} />
           <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl">
             {getInitials(displayFullName)}
           </AvatarFallback>
@@ -58,7 +58,7 @@ const EmployeeProfileHeader: React.FC<EmployeeProfileHeaderProps> = ({
       <div className="flex gap-2">
         {isEditing ? (
           <>
-            <Button variant="outline" onClick={onCancel}>
+            <Button type="button" variant="outline" onClick={onCancel}>
               <X className="mr-2 h-4 w-4" />
               {t('form.cancel')}
             </Button>
@@ -69,7 +69,7 @@ const EmployeeProfileHeader: React.FC<EmployeeProfileHeaderProps> = ({
             </Button>
           </>
         ) : (
-          <Button onClick={onEditToggle}>
+          <Button type="button" onClick={onEditToggle}>
             <Edit className="mr-2 h-4 w-4" />
             {t('dashboard.edit')}
           </Button>
