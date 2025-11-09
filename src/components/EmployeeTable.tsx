@@ -49,7 +49,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
   };
 
   const SortableHeader = ({ children, sortKey, className = '' }: { children: React.ReactNode, sortKey: SortKey, className?: string }) => (
-    <TableHead className={className}>
+    <TableHead scope="col" className={className}>
       <Button
         variant="ghost"
         className="p-0 h-auto hover:bg-transparent text-foreground/80 hover:text-foreground font-semibold"
@@ -73,13 +73,13 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[50px]">{t('dashboard.photo')}</TableHead>
+              <TableHead scope="col" className="w-[50px]">{t('dashboard.photo')}</TableHead>
               <SortableHeader sortKey="fullName">{t('dashboard.name')}</SortableHeader>
               <SortableHeader sortKey="position" className="hidden md:table-cell">{t('dashboard.position')}</SortableHeader>
               <SortableHeader sortKey="email" className="hidden lg:table-cell">{t('dashboard.email')}</SortableHeader>
               <SortableHeader sortKey="phone" className="hidden lg:table-cell">{t('dashboard.phone')}</SortableHeader>
               <SortableHeader sortKey="status">{t('dashboard.status')}</SortableHeader>
-              <TableHead className="text-right">{t('dashboard.actions')}</TableHead>
+              <TableHead scope="col" className="text-right">{t('dashboard.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
