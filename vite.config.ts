@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => ({
         type: 'module', // Garante que o SW seja carregado como módulo
       },
       manifest: {
-        name: "Giorgio's Mar Azul - Gestão de Funcionários",
+        name: "Gestão de Funcionários",
         short_name: "Gestão de Funcionários",
         description: "Sistema de Gestão de Funcionários do Giorgio's Mar Azul Restaurante",
         theme_color: '#0a192f',
