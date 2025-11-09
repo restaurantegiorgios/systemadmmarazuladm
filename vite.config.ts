@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => ({
       // Força a geração do Service Worker mesmo em desenvolvimento para permitir testes de instalação
       devOptions: {
         enabled: true,
+        type: 'module', // Garante que o SW seja carregado como módulo
       },
       manifest: {
         name: "Giorgio's Mar Azul - Gestão de Funcionários",
