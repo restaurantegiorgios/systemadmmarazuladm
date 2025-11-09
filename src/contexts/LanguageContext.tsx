@@ -337,8 +337,32 @@ const translations = {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+// Chave para o localStorage
+const LANGUAGE_STORAGE_KEY = 'app-language';
+
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('pt-BR');
+  // Tenta ler do localStorage na inicialização, com 'pt-BR' como padrão
+  const [language, setLanguageState] = useState<Language>(() => {
+    try {
+      const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+      if (storedLanguage === 'pt-BR' || storedLanguage === 'en-US') {
+        return storedLanguage;
+      }
+    } catch (error) {
+      console.error("Não foi possível acessar o localStorage:", error);
+    }
+    return 'pt-BR';
+  });
+
+  // Função para definir o idioma e salvar no localStorage
+  const setLanguage = (lang: Language) => {
+    try {
+      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+    } catch (error) {
+      console.error("Não foi possível salvar no localStorage:", error);
+    }
+    setLanguageState(lang);
+  };
 
   const t = (key: string): string => {
     return translations[language][key as keyof typeof translations['pt-BR']] || key;
