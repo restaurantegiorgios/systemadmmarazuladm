@@ -27,19 +27,19 @@ export default defineConfig(({ mode }) => ({
         start_url: '/',
         icons: [
           {
-            src: 'Imagem_PWA.png',
+            src: '/Imagem_PWA.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: 'Imagem_PWA.png',
+            src: '/Imagem_PWA.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: 'Imagem_PWA.png',
+            src: '/Imagem_PWA.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
