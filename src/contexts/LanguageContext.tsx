@@ -87,6 +87,7 @@ const translations = {
     'profile.deleteDoc': 'Deletar documento',
     'profile.docDeleted': 'Documento deletado com sucesso!',
     'userProfile.changePhoto': 'Alterar Foto',
+    'userProfile.removePhoto': 'Remover Foto',
     'profile.yearsOld': 'anos',
     
     // Receipt Generator
@@ -249,6 +250,7 @@ const translations = {
     'profile.deleteDoc': 'Delete document',
     'profile.docDeleted': 'Document deleted successfully!',
     'userProfile.changePhoto': 'Change Photo',
+    'userProfile.removePhoto': 'Remove Photo',
     'profile.yearsOld': 'years old',
 
     // Receipt Generator

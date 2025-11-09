@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Upload, Loader2 } from 'lucide-react';
+import { Upload, Loader2, Trash2 } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -174,13 +174,27 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
                     {getInitials(fullNameValue)}
                   </AvatarFallback>
                 </Avatar>
-                <Label htmlFor="employee-photo-upload" className="cursor-pointer">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    <Upload className="w-4 h-4" />
-                    <span>{t('userProfile.changePhoto')} ({t('form.optional')})</span>
-                  </div>
-                  <Input id="employee-photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-                </Label>
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="employee-photo-upload" className="cursor-pointer">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      <Upload className="w-4 h-4" />
+                      <span>{t('userProfile.changePhoto')} ({t('form.optional')})</span>
+                    </div>
+                    <Input id="employee-photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                  </Label>
+                  {photoValue && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => form.setValue('photo', '')}
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {t('userProfile.removePhoto')}
+                    </Button>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Upload, MapPin, Copy, Check } from 'lucide-react';
+import { Upload, MapPin, Copy, Check, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { positions } from '@/lib/positions';
@@ -304,19 +304,33 @@ const EmployeeDetailsTab: React.FC<EmployeeDetailsTabProps> = ({
               {getInitials(fullNameValue)}
             </AvatarFallback>
           </Avatar>
-          <Label htmlFor="employee-photo-upload" className="cursor-pointer">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-              <Upload className="w-4 h-4" />
-              <span>{t('userProfile.changePhoto')} ({t('form.optional')})</span>
-            </div>
-            <Input 
-              id="employee-photo-upload" 
-              type="file" 
-              accept="image/*" 
-              onChange={handlePhotoUpload} 
-              className="hidden" 
-            />
-          </Label>
+          <div className="flex items-center gap-4">
+            <Label htmlFor="employee-photo-upload" className="cursor-pointer">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Upload className="w-4 h-4" />
+                <span>{t('userProfile.changePhoto')} ({t('form.optional')})</span>
+              </div>
+              <Input 
+                id="employee-photo-upload" 
+                type="file" 
+                accept="image/*" 
+                onChange={handlePhotoUpload} 
+                className="hidden" 
+              />
+            </Label>
+            {photoValue && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="text-destructive hover:text-destructive"
+                onClick={() => form.setValue('photo', '', { shouldDirty: true })}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                {t('userProfile.removePhoto')}
+              </Button>
+            )}
+          </div>
         </div>
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
