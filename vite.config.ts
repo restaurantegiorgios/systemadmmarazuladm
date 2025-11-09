@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['Imagem_PWA.png'], // Cache the icon
+      includeAssets: ['Imagem_PWA.png'],
       manifest: {
         name: "Giorgio's Mar Azul - Gestão de Funcionários",
         short_name: "Giorgio's",
@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => ({
         display: 'standalone',
         scope: '/',
         start_url: '/',
+        id: '/', // Adicionado para identificação única
         icons: [
           {
             src: '/Imagem_PWA.png',
