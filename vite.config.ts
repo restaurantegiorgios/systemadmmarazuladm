@@ -16,6 +16,10 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['Imagem_PWA.png'],
+      // Força a geração do Service Worker mesmo em desenvolvimento para permitir testes de instalação
+      devOptions: {
+        enabled: true,
+      },
       manifest: {
         name: "Giorgio's Mar Azul - Gestão de Funcionários",
         short_name: "Giorgio's",
@@ -25,7 +29,7 @@ export default defineConfig(({ mode }) => ({
         display: 'standalone',
         scope: '/',
         start_url: '/',
-        id: '/', // Adicionado para identificação única
+        id: '/',
         icons: [
           {
             src: '/Imagem_PWA.png',

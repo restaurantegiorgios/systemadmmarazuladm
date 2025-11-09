@@ -12,6 +12,7 @@ const PWAFeatures = () => {
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
+      console.log('beforeinstallprompt event fired.');
       setInstallPrompt(e);
     };
 
@@ -86,12 +87,19 @@ const PWAFeatures = () => {
   }, [needRefresh, setNeedRefresh, updateServiceWorker]);
 
   useEffect(() => {
-    if (isIOS && !isStandalone) {
+    if (isStandalone) {
+      // Não mostrar prompts se já estiver instalado
+      return;
+    }
+    
+    if (isIOS) {
+      // Instruções específicas para iOS
       toast.info('Para instalar, toque no ícone de Compartilhar e "Adicionar à Tela de Início"', {
         icon: <Share className="h-4 w-4" />,
         duration: 10000,
       });
-    } else if (installPrompt && !isStandalone) {
+    } else if (installPrompt) {
+      // Prompt de instalação padrão para desktop/Android
       toast.info('Instale o aplicativo para uma melhor experiência!', {
         action: (
           <Button size="sm" onClick={handleInstall}>
@@ -102,7 +110,7 @@ const PWAFeatures = () => {
         duration: 10000,
       });
     }
-  }, [isIOS, isStandalone, installPrompt]);
+  }, [isIOS, isStandalone, installPrompt, handleInstall]);
 
   return null; // This component only renders toasts
 };
