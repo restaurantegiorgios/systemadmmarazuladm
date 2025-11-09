@@ -55,9 +55,15 @@ const Dashboard = () => {
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [isExportDialogOpen, setExportDialogOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>(
-    () => (localStorage.getItem('viewMode') as ViewMode) || 'table'
-  );
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    const savedViewMode = localStorage.getItem('viewMode') as ViewMode;
+    if (savedViewMode && ['table', 'cards'].includes(savedViewMode)) {
+      return savedViewMode;
+    }
+    // Check if it's a mobile screen size for the default value
+    const isMobile = window.innerWidth < 768;
+    return isMobile ? 'cards' : 'table';
+  });
   
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'fullName', direction: 'asc' });
 
