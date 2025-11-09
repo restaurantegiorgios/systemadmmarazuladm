@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { EmployeeProvider } from "./contexts/EmployeeProvider";
 import React, { Suspense } from "react";
+import PWAFeatures from "./components/PWAFeatures";
 
 // Lazy-loaded pages
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
@@ -23,6 +24,7 @@ const App = () => (
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Toaster />
             <Sonner />
+            <PWAFeatures />
             <Suspense fallback={
               <div className="flex items-center justify-center min-h-screen text-lg text-muted-foreground">
                 Carregando...
