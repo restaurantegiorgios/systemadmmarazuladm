@@ -54,14 +54,12 @@ const EmployeeProfile = () => {
   
   const [docToDelete, setDocToDelete] = useState<string | null>(null);
 
-  // 1. Initialize react-hook-form
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
     defaultValues: initialEmployee || undefined,
-    mode: 'onChange', // Enable real-time validation
+    mode: 'onChange',
   });
 
-  // 2. Sync form data when employee changes or component mounts
   useEffect(() => {
     if (initialEmployee) {
       form.reset(initialEmployee);
@@ -76,16 +74,13 @@ const EmployeeProfile = () => {
     return initialEmployee.documents.filter(doc => doc.type === documentFilter);
   }, [initialEmployee, documentFilter]);
 
-  // --- Utility Functions ---
   const getInitials = (fullName: string) => {
     const parts = fullName.split(' ').filter(p => p.length > 0);
     if (parts.length === 0) return '';
     if (parts.length === 1) return parts[0][0].toUpperCase();
     return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
   };
-  // -------------------------
 
-  // --- Handlers for Details Tab ---
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -97,29 +92,31 @@ const EmployeeProfile = () => {
     }
   };
 
-  const handleSave = async (data: EmployeeFormValues) => {
+  const handleSave = (data: EmployeeFormValues) => {
     if (!id || !initialEmployee) return;
 
-    // Apply final capitalization to the name
     const finalData = {
         ...data,
         fullName: capitalizeName(data.fullName),
     };
 
-    updateEmployee(id, finalData);
-    toast.success(t('form.success'));
-    setIsEditing(false);
+    updateEmployee({ id, data: finalData }, {
+      onSuccess: () => {
+        toast.success(t('form.success'));
+        setIsEditing(false);
+      },
+      onError: () => {
+        toast.error(t('form.error'));
+      }
+    });
   };
 
   const handleCancelEdit = () => {
     if (!initialEmployee) return;
-    // Reset form data to initial state
     form.reset(initialEmployee);
     setIsEditing(false);
   };
-  // --------------------------------
 
-  // --- Handlers for Documents Tab ---
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setSelectedFile(file || null);
@@ -136,23 +133,31 @@ const EmployeeProfile = () => {
     reader.onloadend = () => {
       const fileData = reader.result as string;
       
-      addDocument(initialEmployee.id, {
-        type: uploadDocType,
-        fileName: selectedFile.name,
-        fileData: fileData,
+      addDocument({
+        employeeId: initialEmployee.id,
+        docData: {
+          type: uploadDocType,
+          fileName: selectedFile.name,
+          fileData: fileData,
+        }
+      }, {
+        onSuccess: () => {
+          toast.success('Documento enviado com sucesso!');
+          setSelectedFile(null);
+        }
       });
-      
-      toast.success('Documento enviado com sucesso!');
-      setSelectedFile(null);
     };
     reader.readAsDataURL(selectedFile);
   };
 
   const confirmDeleteDoc = () => {
     if (docToDelete && initialEmployee) {
-      deleteDocument(initialEmployee.id, docToDelete);
-      toast.success(t('profile.docDeleted'));
-      setDocToDelete(null);
+      deleteDocument({ employeeId: initialEmployee.id, docId: docToDelete }, {
+        onSuccess: () => {
+          toast.success(t('profile.docDeleted'));
+          setDocToDelete(null);
+        }
+      });
     }
   };
   
@@ -182,9 +187,7 @@ const EmployeeProfile = () => {
       toast.error("Dados do arquivo não encontrados para download.");
     }
   };
-  // ----------------------------------
   
-  // --- Print Handler ---
   const handlePrint = () => {
     if (initialEmployee && printRef.current) {
       const printContent = printRef.current.innerHTML;
@@ -192,11 +195,9 @@ const EmployeeProfile = () => {
       
       if (printWindow) {
         printWindow.document.write('<html><head><title>Perfil do Funcionário</title>');
-        // Include the application\'s CSS for Tailwind print styles to work
         printWindow.document.write('<link rel="stylesheet" href="/src/index.css" />');
         printWindow.document.write('</head><body>');
         printWindow.document.write('<style>');
-        // CSS para impressão
         printWindow.document.write(`
           @media print { 
             @page { 
@@ -209,7 +210,6 @@ const EmployeeProfile = () => {
               background-color: white !important;
               font-family: sans-serif;
             } 
-            /* Força a exibição do conteúdo do template */
             .print-container {
               width: 100%;
               margin: 0;
@@ -233,7 +233,6 @@ const EmployeeProfile = () => {
       }
     }
   };
-  // ---------------------
 
   if (!initialEmployee) {
     return (
@@ -287,7 +286,7 @@ const EmployeeProfile = () => {
                     isEditing={isEditing}
                     t={t}
                     onEditToggle={() => setIsEditing(true)}
-                    onSave={form.handleSubmit(handleSave)} // Use form.handleSubmit here
+                    onSave={form.handleSubmit(handleSave)}
                     onCancel={handleCancelEdit}
                     getInitials={getInitials}
                     form={form}
@@ -336,7 +335,6 @@ const EmployeeProfile = () => {
         </Card>
       </main>
       
-      {/* Hidden Print Template (Rendered outside the main view, but inside the component) */}
       <div className="hidden print:block">
         <EmployeePrintTemplate 
           ref={printRef}
@@ -346,7 +344,6 @@ const EmployeeProfile = () => {
         />
       </div>
       
-      {/* Confirmation Dialog for Document Deletion */}
       <AlertDialog open={!!docToDelete} onOpenChange={() => setDocToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>

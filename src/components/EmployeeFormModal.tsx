@@ -116,25 +116,26 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ isOpen, onClose, 
     }
   };
 
-  const onSubmit = async (data: EmployeeFormValues) => {
+  const onSubmit = (data: EmployeeFormValues) => {
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simula o tempo de salvamento
 
     const employeeDataToSave = {
       ...data,
-      fullName: capitalizeName(data.fullName), // Aplicando a capitalização antes de salvar
+      fullName: capitalizeName(data.fullName),
       photo: data.photo || undefined,
     };
 
-    if (isEdit && employee) {
-      updateEmployee(employee.id, employeeDataToSave);
-    } else {
-      addEmployee(employeeDataToSave);
-    }
+    const onSettled = () => {
+      toast.success(t('form.success'));
+      setIsSubmitting(false);
+      onClose();
+    };
 
-    toast.success(t('form.success'));
-    setIsSubmitting(false);
-    onClose();
+    if (isEdit && employee) {
+      updateEmployee({ id: employee.id, data: employeeDataToSave }, { onSettled });
+    } else {
+      addEmployee(employeeDataToSave, { onSettled });
+    }
   };
 
   const triggerShake = () => {
