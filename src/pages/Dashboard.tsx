@@ -497,7 +497,7 @@ const Dashboard = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t('form.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+            <AlertDialogAction type="button" onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
               {t('dashboard.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
