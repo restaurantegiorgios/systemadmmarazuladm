@@ -122,7 +122,7 @@ const EmployeeProfile = () => {
     setSelectedFile(file || null);
   };
 
-  const handleUpload = (e: React.FormEvent) => {
+  const handleUpload = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!selectedFile || !initialEmployee) {
       toast.error('Selecione um arquivo para upload');

@@ -26,7 +26,7 @@ interface EmployeeDocumentsTabProps {
   setUploadDocType: (type: string) => void;
   selectedFile: File | null;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleUpload: (e: React.FormEvent) => void;
+  handleUpload: (e: React.MouseEvent<HTMLButtonElement>) => void;
   handleViewDoc: (doc: Document) => void;
   handleDownloadDoc: (doc: Document) => void;
   setDocToDelete: (docId: string) => void;
@@ -52,7 +52,7 @@ const EmployeeDocumentsTab: React.FC<EmployeeDocumentsTabProps> = ({
       <Card className="bg-secondary/50">
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold mb-4">{t('form.uploadDoc')}</h3>
-          <form onSubmit={handleUpload} className="space-y-4">
+          <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="docType">{t('form.docType')}</Label>
@@ -86,11 +86,11 @@ const EmployeeDocumentsTab: React.FC<EmployeeDocumentsTabProps> = ({
                 />
               </div>
             </div>
-            <Button type="submit" className="w-full bg-gradient-to-r from-primary to-accent" disabled={!selectedFile}>
+            <Button type="button" onClick={handleUpload} className="w-full bg-gradient-to-r from-primary to-accent" disabled={!selectedFile}>
               <Upload className="mr-2 h-4 w-4" />
               {t('form.upload')}
             </Button>
-          </form>
+          </div>
         </CardContent>
       </Card>
 
