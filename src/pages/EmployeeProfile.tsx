@@ -347,14 +347,14 @@ const EmployeeProfile = () => {
       <AlertDialog open={!!docToDelete} onOpenChange={() => setDocToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('dashboard.delete')}</AlertDialogTitle>
+            <AlertDialogTitle>{t('profile.deleteDoc')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('dashboard.deleteConfirm')}
+              {t('profile.deleteDocConfirm')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t('form.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDeleteDoc} className="bg-destructive hover:bg-destructive/90">
+            <AlertDialogAction type="button" onClick={confirmDeleteDoc} className="bg-destructive hover:bg-destructive/90">
               {t('dashboard.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
