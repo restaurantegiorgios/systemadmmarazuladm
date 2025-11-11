@@ -19,8 +19,6 @@ import {
 import EmployeeFormModal from '@/components/EmployeeFormModal';
 import DashboardStats from '@/components/DashboardStats';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
-import * as XLSX from 'xlsx';
-import html2pdf from 'html2pdf.js';
 import ExportDialog, { EmployeeColumn } from '@/components/ExportDialog';
 import { formatBrazilianDate } from '@/lib/utils';
 import EmployeeCard from '@/components/EmployeeCard';
@@ -204,6 +202,7 @@ const Dashboard = () => {
     });
 
     if (format === 'excel') {
+        const XLSX = await import('xlsx');
         const worksheet = XLSX.utils.json_to_sheet(dataToExport);
         
         // --- XLSX Formatting Enhancements ---
@@ -259,6 +258,7 @@ const Dashboard = () => {
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Funcionários');
         XLSX.writeFile(workbook, 'funcionarios.xlsx');
     } else if (format === 'pdf') {
+        const { default: html2pdf } = await import('html2pdf.js');
         const logoBase64 = await getLogoBase64();
         const generationDate = new Date().toLocaleDateString('pt-BR');
 
